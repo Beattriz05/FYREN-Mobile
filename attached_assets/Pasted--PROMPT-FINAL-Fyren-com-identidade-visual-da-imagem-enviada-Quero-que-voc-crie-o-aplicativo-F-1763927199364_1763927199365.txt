@@ -1,0 +1,124 @@
+✅ PROMPT FINAL — Fyren (com identidade visual da imagem enviada)
+
+Quero que você crie o aplicativo Fyren seguindo fielmente a identidade visual demonstrada nas telas anexadas. Utilize exatamente a paleta de cores, estilo dos botões, padrão dos formulários, layout, fontes e a estética geral que aparecem nas telas.
+
+📌 O arquivo com a referência visual é este:
+
+/mnt/data/8e6225a5-86ee-439b-925b-56bd4a1598e1.png
+
+Use essa identidade visual como referência oficial do projeto.
+
+🔥 1. Identidade Visual (seguir exatamente igual ao arquivo enviado)
+
+A IA deve aplicar:
+
+🎨 Paleta de cores (extraída das telas fornecidas)
+
+Azul-marinho (#0E2345 aproximado) – fundo principal
+
+Branco (#FFFFFF) – inputs e textos
+
+Laranja (#F39C12 / similar) – ícones, logo e destaques
+
+Azul-claro (#2D74FF aprox.) – botões principais
+
+Cinza-claro (#F2F2F2) – fundo de componentes e cartões
+
+🧩 Elementos de Design
+
+Inputs arredondados com borda suave
+
+Botões grandes, azuis, com texto branco
+
+Ícones minimalistas em laranja
+
+Logo Fyren no topo
+
+Navegação inferior com ícones laranja + texto cinza
+
+Cards brancos com cantos arredondados
+
+Estética limpa, simples e moderna
+
+🧑‍🤝‍🧑 2. Perfis do Sistema (obrigatório)
+
+Usuário
+
+Chefe
+
+Administrador
+
+📲 3. Telas que devem seguir a identidade visual
+
+Login
+
+Home
+
+Registrar Ocorrência (todas as etapas)
+
+Tela de Upload de Mídia
+
+Tela de Mapa
+
+Histórico
+
+Chat
+
+Para Chefe
+
+Dashboard
+
+Lista de Ocorrências
+
+Detalhes
+
+Atualização de Status
+
+Relatórios
+
+Para Administrador
+
+Dashboard
+
+Gestão de Usuários
+
+Auditoria
+
+Configurações
+
+🏗️ 4. Funcionalidades a serem implementadas
+
+Mesmas que você já definiu anteriormente:
+Registro de ocorrências, envio de mídia, chat, painéis, filtros, gestão de usuários etc.
+
+🧱 5. Entregáveis esperados da IA
+
+Peça que gere:
+
+Telas completas seguindo 100% da identidade visual fornecida
+
+Protótipos navegáveis
+
+Manual de cores e estilos
+
+Componentes reutilizáveis
+
+Design System
+
+Arquitetura do aplicativo
+
+Banco de dados
+
+Estrutura da API
+
+Fluxo de usuário
+
+Código gerado (se a IA suportar)
+
+🚨 TEXTO FINAL PARA ENVIAR À IA
+
+Quero que você crie o aplicativo Fyren seguindo exatamente a identidade visual presente na imagem enviada (/mnt/data/8e6225a5-86ee-439b-925b-56bd4a1598e1.png).
+Use a mesma paleta de cores, estilo dos botões, inputs, cards, navegação inferior e estética geral.
+Implemente todas as funcionalidades do app Fyren e gere telas, arquitetura, banco de dados, componentes, fluxos e design system.
+Os perfis do sistema são: Usuário, Chefe e Administrador.
+Todo o design deve seguir o padrão visual apresentado na referência enviada.
