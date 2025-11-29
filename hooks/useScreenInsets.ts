@@ -1,17 +1,30 @@
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useHeaderHeight } from "@react-navigation/elements";
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-
-import { Spacing } from "@/constants/theme";
+import { useHeaderHeight } from '@react-navigation/elements';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export function useScreenInsets() {
   const insets = useSafeAreaInsets();
-  const headerHeight = useHeaderHeight();
-  const tabBarHeight = useBottomTabBarHeight();
-
+  
+  let headerHeight = 0;
+  try {
+    headerHeight = useHeaderHeight();
+  } catch (error) {
+    // Header não disponível, usar valor padrão
+    console.log('Header não disponível, usando valor padrão');
+  }
+  
+  // Se você também usa tab bar, faça o mesmo:
+  let tabBarHeight = 0;
+  try {
+    const { useBottomTabBarHeight } = require('@react-navigation/bottom-tabs');
+    tabBarHeight = useBottomTabBarHeight();
+  } catch (error) {
+    // Tab bar não disponível
+  }
+  
   return {
-    paddingTop: headerHeight + Spacing.xl,
-    paddingBottom: tabBarHeight + Spacing.xl,
-    scrollInsetBottom: insets.bottom + 16,
+    top: insets.top + headerHeight,
+    bottom: insets.bottom + tabBarHeight,
+    left: insets.left,
+    right: insets.right,
   };
 }
