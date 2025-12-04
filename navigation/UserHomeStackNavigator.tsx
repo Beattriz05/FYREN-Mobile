@@ -13,7 +13,8 @@ import { Incident } from '@/utils/storage';
 
 export type UserHomeStackParamList = {
   UserHome: undefined;
-  RegisterIncident: undefined;
+  // Agora aceita um incidente opcional para edição
+  RegisterIncident: { incident?: Incident } | undefined; 
   History: undefined;
   IncidentDetail: { incident: Incident };
   Map: undefined;
@@ -31,45 +32,20 @@ export default function UserHomeStackNavigator() {
       <Stack.Screen
         name="UserHome"
         component={UserHomeScreen}
-        options={{
-          headerTitle: () => <HeaderTitle title="Fyren" />,
-        }}
+        options={{ headerTitle: () => <HeaderTitle title="Fyren" /> }}
       />
       <Stack.Screen
         name="RegisterIncident"
         component={RegisterIncidentScreen}
-        options={{
-          title: 'Nova Ocorrência',
-        }}
+        options={({ route }) => ({
+          // Muda o título dinamicamente
+          title: route.params?.incident ? 'Editar Ocorrência' : 'Nova Ocorrência',
+        })}
       />
-      <Stack.Screen
-        name="History"
-        component={HistoryScreen}
-        options={{
-          title: 'Histórico',
-        }}
-      />
-      <Stack.Screen
-        name="IncidentDetail"
-        component={IncidentDetailScreen}
-        options={{
-          title: 'Detalhes da Ocorrência',
-        }}
-      />
-      <Stack.Screen
-        name="Map"
-        component={MapScreen}
-        options={{
-          title: 'Mapa',
-        }}
-      />
-      <Stack.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{
-          title: 'Perfil',
-        }}
-      />
+      <Stack.Screen name="History" component={HistoryScreen} options={{ title: 'Histórico' }} />
+      <Stack.Screen name="IncidentDetail" component={IncidentDetailScreen} options={{ title: 'Detalhes' }} />
+      <Stack.Screen name="Map" component={MapScreen} options={{ title: 'Mapa' }} />
+      <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Perfil' }} />
     </Stack.Navigator>
   );
 }

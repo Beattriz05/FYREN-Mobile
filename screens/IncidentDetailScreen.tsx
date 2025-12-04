@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, StyleSheet, TextInput, Pressable, ScrollView } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
@@ -16,15 +16,14 @@ import { useFocusEffect } from '@react-navigation/native';
 type Props = NativeStackScreenProps<UserHomeStackParamList, 'IncidentDetail'>;
 
 export default function IncidentDetailScreen({ route, navigation }: Props) {
-  // Inicializa com o parâmetro da rota, mas vamos atualizar se editarmos
   const [incident, setIncident] = useState(route.params.incident);
-  
   const { theme } = useTheme();
   const { user } = useAuth();
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
+  // Aba ativa: 'details' ou 'timeline'
+  const [activeTab, setActiveTab] = useState<'details' | 'timeline'>('details');
 
-  // Atualiza os dados se a tela receber foco (voltar da edição)
   useFocusEffect(
     useCallback(() => {
       const refreshData = async () => {
@@ -43,12 +42,7 @@ export default function IncidentDetailScreen({ route, navigation }: Props) {
 
   const handleAddComment = async () => {
     if (!newComment.trim() || !incident.id || !user) return;
-    await saveComment({
-      incidentId: incident.id,
-      userId: user.id,
-      userName: user.name,
-      text: newComment,
-    });
+    await saveComment({ incidentId: incident.id, userId: user.id, userName: user.name, text: newComment });
     setNewComment('');
     const data = await getComments(incident.id);
     setComments(data);
@@ -63,95 +57,127 @@ export default function IncidentDetailScreen({ route, navigation }: Props) {
   return (
     <ScreenScrollView>
       <View style={styles.container}>
-        
-        {/* F-09: Botão de Edição (Apenas se pendente de sincronização) */}
+        {/* Botão de Edição */}
         {incident.syncStatus === 'pending_sync' && (
           <Pressable
-            style={({ pressed }) => [
-              styles.editButton,
-              { backgroundColor: theme.primary, opacity: pressed ? 0.8 : 1 }
-            ]}
+            style={({ pressed }) => [styles.editButton, { backgroundColor: theme.primary, opacity: pressed ? 0.8 : 1 }]}
             onPress={() => navigation.navigate('RegisterIncident', { incident })}
           >
             <Feather name="edit-2" size={16} color={theme.textLight} />
-            <ThemedText style={{ color: theme.textLight, fontWeight: '600' }}>
-              Editar Dados (Não Sincronizado)
-            </ThemedText>
+            <ThemedText style={{ color: theme.textLight, fontWeight: '600' }}>Editar Dados</ThemedText>
           </Pressable>
         )}
 
-        <Card style={styles.card}>
-          <View style={styles.headerRow}>
-            <View style={[styles.badge, { backgroundColor: theme.primary + '20' }]}>
-              <ThemedText style={[styles.badgeText, { color: theme.primary }]}>{incident.type || 'Geral'}</ThemedText>
-            </View>
-            <View style={[styles.badge, { backgroundColor: getStatusColor(incident.status) + '20' }]}>
-              <ThemedText style={[styles.badgeText, { color: getStatusColor(incident.status) }]}>{incident.status}</ThemedText>
-            </View>
-          </View>
+        {/* Abas de Navegação */}
+        <View style={styles.tabRow}>
+          <Pressable 
+            style={[styles.tab, activeTab === 'details' && { borderBottomColor: theme.primary, borderBottomWidth: 2 }]}
+            onPress={() => setActiveTab('details')}
+          >
+            <ThemedText style={{ fontWeight: activeTab === 'details' ? '700' : '400', color: theme.text }}>Detalhes</ThemedText>
+          </Pressable>
+          <Pressable 
+            style={[styles.tab, activeTab === 'timeline' && { borderBottomColor: theme.primary, borderBottomWidth: 2 }]}
+            onPress={() => setActiveTab('timeline')}
+          >
+            <ThemedText style={{ fontWeight: activeTab === 'timeline' ? '700' : '400', color: theme.text }}>Linha do Tempo</ThemedText>
+          </Pressable>
+        </View>
 
-          <ThemedText style={[styles.title, { color: theme.text }]}>{incident.title}</ThemedText>
+        {activeTab === 'details' ? (
+          <>
+            <Card style={styles.card}>
+              <View style={styles.headerRow}>
+                <View style={[styles.badge, { backgroundColor: theme.primary + '20' }]}>
+                  <ThemedText style={[styles.badgeText, { color: theme.primary }]}>{incident.type || 'Geral'}</ThemedText>
+                </View>
+                <View style={[styles.badge, { backgroundColor: getStatusColor(incident.status) + '20' }]}>
+                  <ThemedText style={[styles.badgeText, { color: getStatusColor(incident.status) }]}>{incident.status}</ThemedText>
+                </View>
+              </View>
 
-          <View style={[styles.infoBox, { backgroundColor: theme.backgroundDefault }]}>
-            <View style={styles.infoCol}>
-              <ThemedText style={styles.label}>Viatura:</ThemedText>
-              <ThemedText style={styles.value}>{incident.vehicle || '-'}</ThemedText>
-            </View>
-            <View style={styles.infoCol}>
-              <ThemedText style={styles.label}>Equipe:</ThemedText>
-              <ThemedText style={styles.value}>{incident.team || '-'}</ThemedText>
-            </View>
-          </View>
+              <ThemedText style={[styles.title, { color: theme.text }]}>{incident.title}</ThemedText>
 
-          <ThemedText style={[styles.description, { color: theme.text }]}>{incident.description}</ThemedText>
+              <View style={[styles.infoBox, { backgroundColor: theme.backgroundDefault }]}>
+                <View style={styles.infoCol}>
+                  <ThemedText style={styles.label}>Viatura:</ThemedText>
+                  <ThemedText style={styles.value}>{incident.vehicle || '-'}</ThemedText>
+                </View>
+                <View style={styles.infoCol}>
+                  <ThemedText style={styles.label}>Equipe:</ThemedText>
+                  <ThemedText style={styles.value}>{incident.team || '-'}</ThemedText>
+                </View>
+              </View>
 
-          {incident.location && (
-            <View style={styles.iconRow}>
-              <Feather name="map-pin" size={16} color={theme.secondary} />
-              <ThemedText style={[styles.smallText, { color: theme.tabIconDefault }]}>
-                {incident.location.latitude.toFixed(5)}, {incident.location.longitude.toFixed(5)}
-              </ThemedText>
-            </View>
-          )}
+              <ThemedText style={[styles.description, { color: theme.text }]}>{incident.description}</ThemedText>
 
-          {incident.images && incident.images.length > 0 && (
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.imageScroll}>
-              {incident.images.map((uri, index) => (
-                <Image key={index} source={{ uri }} style={styles.image} contentFit="cover" />
+              {/* Mídia */}
+              {(incident.images?.length > 0 || incident.videos?.length > 0) && (
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.imageScroll}>
+                  {incident.images?.map((uri, index) => (
+                    <Image key={`i-${index}`} source={{ uri }} style={styles.image} contentFit="cover" />
+                  ))}
+                  {incident.videos?.map((uri, index) => (
+                    <View key={`v-${index}`} style={[styles.image, { backgroundColor: '#000', justifyContent: 'center', alignItems: 'center' }]}>
+                      <Feather name="play" size={24} color="#fff" />
+                    </View>
+                  ))}
+                </ScrollView>
+              )}
+
+              {incident.signature && (
+                <View style={styles.signatureBox}>
+                  <ThemedText style={styles.label}>Assinatura:</ThemedText>
+                  <Image source={{ uri: incident.signature }} style={styles.signatureImage} contentFit="contain" />
+                </View>
+              )}
+            </Card>
+
+            <Card style={styles.card}>
+              <ThemedText style={[styles.title, { fontSize: 18 }]}>Comentários</ThemedText>
+              {comments.map((comment) => (
+                <View key={comment.id} style={[styles.comment, { backgroundColor: theme.backgroundDefault }]}>
+                  <ThemedText style={styles.commentAuthor}>{comment.userName}</ThemedText>
+                  <ThemedText style={styles.commentText}>{comment.text}</ThemedText>
+                </View>
               ))}
-            </ScrollView>
-          )}
-
-          {incident.signature && (
-            <View style={styles.signatureBox}>
-              <ThemedText style={styles.label}>Assinatura:</ThemedText>
-              <Image source={{ uri: incident.signature }} style={styles.signatureImage} contentFit="contain" />
+              <View style={styles.commentInput}>
+                <TextInput
+                  style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text, borderColor: theme.border }]}
+                  value={newComment}
+                  onChangeText={setNewComment}
+                  placeholder="Comentar..."
+                  placeholderTextColor={theme.tabIconDefault}
+                />
+                <Pressable style={[styles.sendButton, { backgroundColor: theme.secondary }]} onPress={handleAddComment}>
+                  <Feather name="send" size={20} color="#fff" />
+                </Pressable>
+              </View>
+            </Card>
+          </>
+        ) : (
+          <Card style={styles.card}>
+            <ThemedText style={styles.title}>Histórico de Eventos</ThemedText>
+            <View style={styles.timelineContainer}>
+              {incident.timeline?.map((event, index) => (
+                <View key={event.id} style={styles.timelineItem}>
+                  <View style={styles.timelineLeft}>
+                    <View style={[styles.timelineDot, { backgroundColor: theme.primary }]} />
+                    {index < (incident.timeline?.length || 0) - 1 && <View style={[styles.timelineLine, { backgroundColor: theme.border }]} />}
+                  </View>
+                  <View style={styles.timelineContent}>
+                    <ThemedText style={styles.timelineTitle}>{event.title}</ThemedText>
+                    <ThemedText style={[styles.timelineDesc, { color: theme.tabIconDefault }]}>{event.description}</ThemedText>
+                    <ThemedText style={[styles.timelineDate, { color: theme.tabIconDefault }]}>
+                      {new Date(event.date).toLocaleString('pt-BR')}
+                    </ThemedText>
+                  </View>
+                </View>
+              ))}
+              {!incident.timeline && <ThemedText>Nenhum evento registrado.</ThemedText>}
             </View>
-          )}
-        </Card>
-
-        {/* Card Comentários (Mesmo código anterior) */}
-        <Card style={styles.card}>
-          <ThemedText style={[styles.title, { fontSize: 18 }]}>Comentários</ThemedText>
-          {comments.map((comment) => (
-            <View key={comment.id} style={[styles.comment, { backgroundColor: theme.backgroundDefault }]}>
-              <ThemedText style={styles.commentAuthor}>{comment.userName}</ThemedText>
-              <ThemedText style={styles.commentText}>{comment.text}</ThemedText>
-            </View>
-          ))}
-          <View style={styles.commentInput}>
-            <TextInput
-              style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text, borderColor: theme.border }]}
-              value={newComment}
-              onChangeText={setNewComment}
-              placeholder="Comentar..."
-              placeholderTextColor={theme.tabIconDefault}
-            />
-            <Pressable style={[styles.sendButton, { backgroundColor: theme.secondary }]} onPress={handleAddComment}>
-              <Feather name="send" size={20} color="#fff" />
-            </Pressable>
-          </View>
-        </Card>
+          </Card>
+        )}
       </View>
     </ScreenScrollView>
   );
@@ -159,7 +185,9 @@ export default function IncidentDetailScreen({ route, navigation }: Props) {
 
 const styles = StyleSheet.create({
   container: { padding: Spacing.lg, gap: Spacing.lg },
-  editButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 12, borderRadius: 8, gap: 8, marginBottom: 8 },
+  editButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 12, borderRadius: 8, gap: 8 },
+  tabRow: { flexDirection: 'row', marginBottom: 4 },
+  tab: { flex: 1, alignItems: 'center', paddingVertical: 12 },
   card: { padding: Spacing.lg, gap: Spacing.md },
   headerRow: { flexDirection: 'row', gap: Spacing.sm },
   badge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 4 },
@@ -170,8 +198,6 @@ const styles = StyleSheet.create({
   label: { fontSize: 12, opacity: 0.7, marginBottom: 2 },
   value: { fontSize: 16, fontWeight: '600' },
   description: { fontSize: 16, lineHeight: 24 },
-  iconRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  smallText: { fontSize: 14 },
   imageScroll: { flexDirection: 'row', marginTop: Spacing.xs },
   image: { width: 120, height: 120, borderRadius: 8, marginRight: 8 },
   signatureBox: { marginTop: Spacing.sm, borderTopWidth: 1, borderTopColor: '#eee', paddingTop: Spacing.sm },
@@ -182,4 +208,14 @@ const styles = StyleSheet.create({
   commentInput: { flexDirection: 'row', gap: 8 },
   input: { flex: 1, height: 44, borderWidth: 1, borderRadius: 8, paddingHorizontal: 12 },
   sendButton: { width: 44, height: 44, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
+  // Estilos da Timeline
+  timelineContainer: { marginTop: Spacing.md },
+  timelineItem: { flexDirection: 'row', marginBottom: 24 },
+  timelineLeft: { width: 20, alignItems: 'center' },
+  timelineDot: { width: 12, height: 12, borderRadius: 6, zIndex: 1 },
+  timelineLine: { width: 2, flex: 1, marginTop: 4 },
+  timelineContent: { flex: 1, paddingLeft: 12 },
+  timelineTitle: { fontWeight: '700', fontSize: 16 },
+  timelineDesc: { fontSize: 14, marginTop: 2 },
+  timelineDate: { fontSize: 12, marginTop: 4 },
 });
