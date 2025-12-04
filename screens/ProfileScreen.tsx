@@ -7,6 +7,7 @@ import { ScreenScrollView } from '@/components/ScreenScrollView';
 import { useTheme } from '@/hooks/useTheme';
 import { useAuth } from '@/hooks/useAuth';
 import { Spacing, BorderRadius } from '@/constants/theme';
+import { clearAllData } from '@/utils/storage';
 
 export default function ProfileScreen() {
   const { theme } = useTheme();
@@ -104,6 +105,35 @@ export default function ProfileScreen() {
           </Pressable>
         </Card>
 
+<Pressable
+          style={({ pressed }) => [
+            styles.logoutButton,
+            { backgroundColor: theme.warning, opacity: pressed ? 0.8 : 1, marginBottom: Spacing.md },
+          ]}
+          onPress={() => {
+            Alert.alert(
+              'Resetar Dados',
+              'Isso apagará todas as ocorrências locais para evitar erros de compatibilidade. Continuar?',
+              [
+                { text: 'Cancelar', style: 'cancel' },
+                { 
+                  text: 'Apagar Tudo', 
+                  style: 'destructive', 
+                  onPress: async () => {
+                    await clearAllData();
+                    Alert.alert('Pronto', 'Dados limpos! O app está pronto para a nova estrutura.');
+                  }
+                },
+              ]
+            );
+          }}
+        >
+          <Feather name="trash-2" size={20} color={theme.textLight} />
+          <ThemedText style={[styles.logoutText, { color: theme.textLight }]}>
+            Resetar Dados (Dev)
+          </ThemedText>
+        </Pressable>
+        
         <Pressable
           style={({ pressed }) => [
             styles.logoutButton,

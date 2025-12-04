@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import { Alert } from 'react-native'; // Adicionado Alert
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export type UserRole = 'user' | 'chief' | 'admin';
@@ -27,10 +28,16 @@ export const AuthContext = createContext<AuthContextType>({
 });
 
 const STORAGE_KEY = '@fyren_user';
+const MAX_ATTEMPTS = 3;
+const LOCKOUT_TIME = 30000; // 30 segundos em milissegundos
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Estados para controle de segurança (F-01)
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [lockoutUntil, setLockoutUntil] = useState<number | null>(null);
 
   useEffect(() => {
     loadUser();
@@ -50,16 +57,61 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const login = async (email: string, password: string) => {
+    // 1. Verifica se está bloqueado
+    if (lockoutUntil) {
+      const now = Date.now();
+      if (now < lockoutUntil) {
+        const remainingSeconds = Math.ceil((lockoutUntil - now) / 1000);
+        Alert.alert(
+          'Acesso Bloqueado', 
+          `Muitas tentativas falhas. Tente novamente em ${remainingSeconds} segundos.`
+        );
+        throw new Error('Locked out');
+      } else {
+        // Tempo passou, reseta o bloqueio
+        setLockoutUntil(null);
+        setFailedAttempts(0);
+      }
+    }
+
+    // 2. Simulação de validação de senha (F-01)
+    // Para o MVP, a senha correta é sempre "123456"
+    if (password !== '123456') {
+      const newAttempts = failedAttempts + 1;
+      setFailedAttempts(newAttempts);
+
+      if (newAttempts >= MAX_ATTEMPTS) {
+        setLockoutUntil(Date.now() + LOCKOUT_TIME);
+        Alert.alert(
+          'Bloqueado', 
+          'Número máximo de tentativas excedido. Aguarde 30s.'
+        );
+      } else {
+        Alert.alert(
+          'Credenciais Inválidas', 
+          `Senha incorreta. Tentativa ${newAttempts} de ${MAX_ATTEMPTS}.`
+        );
+      }
+      throw new Error('Invalid credentials');
+    }
+
+    // 3. Sucesso - Reseta contadores
+    setFailedAttempts(0);
+    setLockoutUntil(null);
+
+    // Define o cargo baseado no e-mail (Lógica Mockada)
     let role: UserRole = 'user';
-    if (email.includes('chief') || email.includes('chefe')) {
+    const emailLower = email.toLowerCase();
+    
+    if (emailLower.includes('chief') || emailLower.includes('chefe')) {
       role = 'chief';
-    } else if (email.includes('admin')) {
+    } else if (emailLower.includes('admin')) {
       role = 'admin';
     }
 
     const userData: User = {
       id: Math.random().toString(36).substring(7),
-      name: email.split('@')[0],
+      name: email.split('@')[0], // Usa a parte antes do @ como nome
       email,
       role,
     };
