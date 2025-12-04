@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, LogBox } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
@@ -9,27 +9,33 @@ import { StatusBar } from "expo-status-bar";
 import RootNavigator from "@/navigation/RootNavigator";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { ThemeProvider } from "@/contexts/ThemeContext"; // Novo
+import { ThemeProvider } from "@/contexts/ThemeContext";
+
+// Opcional: Ignorar warnings específicos (remova em produção)
+LogBox.ignoreLogs([
+  "ViewPropTypes will be removed",
+  "ColorPropType will be removed",
+  "Require cycle:"
+]);
 
 export default function App() {
   return (
-  <ErrorBoundary>
-    <SafeAreaProvider>
-        <GestureHandlerRootView style={styles.root}>
-          <KeyboardProvider>
-            {/* Adicione o ThemeProvider aqui */}
-            <ThemeProvider> 
-              <AuthProvider>
+    <ErrorBoundary>
+      <GestureHandlerRootView style={styles.root}>
+        <SafeAreaProvider>
+          <ThemeProvider> {/* Tema primeiro - para outros providers terem acesso */}
+            <KeyboardProvider>
+              <AuthProvider> {/* Auth depois do tema */}
                 <NavigationContainer>
                   <RootNavigator />
+                  <StatusBar style="auto" />
                 </NavigationContainer>
               </AuthProvider>
-              <StatusBar style="auto" />
-            </ThemeProvider>
-          </KeyboardProvider>
-        </GestureHandlerRootView>
-      </SafeAreaProvider>
-  </ErrorBoundary>
+            </KeyboardProvider>
+          </ThemeProvider>
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
+    </ErrorBoundary>
   );
 }
 
