@@ -17,7 +17,8 @@ export function ScreenKeyboardAwareScrollView({
   ...scrollViewProps
 }: KeyboardAwareScrollViewProps) {
   const { theme } = useTheme();
-  const { paddingTop, paddingBottom, scrollInsetBottom } = useScreenInsets();
+  // Aqui pegamos o "top" corrigido do nosso hook novo
+  const { top, bottom, scrollInsetBottom } = useScreenInsets();
 
   if (Platform.OS === "web") {
     return (
@@ -41,14 +42,15 @@ export function ScreenKeyboardAwareScrollView({
       ]}
       contentContainerStyle={[
         {
-          paddingTop,
-          paddingBottom,
+          paddingTop: top, // Aplica o espaçamento do topo (header)
+          paddingBottom: bottom, // Aplica o espaçamento da base (tabs)
         },
         styles.contentContainer,
         contentContainerStyle,
       ]}
-      scrollIndicatorInsets={{ bottom: scrollInsetBottom }}
+      scrollIndicatorInsets={{ bottom: scrollInsetBottom, top: top }}
       keyboardShouldPersistTaps={keyboardShouldPersistTaps}
+      bottomOffset={20} // Espaço extra acima do teclado
       {...scrollViewProps}
     >
       {children}
@@ -61,6 +63,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    paddingHorizontal: Spacing.xl,
+    paddingHorizontal: Spacing.lg, // Ajustado para ser consistente
   },
 });

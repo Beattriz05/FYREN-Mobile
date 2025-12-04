@@ -6,6 +6,29 @@ const lightBlue = "#2D74FF";
 const white = "#FFFFFF";
 const lightGray = "#F2F2F2";
 
+// F-15: Paleta de Alto Contraste
+const highContrast = {
+  primary: "#FFFF00", 
+  secondary: "#FFFFFF",
+  accent: "#00FF00",
+  text: "#FFFFFF",
+  textLight: "#000000",
+  buttonText: "#000000",
+  tabIconDefault: "#FFFFFF",
+  tabIconSelected: "#FFFF00",
+  link: "#FFFF00",
+  backgroundRoot: "#000000",
+  backgroundDefault: "#000000",
+  backgroundSecondary: "#111111",
+  backgroundTertiary: "#333333",
+  card: "#000000",
+  border: "#FFFFFF",
+  success: "#00FF00",
+  warning: "#FFFF00",
+  error: "#FF0000",
+  info: "#00FFFF",
+};
+
 export const Colors = {
   light: {
     primary: navyBlue,
@@ -38,17 +61,18 @@ export const Colors = {
     tabIconDefault: "#9E9E9E",
     tabIconSelected: orange,
     link: lightBlue,
-    backgroundRoot: navyBlue,
-    backgroundDefault: "#1A2F4A",
-    backgroundSecondary: "#0A1829",
-    backgroundTertiary: "#152336",
-    card: "#1A2F4A",
-    border: "#2D4563",
+    backgroundRoot: navyBlue, // Fundo geral azul escuro
+    backgroundDefault: "#152336", // Fundo padrão um pouco mais claro
+    backgroundSecondary: "#2A3C55", // [CORRIGIDO] Inputs mais claros para contraste
+    backgroundTertiary: "#1A2F4A",
+    card: "#1A2F4A", // Cartão azul médio
+    border: "#4A6FA5", // Borda mais visível
     success: "#4CAF50",
     warning: orange,
     error: "#F44336",
     info: lightBlue,
   },
+  highContrast: highContrast,
 };
 
 export const Spacing = {
@@ -61,8 +85,8 @@ export const Spacing = {
   "3xl": 32,
   "4xl": 40,
   "5xl": 48,
-  inputHeight: 48,
-  buttonHeight: 52,
+  inputHeight: 52, // Aumentei um pouco para melhor toque
+  buttonHeight: 56,
 };
 
 export const BorderRadius = {
@@ -76,66 +100,18 @@ export const BorderRadius = {
   full: 9999,
 };
 
-export const Typography = {
-  h1: {
-    fontSize: 32,
-    lineHeight: 40,
-    fontWeight: "700" as const,
-  },
-  h2: {
-    fontSize: 28,
-    lineHeight: 36,
-    fontWeight: "700" as const,
-  },
-  h3: {
-    fontSize: 24,
-    lineHeight: 32,
-    fontWeight: "600" as const,
-  },
-  h4: {
-    fontSize: 20,
-    lineHeight: 28,
-    fontWeight: "600" as const,
-  },
-  body: {
-    fontSize: 16,
-    lineHeight: 24,
-    fontWeight: "400" as const,
-  },
-  small: {
-    fontSize: 14,
-    lineHeight: 20,
-    fontWeight: "400" as const,
-  },
-  link: {
-    fontSize: 16,
-    lineHeight: 24,
-    fontWeight: "400" as const,
-  },
+export const BaseTypography = {
+  h1: { fontSize: 32, lineHeight: 40, fontWeight: "700" as const },
+  h2: { fontSize: 28, lineHeight: 36, fontWeight: "700" as const },
+  h3: { fontSize: 24, lineHeight: 32, fontWeight: "600" as const },
+  h4: { fontSize: 20, lineHeight: 28, fontWeight: "600" as const },
+  body: { fontSize: 16, lineHeight: 24, fontWeight: "400" as const },
+  small: { fontSize: 14, lineHeight: 20, fontWeight: "400" as const },
+  link: { fontSize: 16, lineHeight: 24, fontWeight: "400" as const },
 };
 
 export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: "system-ui",
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: "ui-serif",
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: "ui-rounded",
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: "ui-monospace",
-  },
-  default: {
-    sans: "normal",
-    serif: "serif",
-    rounded: "normal",
-    mono: "monospace",
-  },
-  web: {
-    sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-    serif: "Georgia, 'Times New Roman', serif",
-    rounded:
-      "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
-    mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
-  },
+  ios: { sans: "system-ui", serif: "ui-serif", rounded: "ui-rounded", mono: "ui-monospace" },
+  default: { sans: "normal", serif: "serif", rounded: "normal", mono: "monospace" },
+  web: { sans: "sans-serif", serif: "serif", rounded: "sans-serif", mono: "monospace" },
 });
