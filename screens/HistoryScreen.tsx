@@ -15,7 +15,7 @@ import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 type Props = NativeStackScreenProps<UserHomeStackParamList, 'History'>;
 
 export default function HistoryScreen({ navigation }: Props) {
-  const { theme } = useTheme();
+  const { colors } = useTheme();
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const insets = useSafeAreaInsets();
@@ -39,13 +39,13 @@ export default function HistoryScreen({ navigation }: Props) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
-        return theme.warning;
+        return colors.warning;
       case 'in_progress':
-        return theme.info;
+        return colors.info;
       case 'resolved':
-        return theme.success;
+        return colors.success;
       default:
-        return theme.tabIconDefault;
+        return colors.tabIconDefault;
     }
   };
 
@@ -68,7 +68,7 @@ export default function HistoryScreen({ navigation }: Props) {
     >
       <Card style={styles.incidentCard}>
         <View style={styles.header}>
-          <ThemedText style={[styles.title, { color: theme.text }]}>
+          <ThemedText style={[styles.title, { color: colors.text }]}>
             {item.title}
           </ThemedText>
           <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) + '20' }]}>
@@ -77,19 +77,19 @@ export default function HistoryScreen({ navigation }: Props) {
             </ThemedText>
           </View>
         </View>
-        <ThemedText style={[styles.description, { color: theme.tabIconDefault }]} numberOfLines={2}>
+        <ThemedText style={[styles.description, { color: colors.tabIconDefault }]} numberOfLines={2}>
           {item.description}
         </ThemedText>
         <View style={styles.footer}>
           <View style={styles.iconRow}>
             {item.location ? (
-              <Feather name="map-pin" size={16} color={theme.secondary} />
+              <Feather name="map-pin" size={16} color={colors.secondary} />
             ) : null}
             {item.images && item.images.length > 0 ? (
-              <Feather name="image" size={16} color={theme.secondary} />
+              <Feather name="image" size={16} color={colors.secondary} />
             ) : null}
           </View>
-          <ThemedText style={[styles.date, { color: theme.tabIconDefault }]}>
+          <ThemedText style={[styles.date, { color: colors.tabIconDefault }]}>
             {new Date(item.createdAt).toLocaleDateString('pt-BR')}
           </ThemedText>
         </View>
@@ -108,12 +108,12 @@ export default function HistoryScreen({ navigation }: Props) {
           { paddingBottom: tabBarHeight + Spacing.xl },
         ]}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.secondary} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.secondary} />
         }
         ListEmptyComponent={
           <View style={styles.empty}>
-            <Feather name="inbox" size={64} color={theme.tabIconDefault} />
-            <ThemedText style={[styles.emptyText, { color: theme.tabIconDefault }]}>
+            <Feather name="inbox" size={64} color={colors.tabIconDefault} />
+            <ThemedText style={[styles.emptyText, { color: colors.tabIconDefault }]}>
               Nenhuma ocorrência registrada
             </ThemedText>
           </View>

@@ -8,7 +8,7 @@ import { Spacing } from '@/constants/theme';
 import { getIncidents } from '@/utils/storage';
 
 export default function ReportsScreen() {
-  const { theme } = useTheme();
+  const { colors } = useTheme();
   const [report, setReport] = useState({
     totalToday: 0,
     totalWeek: 0,
@@ -39,42 +39,42 @@ export default function ReportsScreen() {
     <ScreenScrollView>
       <View style={styles.container}>
         <Card style={styles.card}>
-          <ThemedText style={[styles.title, { color: theme.text }]}>
+          <ThemedText style={[styles.title, { color: colors.text }]}>
             Relatório de Ocorrências
           </ThemedText>
 
           <View style={styles.reportRow}>
-            <ThemedText style={[styles.label, { color: theme.tabIconDefault }]}>
+            <ThemedText style={[styles.label, { color: colors.tabIconDefault }]}>
               Hoje:
             </ThemedText>
-            <ThemedText style={[styles.value, { color: theme.text }]}>
+            <ThemedText style={[styles.value, { color: colors.text }]}>
               {report.totalToday}
             </ThemedText>
           </View>
 
           <View style={styles.reportRow}>
-            <ThemedText style={[styles.label, { color: theme.tabIconDefault }]}>
+            <ThemedText style={[styles.label, { color: colors.tabIconDefault }]}>
               Últimos 7 dias:
             </ThemedText>
-            <ThemedText style={[styles.value, { color: theme.text }]}>
+            <ThemedText style={[styles.value, { color: colors.text }]}>
               {report.totalWeek}
             </ThemedText>
           </View>
 
           <View style={styles.reportRow}>
-            <ThemedText style={[styles.label, { color: theme.tabIconDefault }]}>
+            <ThemedText style={[styles.label, { color: colors.tabIconDefault }]}>
               Último mês:
             </ThemedText>
-            <ThemedText style={[styles.value, { color: theme.text }]}>
+            <ThemedText style={[styles.value, { color: colors.text }]}>
               {report.totalMonth}
             </ThemedText>
           </View>
 
           <View style={styles.reportRow}>
-            <ThemedText style={[styles.label, { color: theme.tabIconDefault }]}>
+            <ThemedText style={[styles.label, { color: colors.tabIconDefault }]}>
               Tempo médio de resolução:
             </ThemedText>
-            <ThemedText style={[styles.value, { color: theme.text }]}>
+            <ThemedText style={[styles.value, { color: colors.text }]}>
               {report.avgResolutionTime}
             </ThemedText>
           </View>

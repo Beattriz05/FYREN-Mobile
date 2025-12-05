@@ -12,7 +12,7 @@ import { getIncidents, Incident } from '@/utils/storage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function MapScreen() {
-  const { theme } = useTheme();
+  const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
   const [incidents, setIncidents] = useState<Incident[]>([]);
@@ -77,14 +77,14 @@ export default function MapScreen() {
       {selectedIncident ? (
         <Card style={StyleSheet.flatten([styles.detailCard, { bottom: insets.bottom + Spacing.xl }])}>
           <View style={styles.detailHeader}>
-            <ThemedText style={[styles.detailTitle, { color: theme.text }]}>
+            <ThemedText style={[styles.detailTitle, { color: colors.text }]}>
               {selectedIncident.title}
             </ThemedText>
             <Pressable onPress={() => setSelectedIncident(null)}>
-              <Feather name="x" size={24} color={theme.tabIconDefault} />
+              <Feather name="x" size={24} color={colors.tabIconDefault} />
             </Pressable>
           </View>
-          <ThemedText style={[styles.detailDesc, { color: theme.tabIconDefault }]} numberOfLines={2}>
+          <ThemedText style={[styles.detailDesc, { color: colors.tabIconDefault }]} numberOfLines={2}>
             {selectedIncident.description}
           </ThemedText>
         </Card>

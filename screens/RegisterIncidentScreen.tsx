@@ -17,7 +17,7 @@ import { Image } from 'expo-image';
 type Props = NativeStackScreenProps<UserHomeStackParamList, 'RegisterIncident'>;
 
 export default function RegisterIncidentScreen({ navigation, route }: Props) {
-  const { theme } = useTheme();
+  const { colors } = useTheme();
   const editingIncident = route.params?.incident;
 
   const [title, setTitle] = useState(editingIncident?.title || '');
@@ -120,8 +120,8 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
           <ThemedText style={styles.label}>Tipo de Ocorrência *</ThemedText>
           <View style={styles.typeRow}>
             {['Resgate', 'Incêndio', 'Salvamento'].map((t) => (
-              <Pressable key={t} style={[styles.typeButton, { backgroundColor: type === t ? theme.primary : theme.backgroundDefault }]} onPress={() => setType(t)}>
-                <ThemedText style={{ color: type === t ? theme.textLight : theme.text }}>{t}</ThemedText>
+              <Pressable key={t} style={[styles.typeButton, { backgroundColor: type === t ? colors.primary : colors.backgroundDefault }]} onPress={() => setType(t)}>
+                <ThemedText style={{ color: type === t ? colors.textLight : colors.text }}>{t}</ThemedText>
               </Pressable>
             ))}
           </View>
@@ -130,60 +130,60 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
             <View style={{ flex: 1 }}>
               <ThemedText style={styles.label}>Viatura *</ThemedText>
               <TextInput 
-                style={[styles.input, { borderColor: theme.border, color: theme.text }]} 
+                style={[styles.input, { borderColor: colors.border, color: colors.text }]} 
                 value={vehicle} 
                 onChangeText={handleVehicleChange} 
                 placeholder="ABT-12" 
-                placeholderTextColor={theme.tabIconDefault}
+                placeholderTextColor={colors.tabIconDefault}
               />
             </View>
             <View style={{ flex: 1 }}>
               <ThemedText style={styles.label}>Equipe *</ThemedText>
               <TextInput 
-                style={[styles.input, { borderColor: theme.border, color: theme.text }]} 
+                style={[styles.input, { borderColor: colors.border, color: colors.text }]} 
                 value={team} 
                 onChangeText={setTeam} 
                 placeholder="Alfa" 
-                placeholderTextColor={theme.tabIconDefault}
+                placeholderTextColor={colors.tabIconDefault}
               />
             </View>
           </View>
 
           <ThemedText style={styles.label}>Título *</ThemedText>
           <TextInput 
-            style={[styles.input, { borderColor: theme.border, color: theme.text }]} 
+            style={[styles.input, { borderColor: colors.border, color: colors.text }]} 
             value={title} 
             onChangeText={setTitle} 
             placeholder="Resumo" 
-            placeholderTextColor={theme.tabIconDefault}
+            placeholderTextColor={colors.tabIconDefault}
           />
 
           <ThemedText style={styles.label}>Descrição *</ThemedText>
           <TextInput 
-            style={[styles.textArea, { borderColor: theme.border, color: theme.text }]} 
+            style={[styles.textArea, { borderColor: colors.border, color: colors.text }]} 
             value={description} 
             onChangeText={setDescription} 
             multiline 
             numberOfLines={4} 
             placeholder="Detalhes..." 
-            placeholderTextColor={theme.tabIconDefault}
+            placeholderTextColor={colors.tabIconDefault}
           />
 
           <View style={styles.actionRow}>
-            <Pressable style={[styles.iconButton, { borderColor: theme.border }]} onPress={captureLocation}>
-              <Feather name="map-pin" size={20} color={location ? theme.success : theme.secondary} />
+            <Pressable style={[styles.iconButton, { borderColor: colors.border }]} onPress={captureLocation}>
+              <Feather name="map-pin" size={20} color={location ? colors.success : colors.secondary} />
               <ThemedText style={{fontSize: 10}}>GPS</ThemedText>
             </Pressable>
-            <Pressable style={[styles.iconButton, { borderColor: theme.border }]} onPress={() => captureMedia('photo')}>
-              <Feather name="camera" size={20} color={images.length > 0 ? theme.success : theme.secondary} />
+            <Pressable style={[styles.iconButton, { borderColor: colors.border }]} onPress={() => captureMedia('photo')}>
+              <Feather name="camera" size={20} color={images.length > 0 ? colors.success : colors.secondary} />
               <ThemedText style={{fontSize: 10}}>Foto ({images.length})</ThemedText>
             </Pressable>
-            <Pressable style={[styles.iconButton, { borderColor: theme.border }]} onPress={() => captureMedia('video')}>
-              <Feather name="video" size={20} color={videos.length > 0 ? theme.success : theme.secondary} />
+            <Pressable style={[styles.iconButton, { borderColor: colors.border }]} onPress={() => captureMedia('video')}>
+              <Feather name="video" size={20} color={videos.length > 0 ? colors.success : colors.secondary} />
               <ThemedText style={{fontSize: 10}}>Vídeo ({videos.length})</ThemedText>
             </Pressable>
-            <Pressable style={[styles.iconButton, { borderColor: theme.border }]} onPress={() => setShowSignatureModal(true)}>
-              <Feather name="pen-tool" size={20} color={signature ? theme.success : theme.secondary} />
+            <Pressable style={[styles.iconButton, { borderColor: colors.border }]} onPress={() => setShowSignatureModal(true)}>
+              <Feather name="pen-tool" size={20} color={signature ? colors.success : colors.secondary} />
               <ThemedText style={{fontSize: 10}}>Assinar</ThemedText>
             </Pressable>
           </View>
@@ -207,11 +207,11 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
           )}
 
           <Pressable
-            style={({ pressed }) => [styles.submitButton, { backgroundColor: theme.accent, opacity: pressed ? 0.8 : 1 }]}
+            style={({ pressed }) => [styles.submitButton, { backgroundColor: colors.accent, opacity: pressed ? 0.8 : 1 }]}
             onPress={handleSubmit}
             disabled={isLoading}
           >
-            <ThemedText style={{ color: theme.textLight, fontSize: 18, fontWeight: '600' }}>
+            <ThemedText style={{ color: colors.textLight, fontSize: 18, fontWeight: '600' }}>
               {isLoading ? 'Salvando...' : 'Finalizar Registro'}
             </ThemedText>
           </Pressable>

@@ -7,7 +7,7 @@ import { Spacing, BorderRadius } from '@/constants/theme';
 import { ScreenKeyboardAwareScrollView } from '@/components/ScreenKeyboardAwareScrollView';
 
 export default function LoginScreen() {
-  const { theme } = useTheme();
+  const { colors } = useTheme();
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -38,16 +38,16 @@ export default function LoginScreen() {
             style={styles.logo}
             resizeMode="contain"
           />
-          <ThemedText style={[styles.title, { color: theme.secondary }]}>
+          <ThemedText style={[styles.title, { color: colors.secondary }]}>
             Fyren
           </ThemedText>
         </View>
 
         <View style={styles.formContainer}>
           <TextInput
-            style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text, borderColor: theme.border }]}
+            style={[styles.input, { backgroundColor: colors.backgroundSecondary, color: colors.text, borderColor: colors.border }]}
             placeholder="Email"
-            placeholderTextColor={theme.tabIconDefault}
+            placeholderTextColor={colors.tabIconDefault}
             value={email}
             onChangeText={setEmail}
             autoCapitalize="none"
@@ -55,9 +55,9 @@ export default function LoginScreen() {
           />
 
           <TextInput
-            style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text, borderColor: theme.border }]}
+            style={[styles.input, { backgroundColor: colors.backgroundSecondary, color: colors.text, borderColor: colors.border }]}
             placeholder="Senha"
-            placeholderTextColor={theme.tabIconDefault}
+            placeholderTextColor={colors.tabIconDefault}
             value={password}
             onChangeText={setPassword}
             secureTextEntry
@@ -66,17 +66,17 @@ export default function LoginScreen() {
           <Pressable
             style={({ pressed }) => [
               styles.button,
-              { backgroundColor: theme.accent, opacity: pressed ? 0.8 : 1 },
+              { backgroundColor: colors.accent, opacity: pressed ? 0.8 : 1 },
             ]}
             onPress={handleLogin}
             disabled={isLoading}
           >
-            <ThemedText style={[styles.buttonText, { color: theme.textLight }]}>
+            <ThemedText style={[styles.buttonText, { color: colors.textLight }]}>
               {isLoading ? 'Entrando...' : 'Entrar'}
             </ThemedText>
           </Pressable>
 
-          <ThemedText style={[styles.hint, { color: theme.tabIconDefault }]}>
+          <ThemedText style={[styles.hint, { color: colors.tabIconDefault }]}>
             Dica: use "user@email.com", "chief@email.com" ou "admin@email.com"
           </ThemedText>
         </View>

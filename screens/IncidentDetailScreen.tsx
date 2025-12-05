@@ -17,7 +17,7 @@ type Props = NativeStackScreenProps<UserHomeStackParamList, 'IncidentDetail'>;
 
 export default function IncidentDetailScreen({ route, navigation }: Props) {
   const [incident, setIncident] = useState(route.params.incident);
-  const { theme } = useTheme();
+  const { colors } = useTheme();
   const { user } = useAuth();
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
@@ -49,9 +49,9 @@ export default function IncidentDetailScreen({ route, navigation }: Props) {
   };
 
   const getStatusColor = (status: string) => {
-    if (status === 'pending') return theme.warning;
-    if (status === 'in_progress') return theme.info;
-    return theme.success;
+    if (status === 'pending') return colors.warning;
+    if (status === 'in_progress') return colors.info;
+    return colors.success;
   };
 
   return (
@@ -60,27 +60,27 @@ export default function IncidentDetailScreen({ route, navigation }: Props) {
         {/* Botão de Edição */}
         {incident.syncStatus === 'pending_sync' && (
           <Pressable
-            style={({ pressed }) => [styles.editButton, { backgroundColor: theme.primary, opacity: pressed ? 0.8 : 1 }]}
+            style={({ pressed }) => [styles.editButton, { backgroundColor: colors.primary, opacity: pressed ? 0.8 : 1 }]}
             onPress={() => navigation.navigate('RegisterIncident', { incident })}
           >
-            <Feather name="edit-2" size={16} color={theme.textLight} />
-            <ThemedText style={{ color: theme.textLight, fontWeight: '600' }}>Editar Dados</ThemedText>
+            <Feather name="edit-2" size={16} color={colors.textLight} />
+            <ThemedText style={{ color: colors.textLight, fontWeight: '600' }}>Editar Dados</ThemedText>
           </Pressable>
         )}
 
         {/* Abas de Navegação */}
         <View style={styles.tabRow}>
           <Pressable 
-            style={[styles.tab, activeTab === 'details' && { borderBottomColor: theme.primary, borderBottomWidth: 2 }]}
+            style={[styles.tab, activeTab === 'details' && { borderBottomColor: colors.primary, borderBottomWidth: 2 }]}
             onPress={() => setActiveTab('details')}
           >
-            <ThemedText style={{ fontWeight: activeTab === 'details' ? '700' : '400', color: theme.text }}>Detalhes</ThemedText>
+            <ThemedText style={{ fontWeight: activeTab === 'details' ? '700' : '400', color: colors.text }}>Detalhes</ThemedText>
           </Pressable>
           <Pressable 
-            style={[styles.tab, activeTab === 'timeline' && { borderBottomColor: theme.primary, borderBottomWidth: 2 }]}
+            style={[styles.tab, activeTab === 'timeline' && { borderBottomColor: colors.primary, borderBottomWidth: 2 }]}
             onPress={() => setActiveTab('timeline')}
           >
-            <ThemedText style={{ fontWeight: activeTab === 'timeline' ? '700' : '400', color: theme.text }}>Linha do Tempo</ThemedText>
+            <ThemedText style={{ fontWeight: activeTab === 'timeline' ? '700' : '400', color: colors.text }}>Linha do Tempo</ThemedText>
           </Pressable>
         </View>
 
@@ -88,17 +88,17 @@ export default function IncidentDetailScreen({ route, navigation }: Props) {
           <>
             <Card style={styles.card}>
               <View style={styles.headerRow}>
-                <View style={[styles.badge, { backgroundColor: theme.primary + '20' }]}>
-                  <ThemedText style={[styles.badgeText, { color: theme.primary }]}>{incident.type || 'Geral'}</ThemedText>
+                <View style={[styles.badge, { backgroundColor: colors.primary + '20' }]}>
+                  <ThemedText style={[styles.badgeText, { color: colors.primary }]}>{incident.type || 'Geral'}</ThemedText>
                 </View>
                 <View style={[styles.badge, { backgroundColor: getStatusColor(incident.status) + '20' }]}>
                   <ThemedText style={[styles.badgeText, { color: getStatusColor(incident.status) }]}>{incident.status}</ThemedText>
                 </View>
               </View>
 
-              <ThemedText style={[styles.title, { color: theme.text }]}>{incident.title}</ThemedText>
+              <ThemedText style={[styles.title, { color: colors.text }]}>{incident.title}</ThemedText>
 
-              <View style={[styles.infoBox, { backgroundColor: theme.backgroundDefault }]}>
+              <View style={[styles.infoBox, { backgroundColor: colors.backgroundDefault }]}>
                 <View style={styles.infoCol}>
                   <ThemedText style={styles.label}>Viatura:</ThemedText>
                   <ThemedText style={styles.value}>{incident.vehicle || '-'}</ThemedText>
@@ -109,7 +109,7 @@ export default function IncidentDetailScreen({ route, navigation }: Props) {
                 </View>
               </View>
 
-              <ThemedText style={[styles.description, { color: theme.text }]}>{incident.description}</ThemedText>
+              <ThemedText style={[styles.description, { color: colors.text }]}>{incident.description}</ThemedText>
 
               {/* Mídia */}
               {(incident.images?.length > 0 || incident.videos?.length > 0) && (
@@ -136,20 +136,20 @@ export default function IncidentDetailScreen({ route, navigation }: Props) {
             <Card style={styles.card}>
               <ThemedText style={[styles.title, { fontSize: 18 }]}>Comentários</ThemedText>
               {comments.map((comment) => (
-                <View key={comment.id} style={[styles.comment, { backgroundColor: theme.backgroundDefault }]}>
+                <View key={comment.id} style={[styles.comment, { backgroundColor: colors.backgroundDefault }]}>
                   <ThemedText style={styles.commentAuthor}>{comment.userName}</ThemedText>
                   <ThemedText style={styles.commentText}>{comment.text}</ThemedText>
                 </View>
               ))}
               <View style={styles.commentInput}>
                 <TextInput
-                  style={[styles.input, { backgroundColor: theme.backgroundSecondary, color: theme.text, borderColor: theme.border }]}
+                  style={[styles.input, { backgroundColor: colors.backgroundSecondary, color: colors.text, borderColor: colors.border }]}
                   value={newComment}
                   onChangeText={setNewComment}
                   placeholder="Comentar..."
-                  placeholderTextColor={theme.tabIconDefault}
+                  placeholderTextColor={colors.tabIconDefault}
                 />
-                <Pressable style={[styles.sendButton, { backgroundColor: theme.secondary }]} onPress={handleAddComment}>
+                <Pressable style={[styles.sendButton, { backgroundColor: colors.secondary }]} onPress={handleAddComment}>
                   <Feather name="send" size={20} color="#fff" />
                 </Pressable>
               </View>
@@ -162,13 +162,13 @@ export default function IncidentDetailScreen({ route, navigation }: Props) {
               {incident.timeline?.map((event, index) => (
                 <View key={event.id} style={styles.timelineItem}>
                   <View style={styles.timelineLeft}>
-                    <View style={[styles.timelineDot, { backgroundColor: theme.primary }]} />
-                    {index < (incident.timeline?.length || 0) - 1 && <View style={[styles.timelineLine, { backgroundColor: theme.border }]} />}
+                    <View style={[styles.timelineDot, { backgroundColor: colors.primary }]} />
+                    {index < (incident.timeline?.length || 0) - 1 && <View style={[styles.timelineLine, { backgroundColor: colors.border }]} />}
                   </View>
                   <View style={styles.timelineContent}>
                     <ThemedText style={styles.timelineTitle}>{event.title}</ThemedText>
-                    <ThemedText style={[styles.timelineDesc, { color: theme.tabIconDefault }]}>{event.description}</ThemedText>
-                    <ThemedText style={[styles.timelineDate, { color: theme.tabIconDefault }]}>
+                    <ThemedText style={[styles.timelineDesc, { color: colors.tabIconDefault }]}>{event.description}</ThemedText>
+                    <ThemedText style={[styles.timelineDate, { color: colors.tabIconDefault }]}>
                       {new Date(event.date).toLocaleString('pt-BR')}
                     </ThemedText>
                   </View>

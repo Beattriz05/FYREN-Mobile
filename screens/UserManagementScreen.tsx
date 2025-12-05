@@ -11,7 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 
 export default function UserManagementScreen() {
-  const { theme } = useTheme();
+  const { colors } = useTheme();
   const [users, setUsers] = useState<AppUser[]>([]);
   const insets = useSafeAreaInsets();
   const tabBarHeight = useBottomTabBarHeight();
@@ -58,27 +58,27 @@ export default function UserManagementScreen() {
   const getRoleColor = (role: string) => {
     switch (role) {
       case 'user':
-        return theme.info;
+        return colors.info;
       case 'chief':
-        return theme.secondary;
+        return colors.secondary;
       case 'admin':
-        return theme.error;
+        return colors.error;
       default:
-        return theme.tabIconDefault;
+        return colors.tabIconDefault;
     }
   };
 
   const renderItem = ({ item }: { item: AppUser }) => (
     <Card style={styles.userCard}>
       <View style={styles.userHeader}>
-        <View style={[styles.avatar, { backgroundColor: theme.secondary + '20' }]}>
-          <Feather name="user" size={24} color={theme.secondary} />
+        <View style={[styles.avatar, { backgroundColor: colors.secondary + '20' }]}>
+          <Feather name="user" size={24} color={colors.secondary} />
         </View>
         <View style={styles.userInfo}>
-          <ThemedText style={[styles.userName, { color: theme.text }]}>
+          <ThemedText style={[styles.userName, { color: colors.text }]}>
             {item.name}
           </ThemedText>
-          <ThemedText style={[styles.userEmail, { color: theme.tabIconDefault }]}>
+          <ThemedText style={[styles.userEmail, { color: colors.tabIconDefault }]}>
             {item.email}
           </ThemedText>
         </View>
@@ -92,13 +92,13 @@ export default function UserManagementScreen() {
         style={({ pressed }) => [
           styles.statusButton,
           {
-            backgroundColor: item.active ? theme.error + '20' : theme.success + '20',
+            backgroundColor: item.active ? colors.error + '20' : colors.success + '20',
             opacity: pressed ? 0.7 : 1,
           },
         ]}
         onPress={() => toggleUserStatus(item)}
       >
-        <ThemedText style={[styles.statusText, { color: item.active ? theme.error : theme.success }]}>
+        <ThemedText style={[styles.statusText, { color: item.active ? colors.error : colors.success }]}>
           {item.active ? 'Desativar' : 'Ativar'}
         </ThemedText>
       </Pressable>

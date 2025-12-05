@@ -13,17 +13,17 @@ import { UserHomeStackParamList } from '@/navigation/UserHomeStackNavigator';
 type Props = NativeStackScreenProps<UserHomeStackParamList, 'UserHome'>;
 
 export default function UserHomeScreen({ navigation }: Props) {
-  const { theme } = useTheme();
+  const { colors } = useTheme();
   const { user } = useAuth();
 
   return (
     <ScreenScrollView>
       <View style={styles.container}>
         <Card style={styles.welcomeCard}>
-          <ThemedText style={[styles.welcome, { color: theme.text }]}>
+          <ThemedText style={[styles.welcome, { color: colors.text }]}>
             Olá, {user?.name}!
           </ThemedText>
-          <ThemedText style={[styles.subtitle, { color: theme.tabIconDefault }]}>
+          <ThemedText style={[styles.subtitle, { color: colors.tabIconDefault }]}>
             Bem-vindo ao Fyren
           </ThemedText>
         </Card>
@@ -32,17 +32,17 @@ export default function UserHomeScreen({ navigation }: Props) {
           <Pressable
             style={({ pressed }) => [
               styles.actionCard,
-              { backgroundColor: theme.card, opacity: pressed ? 0.8 : 1 },
+              { backgroundColor: colors.card, opacity: pressed ? 0.8 : 1 },
             ]}
             onPress={() => navigation.navigate('RegisterIncident')}
           >
-            <View style={[styles.iconCircle, { backgroundColor: theme.secondary + '20' }]}>
-              <Feather name="alert-circle" size={32} color={theme.secondary} />
+            <View style={[styles.iconCircle, { backgroundColor: colors.secondary + '20' }]}>
+              <Feather name="alert-circle" size={32} color={colors.secondary} />
             </View>
-            <ThemedText style={[styles.actionTitle, { color: theme.text }]}>
+            <ThemedText style={[styles.actionTitle, { color: colors.text }]}>
               Nova Ocorrência
             </ThemedText>
-            <ThemedText style={[styles.actionDesc, { color: theme.tabIconDefault }]}>
+            <ThemedText style={[styles.actionDesc, { color: colors.tabIconDefault }]}>
               Registrar um novo incidente
             </ThemedText>
           </Pressable>
@@ -50,17 +50,17 @@ export default function UserHomeScreen({ navigation }: Props) {
           <Pressable
             style={({ pressed }) => [
               styles.actionCard,
-              { backgroundColor: theme.card, opacity: pressed ? 0.8 : 1 },
+              { backgroundColor: colors.card, opacity: pressed ? 0.8 : 1 },
             ]}
             onPress={() => navigation.navigate('History')}
           >
-            <View style={[styles.iconCircle, { backgroundColor: theme.accent + '20' }]}>
-              <Feather name="clock" size={32} color={theme.accent} />
+            <View style={[styles.iconCircle, { backgroundColor: colors.accent + '20' }]}>
+              <Feather name="clock" size={32} color={colors.accent} />
             </View>
-            <ThemedText style={[styles.actionTitle, { color: theme.text }]}>
+            <ThemedText style={[styles.actionTitle, { color: colors.text }]}>
               Histórico
             </ThemedText>
-            <ThemedText style={[styles.actionDesc, { color: theme.tabIconDefault }]}>
+            <ThemedText style={[styles.actionDesc, { color: colors.tabIconDefault }]}>
               Ver ocorrências anteriores
             </ThemedText>
           </Pressable>
@@ -68,17 +68,17 @@ export default function UserHomeScreen({ navigation }: Props) {
           <Pressable
             style={({ pressed }) => [
               styles.actionCard,
-              { backgroundColor: theme.card, opacity: pressed ? 0.8 : 1 },
+              { backgroundColor: colors.card, opacity: pressed ? 0.8 : 1 },
             ]}
             onPress={() => navigation.navigate('Map')}
           >
-            <View style={[styles.iconCircle, { backgroundColor: theme.success + '20' }]}>
-              <Feather name="map" size={32} color={theme.success} />
+            <View style={[styles.iconCircle, { backgroundColor: colors.success + '20' }]}>
+              <Feather name="map" size={32} color={colors.success} />
             </View>
-            <ThemedText style={[styles.actionTitle, { color: theme.text }]}>
+            <ThemedText style={[styles.actionTitle, { color: colors.text }]}>
               Mapa
             </ThemedText>
-            <ThemedText style={[styles.actionDesc, { color: theme.tabIconDefault }]}>
+            <ThemedText style={[styles.actionDesc, { color: colors.tabIconDefault }]}>
               Ver incidentes no mapa
             </ThemedText>
           </Pressable>
@@ -86,17 +86,17 @@ export default function UserHomeScreen({ navigation }: Props) {
           <Pressable
             style={({ pressed }) => [
               styles.actionCard,
-              { backgroundColor: theme.card, opacity: pressed ? 0.8 : 1 },
+              { backgroundColor: colors.card, opacity: pressed ? 0.8 : 1 },
             ]}
             onPress={() => navigation.navigate('Profile')}
           >
-            <View style={[styles.iconCircle, { backgroundColor: theme.tabIconDefault + '20' }]}>
-              <Feather name="user" size={32} color={theme.tabIconDefault} />
+            <View style={[styles.iconCircle, { backgroundColor: colors.tabIconDefault + '20' }]}>
+              <Feather name="user" size={32} color={colors.tabIconDefault} />
             </View>
-            <ThemedText style={[styles.actionTitle, { color: theme.text }]}>
+            <ThemedText style={[styles.actionTitle, { color: colors.text }]}>
               Perfil
             </ThemedText>
-            <ThemedText style={[styles.actionDesc, { color: theme.tabIconDefault }]}>
+            <ThemedText style={[styles.actionDesc, { color: colors.tabIconDefault }]}>
               Configurações da conta
             </ThemedText>
           </Pressable>
