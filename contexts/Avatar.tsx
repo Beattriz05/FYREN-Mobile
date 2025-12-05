@@ -1,4 +1,3 @@
-// components/Avatar.tsx
 import React from 'react';
 import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
@@ -41,17 +40,22 @@ const Avatar: React.FC<AvatarProps> = ({
       case 'bombeiro':
         return '#2196F3'; // Azul
       default:
-        return colors.bombeiros?.primary || '#D32F2F';
+        return colors.bombeiros?.primary || colors.primary || '#0E2345';
     }
   };
+
+  // CORREÇÃO: Use onSurfaceVariant em vez de surfaceVariant
+  // ou use colors.border que já existe
+  const borderColor = colors.border || colors.onSurfaceVariant || '#E0E0E0';
+  const backgroundColor = getRoleColor(role);
 
   const containerStyle = {
     width: size,
     height: size,
     borderRadius: size / 2,
-    backgroundColor: getRoleColor(role),
+    backgroundColor: backgroundColor,
     borderWidth: 3,
-    borderColor: colors.surfaceVariant,
+    borderColor: borderColor, // Corrigido
   };
 
   const Content = (

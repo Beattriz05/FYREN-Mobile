@@ -1,4 +1,3 @@
-// hooks/useToast.ts
 import React, { createContext, useContext, useState, ReactNode, useRef } from 'react';
 import { Animated, StyleSheet, View, Text } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';

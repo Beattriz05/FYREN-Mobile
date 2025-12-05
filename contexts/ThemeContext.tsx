@@ -1,9 +1,8 @@
-// contexts/ThemeContext.tsx
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Importe suas cores do theme.ts
+// Importe cores do theme.ts
 import { Colors } from '../constants/theme';
 
 export type ThemeMode = 'light' | 'dark' | 'highContrast';

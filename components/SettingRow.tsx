@@ -1,4 +1,3 @@
-// components/SettingRow.tsx
 import React, { ReactNode } from 'react';
 import { View, StyleSheet, Switch, TouchableOpacity } from 'react-native';
 import { ThemedText } from './ThemedText';

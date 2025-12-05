@@ -27,6 +27,18 @@ const highContrast = {
   warning: "#FFFF00",
   error: "#FF0000",
   info: "#00FFFF",
+  onSurfaceVariant: "#000000", // ADICIONADO
+};
+
+// Paleta bombeiros (cores fixas que podem ser usadas em qualquer tema)
+const bombeirosPalette = {
+  primary: "#0E2345",     // Azul marinho
+  secondary: "#F39C12",   // Laranja
+  emergency: "#F44336",   // Vermelho
+  warning: "#FF9800",     // Laranja aviso
+  success: "#4CAF50",     // Verde
+  info: "#2196F3",        // Azul info
+  background: "#F2F2F2",  // Cinza claro
 };
 
 export const Colors = {
@@ -50,6 +62,8 @@ export const Colors = {
     warning: orange,
     error: "#F44336",
     info: lightBlue,
+    onSurfaceVariant: "#666666", // ADICIONADO - cor para ícones/variantes em superfície
+    bombeiros: bombeirosPalette,
   },
   dark: {
     primary: navyBlue,
@@ -61,18 +75,35 @@ export const Colors = {
     tabIconDefault: "#9E9E9E",
     tabIconSelected: orange,
     link: lightBlue,
-    backgroundRoot: navyBlue, // Fundo geral azul escuro
-    backgroundDefault: "#152336", // Fundo padrão um pouco mais claro
-    backgroundSecondary: "#2A3C55", // [CORRIGIDO] Inputs mais claros para contraste
+    backgroundRoot: navyBlue,
+    backgroundDefault: "#152336",
+    backgroundSecondary: "#2A3C55",
     backgroundTertiary: "#1A2F4A",
-    card: "#1A2F4A", // Cartão azul médio
-    border: "#4A6FA5", // Borda mais visível
+    card: "#1A2F4A",
+    border: "#4A6FA5",
     success: "#4CAF50",
     warning: orange,
     error: "#F44336",
     info: lightBlue,
+    onSurfaceVariant: "#A0A0A0", // ADICIONADO - mais claro para tema escuro
+    bombeiros: {
+      ...bombeirosPalette,
+      background: "#1A2F4A",
+    },
   },
-  highContrast: highContrast,
+  highContrast: {
+    ...highContrast,
+    bombeiros: {
+      primary: "#FFFF00",
+      secondary: "#FFFFFF",
+      emergency: "#FF0000",
+      warning: "#FFFF00",
+      success: "#00FF00",
+      info: "#00FFFF",
+      background: "#000000",
+    },
+  },
+  bombeiros: bombeirosPalette,
 };
 
 export const Spacing = {
@@ -85,7 +116,7 @@ export const Spacing = {
   "3xl": 32,
   "4xl": 40,
   "5xl": 48,
-  inputHeight: 52, // Aumentei um pouco para melhor toque
+  inputHeight: 52,
   buttonHeight: 56,
 };
 
@@ -107,6 +138,7 @@ export const BaseTypography = {
   h4: { fontSize: 20, lineHeight: 28, fontWeight: "600" as const },
   body: { fontSize: 16, lineHeight: 24, fontWeight: "400" as const },
   small: { fontSize: 14, lineHeight: 20, fontWeight: "400" as const },
+  caption: { fontSize: 12, lineHeight: 16, fontWeight: "400" as const },
   link: { fontSize: 16, lineHeight: 24, fontWeight: "400" as const },
 };
 

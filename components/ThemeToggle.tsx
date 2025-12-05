@@ -1,8 +1,9 @@
-// components/ThemeToggle.tsx
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { ThemedText } from './ThemedText';
 import { useTheme } from '../hooks/useTheme';
+import { MaterialIcons } from '@expo/vector-icons'; // Importar MaterialIcons
+import Spacer from './Spacer'; // Importar Spacer
 
 interface ThemeToggleProps {
   value: 'light' | 'dark' | 'auto';
@@ -13,34 +14,37 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({ value, onChange }) => {
   const { colors } = useTheme();
   
   const options = [
-    { id: 'light', label: 'Claro', icon: 'wb-sunny' },
-    { id: 'dark', label: 'Escuro', icon: 'nights-stay' },
-    { id: 'auto', label: 'Auto', icon: 'brightness-auto' },
+    { id: 'light' as const, label: 'Claro', icon: 'wb-sunny' as const },
+    { id: 'dark' as const, label: 'Escuro', icon: 'nights-stay' as const },
+    { id: 'auto' as const, label: 'Auto', icon: 'brightness-auto' as const },
   ];
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.backgroundTertiary || 'rgba(0,0,0,0.05)' }]}>
       {options.map((option) => (
         <TouchableOpacity
           key={option.id}
           style={[
             styles.option,
             value === option.id && styles.optionActive,
-            value === option.id && { backgroundColor: colors.bombeiros.primary + '20' },
+            value === option.id && { backgroundColor: colors.bombeiros?.primary + '20' },
           ]}
-          onPress={() => onChange(option.id as 'light' | 'dark' | 'auto')}
+          onPress={() => onChange(option.id)}
           activeOpacity={0.7}
         >
-          <Icon
+          <MaterialIcons // Alterado de Icon para MaterialIcons
             name={option.icon}
             size={20}
-            color={value === option.id ? colors.bombeiros.primary : colors.onSurfaceVariant}
+            color={value === option.id ? colors.bombeiros?.primary : colors.textLight}
           />
-          <Spacer size="xs" />
+          <Spacer size={4} /> {/* Alterado para número, já que o Spacer aceita number */}
           <ThemedText
             style={[
               styles.optionLabel,
-              value === option.id && { color: colors.bombeiros.primary, fontWeight: '600' },
+              value === option.id && { 
+                color: colors.bombeiros?.primary || colors.primary, 
+                fontWeight: '600' 
+              },
             ]}
           >
             {option.label}
@@ -55,7 +59,6 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: 'rgba(0,0,0,0.05)',
     borderRadius: 12,
     padding: 4,
   },

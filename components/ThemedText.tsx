@@ -1,75 +1,73 @@
-import { Text, type TextProps, type TextStyle } from 'react-native';
-import { useTheme } from '@/hooks/useTheme';
+// components/ThemedText.tsx
+import React from 'react';
+import { Text, TextProps, StyleSheet } from 'react-native';
+import { useTheme } from '../contexts/ThemeContext';
 
-// 1. AQUI ESTÁ A TIPOGRAFIA (Completei com os tipos que faltavam no seu código original)
-const typography = {
-  h1: { fontSize: 32, fontWeight: 'bold', lineHeight: 34 },
-  h2: { fontSize: 24, fontWeight: 'bold', lineHeight: 28 },
-  h3: { fontSize: 20, fontWeight: 'bold', lineHeight: 24 },
-  h4: { fontSize: 18, fontWeight: 'bold', lineHeight: 22 },
-  body: { fontSize: 16, lineHeight: 24 },
-  small: { fontSize: 12, lineHeight: 16 },
-  link: { fontSize: 16, color: '#0a7ea4', textDecorationLine: 'underline' as 'underline' },
-};
+export type ThemedTextType = 'h1' | 'h2' | 'h3' | 'h4' | 'body' | 'small' | 'link' | 'caption';
 
-export type ThemedTextProps = TextProps & {
-  lightColor?: string;
-  darkColor?: string;
-  type?: "h1" | "h2" | "h3" | "h4" | "body" | "small" | "link";
-};
+interface ThemedTextProps extends TextProps {
+  type?: ThemedTextType;
+  children: React.ReactNode;
+}
 
-export function ThemedText({
+export const ThemedText: React.FC<ThemedTextProps> = ({
+  type = 'body',
   style,
-  lightColor,
-  darkColor,
-  type = "body",
-  ...rest
-}: ThemedTextProps) {
+  children,
+  ...props
+}) => {
+  const { colors, fontSizeScale } = useTheme();
   
-  // 2. CORREÇÃO CRÍTICA: Removi 'typography' daqui de dentro.
-  // Agora ele só pega theme e isDark.
-  const { theme, isDark } = useTheme();
-
-  const getColor = () => {
-    if (isDark && darkColor) return darkColor;
-    if (!isDark && lightColor) return lightColor;
-    // O ?. previne erro caso o theme demore a carregar
-    if (type === "link") return theme?.link || '#0a7ea4';
-    return theme?.text || '#000';
+  const getFontSize = () => {
+    switch (type) {
+      case 'h1': return 32 * fontSizeScale;
+      case 'h2': return 28 * fontSizeScale;
+      case 'h3': return 24 * fontSizeScale;
+      case 'h4': return 20 * fontSizeScale;
+      case 'body': return 16 * fontSizeScale;
+      case 'small': return 14 * fontSizeScale;
+      case 'link': return 16 * fontSizeScale;
+      case 'caption': return 12 * fontSizeScale; // Adicionado
+      default: return 16 * fontSizeScale;
+    }
   };
 
-  const getTypeStyle = (): TextStyle => {
-    // Truque para o TypeScript entender que 'typography' é um objeto de estilos
-    const typoStyles = typography as Record<string, TextStyle>;
-
-    // Se o tipo (ex: h1) existir direto no objeto, retorna ele
-    if (typoStyles[type]) {
-      return typoStyles[type];
+  const getFontWeight = () => {
+    switch (type) {
+      case 'h1': return '700';
+      case 'h2': return '700';
+      case 'h3': return '600';
+      case 'h4': return '600';
+      case 'body': return '400';
+      case 'small': return '400';
+      case 'link': return '400';
+      case 'caption': return '400'; // Adicionado
+      default: return '400';
     }
+  };
 
-    // Lógica de Fallback (Mantive a sua lógica original caso queira expandir depois)
-    const fallbacks: Record<string, string[]> = {
-      h1: ["heading1", "title", "display"],
-      h2: ["heading2", "subtitle", "headline"],
-      h3: ["heading3", "subhead"],
-      h4: ["heading4"],
-      body: ["p", "paragraph", "text"],
-      small: ["caption", "footnote"],
-      link: ["link", "body"]
-    };
-
-    if (fallbacks[type]) {
-      for (const key of fallbacks[type]) {
-        if (typoStyles[key]) {
-          return typoStyles[key];
-        }
-      }
+  const getColor = () => {
+    if (type === 'link') {
+      return colors.link || '#2D74FF';
     }
-
-    return typoStyles.body;
+    return colors.text || '#2c3e50';
   };
 
   return (
-    <Text style={[{ color: getColor() }, getTypeStyle(), style]} {...rest} />
+    <Text
+      style={[
+        { 
+          color: getColor(),
+          fontSize: getFontSize(),
+          fontWeight: getFontWeight(),
+        },
+        type === 'caption' && { opacity: 0.7 },
+        type === 'small' && { opacity: 0.7 },
+        style,
+      ]}
+      {...props}
+    >
+      {children}
+    </Text>
   );
-}
+};
