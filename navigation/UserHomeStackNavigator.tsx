@@ -24,8 +24,8 @@ export type UserHomeStackParamList = {
 const Stack = createNativeStackNavigator<UserHomeStackParamList>();
 
 export default function UserHomeStackNavigator() {
-  const { theme, isDark } = useTheme();
-  const commonOptions = getCommonScreenOptions({ theme, isDark });
+  const { colors, isDark } = useTheme();
+  const commonOptions = getCommonScreenOptions({ colors, isDark }); 
 
   return (
     <Stack.Navigator screenOptions={commonOptions}>

@@ -42,7 +42,7 @@ const mockAuditLogs: AuditLog[] = [
 ];
 
 export default function AuditScreen() {
-  const { theme } = useTheme();
+  const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const tabBarHeight = useBottomTabBarHeight();
 
@@ -62,13 +62,13 @@ export default function AuditScreen() {
   const getTypeColor = (type: string) => {
     switch (type) {
       case 'create':
-        return theme.success;
+        return colors.success;
       case 'update':
-        return theme.info;
+        return colors.info;
       case 'delete':
-        return theme.error;
+        return colors.error;
       default:
-        return theme.tabIconDefault;
+        return colors.tabIconDefault;
     }
   };
 
@@ -83,13 +83,13 @@ export default function AuditScreen() {
           />
         </View>
         <View style={styles.logContent}>
-          <ThemedText style={[styles.logAction, { color: theme.text }]}>
+          <ThemedText style={[styles.logAction, { color: colors.text }]}>
             {item.action}
           </ThemedText>
-          <ThemedText style={[styles.logUser, { color: theme.tabIconDefault }]}>
+          <ThemedText style={[styles.logUser, { color: colors.tabIconDefault }]}>
             Por: {item.user}
           </ThemedText>
-          <ThemedText style={[styles.logTime, { color: theme.tabIconDefault }]}>
+          <ThemedText style={[styles.logTime, { color: colors.tabIconDefault }]}>
             {new Date(item.timestamp).toLocaleString('pt-BR')}
           </ThemedText>
         </View>

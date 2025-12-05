@@ -29,19 +29,19 @@ type UserTabParamList = {
 const UserTab = createBottomTabNavigator<UserTabParamList>();
 
 function UserTabNavigator() {
-  const { theme, isDark } = useTheme();
+  const { colors, isDark } = useTheme();
 
   return (
     <UserTab.Navigator
       initialRouteName="UserHome"
       screenOptions={{
-        tabBarActiveTintColor: theme.tabIconSelected,
-        tabBarInactiveTintColor: theme.tabIconDefault,
+        tabBarActiveTintColor: colors.tabIconSelected,
+        tabBarInactiveTintColor: colors.tabIconDefault,
         tabBarStyle: {
           position: 'absolute',
           backgroundColor: Platform.select({
             ios: 'transparent',
-            android: theme.backgroundRoot,
+            android: colors.backgroundRoot,
           }),
           borderTopWidth: 0,
           elevation: 0,
@@ -56,12 +56,12 @@ function UserTabNavigator() {
           ) : null,
         headerShown: true,
         headerTransparent: true,
-        headerTintColor: theme.textLight,
+        headerTintColor: colors.textLight,
         headerTitleAlign: 'center',
         headerStyle: {
           backgroundColor: Platform.select({
             ios: 'transparent',
-            android: theme.backgroundRoot,
+            android: colors.backgroundRoot,
           }),
         },
       }}
@@ -121,7 +121,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function RootNavigator() {
   const { user, isLoading } = useAuth();
-  const { theme, isDark } = useTheme();
+  const { colors, isDark } = useTheme();
 
   if (isLoading) {
     return null;
@@ -131,7 +131,7 @@ export default function RootNavigator() {
     return <LoginScreen />;
   }
 
-  const commonOptions = getCommonScreenOptions({ theme, isDark });
+  const commonOptions = getCommonScreenOptions({ colors, isDark });
 
   const MainComponent = user.role === 'chief'
     ? ChiefTabNavigator

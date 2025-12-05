@@ -10,14 +10,14 @@ export function ScreenScrollView({
   style,
   ...scrollViewProps
 }: ScrollViewProps) {
-  const { theme } = useTheme();
+  const { colors } = useTheme();
   const { paddingTop, paddingBottom, scrollInsetBottom } = useScreenInsets();
 
   return (
     <ScrollView
       style={[
         styles.container,
-        { backgroundColor: theme.backgroundRoot },
+        { backgroundColor: colors.backgroundRoot },
         style,
       ]}
       contentContainerStyle={[

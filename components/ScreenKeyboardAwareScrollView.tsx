@@ -16,7 +16,7 @@ export function ScreenKeyboardAwareScrollView({
   keyboardShouldPersistTaps = "handled",
   ...scrollViewProps
 }: KeyboardAwareScrollViewProps) {
-  const { theme } = useTheme();
+  const { colors } = useTheme();
   // Aqui pegamos o "top" corrigido do nosso hook novo
   const { top, bottom, scrollInsetBottom } = useScreenInsets();
 
@@ -37,7 +37,7 @@ export function ScreenKeyboardAwareScrollView({
     <KeyboardAwareScrollView
       style={[
         styles.container,
-        { backgroundColor: theme.backgroundRoot },
+        { backgroundColor: colors.backgroundRoot },
         style,
       ]}
       contentContainerStyle={[

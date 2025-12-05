@@ -13,7 +13,7 @@ interface Props {
 
 export function SignatureModal({ visible, onOK, onCancel }: Props) {
   const ref = useRef<SignatureViewRef>(null);
-  const { theme } = useTheme();
+  const { colors } = useTheme();
 
   const handleOK = (signature: string) => {
     onOK(signature); // Retorna string base64
@@ -30,7 +30,7 @@ export function SignatureModal({ visible, onOK, onCancel }: Props) {
   return (
     <Modal visible={visible} animationType="slide" transparent>
       <View style={[styles.overlay, { backgroundColor: 'rgba(0,0,0,0.5)' }]}>
-        <View style={[styles.container, { backgroundColor: theme.backgroundSecondary }]}>
+        <View style={[styles.container, { backgroundColor: colors.backgroundSecondary }]}>
           <ThemedText type="h4" style={styles.title}>Assinatura do Responsável</ThemedText>
           
           <View style={styles.canvasContainer}>
@@ -42,9 +42,9 @@ export function SignatureModal({ visible, onOK, onCancel }: Props) {
           </View>
 
           <View style={styles.buttonRow}>
-            <Button title="Limpar" onPress={handleClear} color={theme.error} />
-            <Button title="Cancelar" onPress={onCancel} color={theme.tabIconDefault} />
-            <Button title="Confirmar" onPress={handleConfirm} color={theme.primary} />
+            <Button title="Limpar" onPress={handleClear} color={colors.error} />
+            <Button title="Cancelar" onPress={onCancel} color={colors.tabIconDefault} />
+            <Button title="Confirmar" onPress={handleConfirm} color={colors.primary} />
           </View>
         </View>
       </View>

@@ -10,14 +10,14 @@ export function ScreenFlatList<T>({
   style,
   ...flatListProps
 }: FlatListProps<T>) {
-  const { theme } = useTheme();
+  const { colors } = useTheme();
   const { paddingTop, paddingBottom, scrollInsetBottom } = useScreenInsets();
 
   return (
     <FlatList
       style={[
         styles.container,
-        { backgroundColor: theme.backgroundRoot },
+        { backgroundColor: colors.backgroundRoot },
         style,
       ]}
       contentContainerStyle={[

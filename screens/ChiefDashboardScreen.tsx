@@ -13,7 +13,7 @@ import { ChiefTabParamList } from '@/navigation/ChiefTabNavigator';
 type Props = NativeStackScreenProps<ChiefTabParamList, 'ChiefDashboard'>;
 
 export default function ChiefDashboardScreen({ navigation }: Props) {
-  const { theme } = useTheme();
+  const { colors } = useTheme();
   const [stats, setStats] = useState({ total: 0, pending: 0, inProgress: 0, resolved: 0 });
 
   useEffect(() => {
@@ -34,83 +34,83 @@ export default function ChiefDashboardScreen({ navigation }: Props) {
     <ScreenScrollView>
       <View style={styles.container}>
         <Card style={styles.welcomeCard}>
-          <ThemedText style={[styles.title, { color: theme.text }]}>
+          <ThemedText style={[styles.title, { color: colors.text }]}>
             Dashboard do Chefe
           </ThemedText>
-          <ThemedText style={[styles.subtitle, { color: theme.tabIconDefault }]}>
+          <ThemedText style={[styles.subtitle, { color: colors.tabIconDefault }]}>
             Visão geral das ocorrências
           </ThemedText>
         </Card>
 
         <View style={styles.statsGrid}>
-          <Card style={StyleSheet.flatten([styles.statCard, { borderLeftColor: theme.secondary, borderLeftWidth: 4 }])}>
-            <ThemedText style={[styles.statValue, { color: theme.text }]}>
+          <Card style={StyleSheet.flatten([styles.statCard, { borderLeftColor: colors.secondary, borderLeftWidth: 4 }])}>
+            <ThemedText style={[styles.statValue, { color: colors.text }]}>
               {stats.total}
             </ThemedText>
-            <ThemedText style={[styles.statLabel, { color: theme.tabIconDefault }]}>
+            <ThemedText style={[styles.statLabel, { color: colors.tabIconDefault }]}>
               Total
             </ThemedText>
           </Card>
 
-          <Card style={StyleSheet.flatten([styles.statCard, { borderLeftColor: theme.warning, borderLeftWidth: 4 }])}>
-            <ThemedText style={[styles.statValue, { color: theme.text }]}>
+          <Card style={StyleSheet.flatten([styles.statCard, { borderLeftColor: colors.warning, borderLeftWidth: 4 }])}>
+            <ThemedText style={[styles.statValue, { color: colors.text }]}>
               {stats.pending}
             </ThemedText>
-            <ThemedText style={[styles.statLabel, { color: theme.tabIconDefault }]}>
+            <ThemedText style={[styles.statLabel, { color: colors.tabIconDefault }]}>
               Pendentes
             </ThemedText>
           </Card>
 
-          <Card style={StyleSheet.flatten([styles.statCard, { borderLeftColor: theme.info, borderLeftWidth: 4 }])}>
-            <ThemedText style={[styles.statValue, { color: theme.text }]}>
+          <Card style={StyleSheet.flatten([styles.statCard, { borderLeftColor: colors.info, borderLeftWidth: 4 }])}>
+            <ThemedText style={[styles.statValue, { color: colors.text }]}>
               {stats.inProgress}
             </ThemedText>
-            <ThemedText style={[styles.statLabel, { color: theme.tabIconDefault }]}>
+            <ThemedText style={[styles.statLabel, { color: colors.tabIconDefault }]}>
               Em Andamento
             </ThemedText>
           </Card>
 
-          <Card style={StyleSheet.flatten([styles.statCard, { borderLeftColor: theme.success, borderLeftWidth: 4 }])}>
-            <ThemedText style={[styles.statValue, { color: theme.text }]}>
+          <Card style={StyleSheet.flatten([styles.statCard, { borderLeftColor: colors.success, borderLeftWidth: 4 }])}>
+            <ThemedText style={[styles.statValue, { color: colors.text }]}>
               {stats.resolved}
             </ThemedText>
-            <ThemedText style={[styles.statLabel, { color: theme.tabIconDefault }]}>
+            <ThemedText style={[styles.statLabel, { color: colors.tabIconDefault }]}>
               Resolvidos
             </ThemedText>
           </Card>
         </View>
 
         <Card style={styles.section}>
-          <ThemedText style={[styles.sectionTitle, { color: theme.text }]}>
+          <ThemedText style={[styles.sectionTitle, { color: colors.text }]}>
             Ações Rápidas
           </ThemedText>
 
           <Pressable
             style={({ pressed }) => [
               styles.actionButton,
-              { backgroundColor: theme.backgroundDefault, opacity: pressed ? 0.7 : 1 },
+              { backgroundColor: colors.backgroundDefault, opacity: pressed ? 0.7 : 1 },
             ]}
             onPress={() => navigation.navigate('IncidentList')}
           >
-            <Feather name="list" size={24} color={theme.secondary} />
-            <ThemedText style={[styles.actionText, { color: theme.text }]}>
+            <Feather name="list" size={24} color={colors.secondary} />
+            <ThemedText style={[styles.actionText, { color: colors.text }]}>
               Ver Todas as Ocorrências
             </ThemedText>
-            <Feather name="chevron-right" size={20} color={theme.tabIconDefault} />
+            <Feather name="chevron-right" size={20} color={colors.tabIconDefault} />
           </Pressable>
 
           <Pressable
             style={({ pressed }) => [
               styles.actionButton,
-              { backgroundColor: theme.backgroundDefault, opacity: pressed ? 0.7 : 1 },
+              { backgroundColor: colors.backgroundDefault, opacity: pressed ? 0.7 : 1 },
             ]}
             onPress={() => navigation.navigate('Reports')}
           >
-            <Feather name="bar-chart-2" size={24} color={theme.accent} />
-            <ThemedText style={[styles.actionText, { color: theme.text }]}>
+            <Feather name="bar-chart-2" size={24} color={colors.accent} />
+            <ThemedText style={[styles.actionText, { color: colors.text }]}>
               Relatórios
             </ThemedText>
-            <Feather name="chevron-right" size={20} color={theme.tabIconDefault} />
+            <Feather name="chevron-right" size={20} color={colors.tabIconDefault} />
           </Pressable>
         </Card>
       </View>

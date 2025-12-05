@@ -19,19 +19,19 @@ export type AdminTabParamList = {
 const Tab = createBottomTabNavigator<AdminTabParamList>();
 
 export default function AdminTabNavigator() {
-  const { theme, isDark } = useTheme();
+  const { colors, isDark } = useTheme();
 
   return (
     <Tab.Navigator
       initialRouteName="AdminDashboard"
       screenOptions={{
-        tabBarActiveTintColor: theme.tabIconSelected,
-        tabBarInactiveTintColor: theme.tabIconDefault,
+        tabBarActiveTintColor: colors.tabIconSelected,
+        tabBarInactiveTintColor: colors.tabIconDefault,
         tabBarStyle: {
           position: 'absolute',
           backgroundColor: Platform.select({
             ios: 'transparent',
-            android: theme.backgroundRoot,
+            android: colors.backgroundRoot,
           }),
           borderTopWidth: 0,
           elevation: 0,
@@ -46,12 +46,12 @@ export default function AdminTabNavigator() {
           ) : null,
         headerShown: true,
         headerTransparent: true,
-        headerTintColor: theme.textLight,
+        headerTintColor: colors.textLight,
         headerTitleAlign: 'center',
         headerStyle: {
           backgroundColor: Platform.select({
             ios: 'transparent',
-            android: theme.backgroundRoot,
+            android: colors.backgroundRoot,
           }),
         },
       }}

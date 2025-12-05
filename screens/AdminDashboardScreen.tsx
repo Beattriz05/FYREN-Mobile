@@ -13,7 +13,7 @@ import { AdminTabParamList } from '@/navigation/AdminTabNavigator';
 type Props = NativeStackScreenProps<AdminTabParamList, 'AdminDashboard'>;
 
 export default function AdminDashboardScreen({ navigation }: Props) {
-  const { theme } = useTheme();
+  const { colors } = useTheme();
   const [stats, setStats] = useState({ users: 0, incidents: 0, activeUsers: 0 });
 
   useEffect(() => {
@@ -34,74 +34,74 @@ export default function AdminDashboardScreen({ navigation }: Props) {
     <ScreenScrollView>
       <View style={styles.container}>
         <Card style={styles.welcomeCard}>
-          <ThemedText style={[styles.title, { color: theme.text }]}>
+          <ThemedText style={[styles.title, { color: colors.text }]}>
             Painel Administrativo
           </ThemedText>
-          <ThemedText style={[styles.subtitle, { color: theme.tabIconDefault }]}>
+          <ThemedText style={[styles.subtitle, { color: colors.tabIconDefault }]}>
             Gestão do sistema Fyren
           </ThemedText>
         </Card>
 
         <View style={styles.statsGrid}>
-          <Card style={StyleSheet.flatten([styles.statCard, { borderLeftColor: theme.secondary, borderLeftWidth: 4 }])}>
-            <ThemedText style={[styles.statValue, { color: theme.text }]}>
+          <Card style={StyleSheet.flatten([styles.statCard, { borderLeftColor: colors.secondary, borderLeftWidth: 4 }])}>
+            <ThemedText style={[styles.statValue, { color: colors.text }]}>
               {stats.users}
             </ThemedText>
-            <ThemedText style={[styles.statLabel, { color: theme.tabIconDefault }]}>
+            <ThemedText style={[styles.statLabel, { color: colors.tabIconDefault }]}>
               Total de Usuários
             </ThemedText>
           </Card>
 
-          <Card style={StyleSheet.flatten([styles.statCard, { borderLeftColor: theme.success, borderLeftWidth: 4 }])}>
-            <ThemedText style={[styles.statValue, { color: theme.text }]}>
+          <Card style={StyleSheet.flatten([styles.statCard, { borderLeftColor: colors.success, borderLeftWidth: 4 }])}>
+            <ThemedText style={[styles.statValue, { color: colors.text }]}>
               {stats.activeUsers}
             </ThemedText>
-            <ThemedText style={[styles.statLabel, { color: theme.tabIconDefault }]}>
+            <ThemedText style={[styles.statLabel, { color: colors.tabIconDefault }]}>
               Usuários Ativos
             </ThemedText>
           </Card>
 
-          <Card style={StyleSheet.flatten([styles.statCard, { borderLeftColor: theme.accent, borderLeftWidth: 4 }])}>
-            <ThemedText style={[styles.statValue, { color: theme.text }]}>
+          <Card style={StyleSheet.flatten([styles.statCard, { borderLeftColor: colors.accent, borderLeftWidth: 4 }])}>
+            <ThemedText style={[styles.statValue, { color: colors.text }]}>
               {stats.incidents}
             </ThemedText>
-            <ThemedText style={[styles.statLabel, { color: theme.tabIconDefault }]}>
+            <ThemedText style={[styles.statLabel, { color: colors.tabIconDefault }]}>
               Total de Ocorrências
             </ThemedText>
           </Card>
         </View>
 
         <Card style={styles.section}>
-          <ThemedText style={[styles.sectionTitle, { color: theme.text }]}>
+          <ThemedText style={[styles.sectionTitle, { color: colors.text }]}>
             Ações Administrativas
           </ThemedText>
 
           <Pressable
             style={({ pressed }) => [
               styles.actionButton,
-              { backgroundColor: theme.backgroundDefault, opacity: pressed ? 0.7 : 1 },
+              { backgroundColor: colors.backgroundDefault, opacity: pressed ? 0.7 : 1 },
             ]}
             onPress={() => navigation.navigate('UserManagement')}
           >
-            <Feather name="users" size={24} color={theme.secondary} />
-            <ThemedText style={[styles.actionText, { color: theme.text }]}>
+            <Feather name="users" size={24} color={colors.secondary} />
+            <ThemedText style={[styles.actionText, { color: colors.text }]}>
               Gestão de Usuários
             </ThemedText>
-            <Feather name="chevron-right" size={20} color={theme.tabIconDefault} />
+            <Feather name="chevron-right" size={20} color={colors.tabIconDefault} />
           </Pressable>
 
           <Pressable
             style={({ pressed }) => [
               styles.actionButton,
-              { backgroundColor: theme.backgroundDefault, opacity: pressed ? 0.7 : 1 },
+              { backgroundColor: colors.backgroundDefault, opacity: pressed ? 0.7 : 1 },
             ]}
             onPress={() => navigation.navigate('Audit')}
           >
-            <Feather name="file-text" size={24} color={theme.accent} />
-            <ThemedText style={[styles.actionText, { color: theme.text }]}>
+            <Feather name="file-text" size={24} color={colors.accent} />
+            <ThemedText style={[styles.actionText, { color: colors.text }]}>
               Auditoria do Sistema
             </ThemedText>
-            <Feather name="chevron-right" size={20} color={theme.tabIconDefault} />
+            <Feather name="chevron-right" size={20} color={colors.tabIconDefault} />
           </Pressable>
         </Card>
       </View>
