@@ -1,13 +1,5 @@
-import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/useColorScheme";
+// hooks/useTheme.ts (se quiser manter separado, mas não é necessário)
+import { useTheme as useThemeContext } from '../contexts/ThemeContext';
 
-export function useTheme() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
-  const theme = Colors[colorScheme ?? "light"];
-
-  return {
-    theme,
-    isDark,
-  };
-}
+// Re-exportando o hook do contexto
+export const useTheme = useThemeContext;

@@ -1,92 +1,164 @@
-import React, { ReactNode } from "react";
-import { StyleSheet, Pressable, ViewStyle, StyleProp } from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  WithSpringConfig,
-} from "react-native-reanimated";
+// components/Button.tsx (exemplo atualizado para variantes)
+import React from 'react';
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  ViewStyle,
+  TextStyle,
+} from 'react-native';
+import { ThemedText } from './ThemedText';
 
-import { ThemedText } from "@/components/ThemedText";
-import { useTheme } from "@/hooks/useTheme";
-import { BorderRadius, Spacing } from "@/constants/theme";
+type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'outline' | 'ghost';
+type ButtonSize = 'small' | 'medium' | 'large';
 
 interface ButtonProps {
-  onPress?: () => void;
-  children: ReactNode;
-  style?: StyleProp<ViewStyle>;
+  title: string;
+  onPress: () => void;
+  variant?: ButtonVariant;
+  size?: ButtonSize;
   disabled?: boolean;
+  loading?: boolean;
+  icon?: string;
+  style?: ViewStyle;
+  textStyle?: TextStyle;
 }
 
-const springConfig: WithSpringConfig = {
-  damping: 15,
-  mass: 0.3,
-  stiffness: 150,
-  overshootClamping: true,
-  energyThreshold: 0.001,
-};
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-
-export function Button({
+const Button: React.FC<ButtonProps> = ({
+  title,
   onPress,
-  children,
-  style,
+  variant = 'primary',
+  size = 'medium',
   disabled = false,
-}: ButtonProps) {
-  const { theme } = useTheme();
-  const scale = useSharedValue(1);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-
-  const handlePressIn = () => {
-    if (!disabled) {
-      scale.value = withSpring(0.98, springConfig);
+  loading = false,
+  style,
+  textStyle,
+}) => {
+  const getVariantStyle = () => {
+    switch (variant) {
+      case 'primary':
+        return styles.primary;
+      case 'secondary':
+        return styles.secondary;
+      case 'danger':
+        return styles.danger;
+      case 'outline':
+        return styles.outline;
+      case 'ghost':
+        return styles.ghost;
+      default:
+        return styles.primary;
     }
   };
 
-  const handlePressOut = () => {
-    if (!disabled) {
-      scale.value = withSpring(1, springConfig);
+  const getSizeStyle = () => {
+    switch (size) {
+      case 'small':
+        return styles.small;
+      case 'medium':
+        return styles.medium;
+      case 'large':
+        return styles.large;
+      default:
+        return styles.medium;
+    }
+  };
+
+  const getTextVariantStyle = () => {
+    switch (variant) {
+      case 'primary':
+      case 'danger':
+        return styles.textLight;
+      default:
+        return styles.textDark;
     }
   };
 
   return (
-    <AnimatedPressable
-      onPress={disabled ? undefined : onPress}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-      disabled={disabled}
+    <TouchableOpacity
       style={[
         styles.button,
-        {
-          backgroundColor: theme.link,
-          opacity: disabled ? 0.5 : 1,
-        },
+        getVariantStyle(),
+        getSizeStyle(),
+        disabled && styles.disabled,
         style,
-        animatedStyle,
       ]}
+      onPress={onPress}
+      disabled={disabled || loading}
+      activeOpacity={0.8}
     >
-      <ThemedText
-        type="body"
-        style={[styles.buttonText, { color: theme.buttonText }]}
-      >
-        {children}
-      </ThemedText>
-    </AnimatedPressable>
+      {loading ? (
+        <ActivityIndicator 
+          color={variant === 'primary' || variant === 'danger' ? '#FFFFFF' : '#2196F3'} 
+        />
+      ) : (
+        <ThemedText
+          style={[
+            styles.text,
+            getTextVariantStyle(),
+            textStyle,
+          ]}
+        >
+          {title}
+        </ThemedText>
+      )}
+    </TouchableOpacity>
   );
-}
+};
 
 const styles = StyleSheet.create({
   button: {
-    height: Spacing.buttonHeight,
-    borderRadius: BorderRadius.full,
-    alignItems: "center",
-    justifyContent: "center",
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
   },
-  buttonText: {
-    fontWeight: "600",
+  primary: {
+    backgroundColor: '#2196F3',
+  },
+  secondary: {
+    backgroundColor: '#4CAF50',
+  },
+  danger: {
+    backgroundColor: '#F44336',
+  },
+  outline: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: '#2196F3',
+  },
+  ghost: {
+    backgroundColor: 'transparent',
+  },
+  small: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    minHeight: 36,
+  },
+  medium: {
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    minHeight: 48,
+  },
+  large: {
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    minHeight: 56,
+  },
+  disabled: {
+    opacity: 0.5,
+  },
+  text: {
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  textLight: {
+    color: '#FFFFFF',
+  },
+  textDark: {
+    color: '#2196F3',
   },
 });
+
+export default Button;

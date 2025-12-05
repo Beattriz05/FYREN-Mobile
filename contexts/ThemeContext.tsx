@@ -1,76 +1,43 @@
-import React, { createContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
-import { useColorScheme as useDeviceColorScheme } from 'react-native';
+// contexts/ThemeContext.tsx
+import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
+import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors, BaseTypography } from '@/constants/theme';
 
-type ThemeMode = 'light' | 'dark' | 'system';
+// Importe suas cores do theme.ts
+import { Colors } from '../constants/theme';
+
+export type ThemeMode = 'light' | 'dark' | 'highContrast';
 
 interface ThemeContextType {
-  themeMode: ThemeMode;
-  setThemeMode: (mode: ThemeMode) => void;
+  mode: ThemeMode;
+  fontSizeScale: number;
   isHighContrast: boolean;
-  setHighContrast: (enabled: boolean) => void;
-  fontScale: number;
-  setFontScale: (scale: number) => void;
-  theme: typeof Colors.light;
-  typography: typeof BaseTypography;
-  isDark: boolean;
+  colors: typeof Colors.light | typeof Colors.dark | typeof Colors.highContrast;
+  toggleTheme: () => void;
+  setThemeMode: (mode: ThemeMode) => void;
+  setFontSize: (scale: number) => void;
+  toggleHighContrast: () => void;
+  increaseFontSize: () => void;
+  decreaseFontSize: () => void;
 }
 
-const defaultContext: ThemeContextType = {
-  themeMode: 'system',
-  setThemeMode: () => {},
-  isHighContrast: false,
-  setHighContrast: () => {},
-  fontScale: 1,
-  setFontScale: () => {},
-  theme: Colors.light,
-  typography: BaseTypography,
-  isDark: false,
-};
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export const ThemeContext = createContext<ThemeContextType>(defaultContext);
+interface ThemeProviderProps {
+  children: ReactNode;
+}
 
-const THEME_KEY = '@fyren_theme_pref';
-const MIN_FONT_SCALE = 0.8;
-const MAX_FONT_SCALE = 2.0;
-
-// Função auxiliar para escalar tipografia de forma segura
-const createScaledTypography = (baseTypography: typeof BaseTypography, fontScale: number) => {
-  const result: Partial<typeof BaseTypography> = {};
+export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
+  const systemColorScheme = useColorScheme();
   
-  (Object.keys(baseTypography) as Array<keyof typeof BaseTypography>).forEach(key => {
-    const style = baseTypography[key];
-    
-    // Assumimos que style é sempre um objeto válido (BaseTypography)
-    const scaledStyle: any = { ...style };
-    
-    // Lista de propriedades que podem ser escaladas
-    const scalableProps = ['fontSize', 'lineHeight', 'letterSpacing'] as const;
-    
-    scalableProps.forEach(prop => {
-      // Verifica se a propriedade existe e é um número
-      if (prop in scaledStyle && typeof scaledStyle[prop] === 'number') {
-        // Determina precisão baseada na propriedade
-        const precision = prop === 'letterSpacing' ? 100 : 10;
-        scaledStyle[prop] = Math.round(scaledStyle[prop] * fontScale * precision) / precision;
-      }
-    });
-    
-    result[key] = scaledStyle;
+  // Estado para o tema
+  const [mode, setMode] = useState<ThemeMode>(() => {
+    // Valor inicial: tentar carregar do AsyncStorage ou usar sistema
+    return (systemColorScheme as ThemeMode) || 'light';
   });
   
-  return result as typeof BaseTypography;
-};
-
-export function ThemeProvider({ children }: { children: ReactNode }) {
-  const deviceScheme = useDeviceColorScheme();
-  const [isLoading, setIsLoading] = useState(true);
-  const [settings, setSettings] = useState({
-    mode: 'system' as ThemeMode,
-    highContrast: false,
-    fontScale: 1,
-  });
+  const [fontSizeScale, setFontSizeScale] = useState(1);
+  const [isHighContrast, setIsHighContrast] = useState(false);
 
   // Carregar configurações salvas
   useEffect(() => {
@@ -79,102 +46,157 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const loadSettings = async () => {
     try {
-      const data = await AsyncStorage.getItem(THEME_KEY);
-      if (data) {
-        const savedSettings = JSON.parse(data);
-        setSettings({
-          mode: savedSettings.mode || 'system',
-          highContrast: savedSettings.highContrast || false,
-          fontScale: savedSettings.fontScale || 1,
-        });
+      const savedMode = await AsyncStorage.getItem('theme_mode');
+      const savedFontScale = await AsyncStorage.getItem('font_scale');
+      const savedHighContrast = await AsyncStorage.getItem('high_contrast');
+
+      if (savedMode && ['light', 'dark', 'highContrast'].includes(savedMode)) {
+        setMode(savedMode as ThemeMode);
       }
-    } catch (e) {
-      console.error('Failed to load theme settings', e);
-    } finally {
-      setIsLoading(false);
+      
+      if (savedFontScale) {
+        const scale = parseFloat(savedFontScale);
+        if (!isNaN(scale) && scale >= 0.8 && scale <= 1.5) {
+          setFontSizeScale(scale);
+        }
+      }
+      
+      if (savedHighContrast) {
+        setIsHighContrast(savedHighContrast === 'true');
+      }
+    } catch (error) {
+      console.error('Erro ao carregar configurações:', error);
     }
   };
 
-  const saveSettings = useCallback(async (newSettings: typeof settings) => {
+  // Salvar configurações
+  const saveMode = async (newMode: ThemeMode) => {
     try {
-      await AsyncStorage.setItem(THEME_KEY, JSON.stringify(newSettings));
-    } catch (e) {
-      console.error('Failed to save theme settings', e);
+      await AsyncStorage.setItem('theme_mode', newMode);
+    } catch (error) {
+      console.error('Erro ao salvar tema:', error);
     }
-  }, []);
+  };
 
-  // Atualiza as preferências
-  const updateThemeMode = useCallback((mode: ThemeMode) => {
-    const newSettings = { ...settings, mode };
-    setSettings(newSettings);
-    saveSettings(newSettings);
-  }, [settings, saveSettings]);
-
-  const updateHighContrast = useCallback((enabled: boolean) => {
-    const newSettings = { ...settings, highContrast: enabled };
-    setSettings(newSettings);
-    saveSettings(newSettings);
-  }, [settings, saveSettings]);
-
-  const updateFontScale = useCallback((scale: number) => {
-    const clampedScale = Math.min(Math.max(scale, MIN_FONT_SCALE), MAX_FONT_SCALE);
-    const newSettings = { ...settings, fontScale: clampedScale };
-    setSettings(newSettings);
-    saveSettings(newSettings);
-  }, [settings, saveSettings]);
-
-  // Lógica de cálculo do tema atual (otimizado com useMemo)
-  const effectiveScheme = useMemo(() => {
-    return settings.mode === 'system' ? (deviceScheme || 'light') : settings.mode;
-  }, [settings.mode, deviceScheme]);
-
-  // Calcular tema atual (com ou sem alto contraste)
-  const currentTheme = useMemo(() => {
-    let theme = Colors[effectiveScheme as keyof typeof Colors];
-    if (settings.highContrast && 'highContrast' in Colors) {
-      theme = Colors.highContrast as typeof Colors.light;
+  const saveFontScale = async (scale: number) => {
+    try {
+      await AsyncStorage.setItem('font_scale', scale.toString());
+    } catch (error) {
+      console.error('Erro ao salvar escala de fonte:', error);
     }
-    return theme;
-  }, [effectiveScheme, settings.highContrast]);
+  };
 
-  // Lógica de cálculo da tipografia (Fontes Escaláveis - F-15)
-  const scaledTypography = useMemo(() => {
-    return createScaledTypography(BaseTypography, settings.fontScale);
-  }, [settings.fontScale]);
+  const saveHighContrast = async (value: boolean) => {
+    try {
+      await AsyncStorage.setItem('high_contrast', value.toString());
+    } catch (error) {
+      console.error('Erro ao salvar alto contraste:', error);
+    }
+  };
 
-  const isDark = useMemo(() => {
-    return effectiveScheme === 'dark' || settings.highContrast;
-  }, [effectiveScheme, settings.highContrast]);
+  // Obter cores baseadas no tema atual
+  const getCurrentColors = () => {
+    if (isHighContrast) {
+      return Colors.highContrast;
+    }
+    
+    if (mode === 'dark') {
+      return Colors.dark;
+    }
+    
+    if (mode === 'light') {
+      return Colors.light;
+    }
+    
+    // Fallback para highContrast se mode for 'highContrast'
+    if (mode === 'highContrast') {
+      return Colors.highContrast;
+    }
+    
+    return Colors.light;
+  };
 
-  // Valor do contexto (otimizado com useMemo)
-  const contextValue = useMemo(() => ({
-    themeMode: settings.mode,
-    setThemeMode: updateThemeMode,
-    isHighContrast: settings.highContrast,
-    setHighContrast: updateHighContrast,
-    fontScale: settings.fontScale,
-    setFontScale: updateFontScale,
-    theme: currentTheme,
-    typography: scaledTypography,
-    isDark,
-  }), [
-    settings,
-    updateThemeMode,
-    updateHighContrast,
-    updateFontScale,
-    currentTheme,
-    scaledTypography,
-    isDark,
-  ]);
+  const toggleTheme = () => {
+    const newMode = mode === 'light' ? 'dark' : 'light';
+    setMode(newMode);
+    saveMode(newMode);
+    
+    // Se estiver mudando para light/dark, desativa alto contraste
+    if (isHighContrast) {
+      setIsHighContrast(false);
+      saveHighContrast(false);
+    }
+  };
 
-  // Evita renderizar com contexto vazio durante carregamento
-  if (isLoading) {
-    return null; // Ou um componente de loading
-  }
+  const setThemeMode = (newMode: ThemeMode) => {
+    setMode(newMode);
+    saveMode(newMode);
+    
+    // Se mudar para highContrast mode, ativa alto contraste
+    if (newMode === 'highContrast') {
+      setIsHighContrast(true);
+      saveHighContrast(true);
+    }
+  };
+
+  const setFontSize = (scale: number) => {
+    const newScale = Math.max(0.8, Math.min(scale, 1.5)); // Limites entre 0.8 e 1.5
+    setFontSizeScale(newScale);
+    saveFontScale(newScale);
+  };
+
+  const toggleHighContrast = () => {
+    const newValue = !isHighContrast;
+    setIsHighContrast(newValue);
+    saveHighContrast(newValue);
+    
+    // Se ativar alto contraste, muda mode para highContrast
+    if (newValue) {
+      setMode('highContrast');
+      saveMode('highContrast');
+    } else {
+      // Se desativar, volta para light (ou poderia lembrar o último)
+      const fallbackMode = systemColorScheme === 'dark' ? 'dark' : 'light';
+      setMode(fallbackMode);
+      saveMode(fallbackMode);
+    }
+  };
+
+  const increaseFontSize = () => {
+    setFontSize(Math.min(fontSizeScale + 0.1, 1.5));
+  };
+
+  const decreaseFontSize = () => {
+    setFontSize(Math.max(fontSizeScale - 0.1, 0.8));
+  };
+
+  const value = {
+    mode,
+    fontSizeScale,
+    isHighContrast,
+    colors: getCurrentColors(),
+    toggleTheme,
+    setThemeMode,
+    setFontSize,
+    toggleHighContrast,
+    increaseFontSize,
+    decreaseFontSize,
+  };
 
   return (
-    <ThemeContext.Provider value={contextValue}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   );
-}
+};
+
+// Hook personalizado para usar o tema
+export const useTheme = () => {
+  const context = useContext(ThemeContext);
+  
+  if (!context) {
+    throw new Error('useTheme deve ser usado dentro de um ThemeProvider');
+  }
+  
+  return context;
+};
