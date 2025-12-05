@@ -1,4 +1,3 @@
-// screens/ProfileScreen.tsx
 import React, { useState } from 'react';
 import {
   View,
@@ -24,7 +23,7 @@ import { TouchableOpacity } from 'react-native';
 import { Colors } from '@/constants/theme';
 
 const ProfileScreen = () => {
-  const { user, logout, updateProfile } = useAuth();
+  const { user, logout } = useAuth();
   const { 
     mode, 
     fontSizeScale, 
@@ -71,8 +70,6 @@ const ProfileScreen = () => {
   ];
 
   const getAppVersion = () => {
-    // Em produção, use:
-    // import { version } from '../../package.json';
     return '1.0.0';
   };
 
@@ -83,6 +80,9 @@ const ProfileScreen = () => {
   const openTerms = () => {
     Linking.openURL('https://www.bombeiros.ms.gov.br/termos-de-uso');
   };
+
+  // Verificar se o usuário é administrador
+  const isAdmin = user?.role === 'Admin' || user?.role === 'Administrador' || user?.role === 'admin';
 
   return (
     <ThemedView style={styles.container}>
@@ -111,13 +111,13 @@ const ProfileScreen = () => {
                 {user?.name || 'Administrador'}
               </ThemedText>
               
-              <ThemedText type="subtitle" style={styles.userEmail}>
-                {user?.email || 'aarnm@ernan.com'}
+              <ThemedText type="default" style={styles.userEmail}>
+                {user?.email || 'admin@cbmpe.com'}
               </ThemedText>
               
               <View style={styles.roleContainer}>
                 <View style={[styles.roleBadge, { backgroundColor: colors.bombeiros.primary }]}>
-                  <Icon name="verified" size={16} color="#FFF" />
+                  <MaterialIcons name="verified" size={16} color="#FFF" />
                   <Spacer size="xs" horizontal />
                   <ThemedText style={styles.roleText}>
                     {user?.role || 'Administrador'}
@@ -144,11 +144,11 @@ const ProfileScreen = () => {
 
         {/* Seção de Aparência */}
         <Card style={styles.sectionCard}>
-          <ThemedText type="sectionTitle" style={styles.sectionTitle}>
-            <Icon name="palette" size={20} />
+          <View style={styles.sectionTitleContainer}>
+            <MaterialIcons name="palette" size={20} color={colors.text} />
             <Spacer size="s" horizontal />
-            Aparência
-          </ThemedText>
+            <ThemedText style={styles.sectionTitleText}>Aparência</ThemedText>
+          </View>
 
           <Spacer size="m" />
 
@@ -209,11 +209,11 @@ const ProfileScreen = () => {
 
         {/* Seção de Preferências */}
         <Card style={styles.sectionCard}>
-          <ThemedText type="sectionTitle" style={styles.sectionTitle}>
-            <Icon name="settings" size={20} />
+          <View style={styles.sectionTitleContainer}>
+            <MaterialIcons name="settings" size={20} color={colors.text} />
             <Spacer size="s" horizontal />
-            Preferências
-          </ThemedText>
+            <ThemedText style={styles.sectionTitleText}>Preferências</ThemedText>
+          </View>
 
           <Spacer size="m" />
 
@@ -256,11 +256,11 @@ const ProfileScreen = () => {
 
         {/* Seção do Sistema */}
         <Card style={styles.sectionCard}>
-          <ThemedText type="sectionTitle" style={styles.sectionTitle}>
-            <Icon name="info" size={20} />
+          <View style={styles.sectionTitleContainer}>
+            <MaterialIcons name="info" size={20} color={colors.text} />
             <Spacer size="s" horizontal />
-            Sistema
-          </ThemedText>
+            <ThemedText style={styles.sectionTitleText}>Sistema</ThemedText>
+          </View>
 
           <Spacer size="m" />
 
@@ -289,10 +289,10 @@ const ProfileScreen = () => {
 
           <SettingRow
             label="Suporte"
-            description="contato@bombeiros.ms.gov.br"
+            description="suporte@cbmpe.gov.br"
             showChevron
             onPress={() => {
-              Linking.openURL('mailto:contato@bombeiros.ms.gov.br');
+              Linking.openURL('mailto:suporte@cbmpe.gov.br');
             }}
           />
         </Card>
@@ -318,16 +318,18 @@ const ProfileScreen = () => {
         </Card>
 
         {/* Informações para Administradores */}
-        {user?.role === 'Admin' && (
+        {isAdmin && (
           <>
             <Spacer size="l" />
             
             <Card style={styles.adminCard}>
-              <ThemedText type="sectionTitle" style={styles.adminTitle}>
-                <Icon name="admin-panel-settings" size={20} />
+              <View style={styles.sectionTitleContainer}>
+                <MaterialIcons name="admin-panel-settings" size={20} color={Colors.bombeiros.info} />
                 <Spacer size="s" horizontal />
-                Painel de Administração
-              </ThemedText>
+                <ThemedText style={[styles.sectionTitleText, styles.adminTitle]}>
+                  Painel de Administração
+                </ThemedText>
+              </View>
 
               <Spacer size="m" />
 
@@ -380,17 +382,24 @@ const ProfileScreen = () => {
 
         {/* Rodapé */}
         <View style={styles.footer}>
-          <Icon name="local-fire-department" size={24} color={colors.bombeiros.primary} />
+          <MaterialIcons name="local-fire-department" size={32} color={colors.bombeiros.primary} />
           <Spacer size="s" />
-          <ThemedText type="caption" style={styles.footerText}>
-            FYREN Mobile • Corpo de Bombeiros Militar
+          <ThemedText type="title" style={styles.footerText}>
+            FYREN Mobile
           </ThemedText>
-          <ThemedText type="caption" style={styles.footerSubtext}>
-            Sistema de Gerenciamento de Ocorrências
+          <ThemedText type="default" style={styles.footerSubtitle}>
+            Corpo de Bombeiros Militar de Pernambuco
           </ThemedText>
           <Spacer size="s" />
+          <ThemedText type="caption" style={styles.footerDescription}>
+            Sistema Integrado de Gerenciamento de Ocorrências
+          </ThemedText>
+          <Spacer size="m" />
           <ThemedText type="caption" style={styles.footerCopyright}>
-            © 2025 Todos os direitos reservados
+            © {new Date().getFullYear()} CBM-PE. Todos os direitos reservados.
+          </ThemedText>
+          <ThemedText type="caption" style={styles.footerVersion}>
+            Versão {getAppVersion()} • Desenvolvido para o CBM-PE
           </ThemedText>
         </View>
 
@@ -411,12 +420,20 @@ const styles = StyleSheet.create({
   profileCard: {
     padding: 24,
     alignItems: 'center',
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
   },
   profileHeader: {
     alignItems: 'center',
+    width: '100%',
   },
   userInfo: {
     alignItems: 'center',
+    width: '100%',
   },
   userName: {
     fontSize: 24,
@@ -426,12 +443,12 @@ const styles = StyleSheet.create({
   },
   userEmail: {
     fontSize: 16,
-    opacity: 0.8,
     textAlign: 'center',
     marginBottom: 12,
+    opacity: 0.8,
   },
   roleContainer: {
-    marginBottom: 16,
+    marginBottom: 20,
   },
   roleBadge: {
     flexDirection: 'row',
@@ -439,6 +456,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2,
   },
   roleText: {
     color: '#FFFFFF',
@@ -447,12 +469,22 @@ const styles = StyleSheet.create({
   },
   sectionCard: {
     padding: 20,
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
+  sectionTitleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 4,
+  },
+  sectionTitleText: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: Colors.bombeiros.primary,
   },
   divider: {
     height: 1,
@@ -490,35 +522,59 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(33, 150, 243, 0.05)',
     borderWidth: 1,
     borderColor: 'rgba(33, 150, 243, 0.1)',
+    borderRadius: 16,
   },
   adminTitle: {
-    fontSize: 16,
     color: Colors.bombeiros.info,
   },
   adminGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: 12,
+    justifyContent: 'space-between',
   },
   adminButton: {
     flex: 1,
-    minWidth: 100,
+    minWidth: '45%',
+    marginBottom: 8,
   },
   footer: {
     alignItems: 'center',
     paddingVertical: 24,
+    paddingHorizontal: 16,
+    backgroundColor: 'rgba(0, 0, 0, 0.02)',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.05)',
   },
   footerText: {
-    fontWeight: '600',
+    fontWeight: '800',
     textAlign: 'center',
+    color: Colors.bombeiros.primary,
+    fontSize: 20,
   },
-  footerSubtext: {
+  footerSubtitle: {
     textAlign: 'center',
-    opacity: 0.7,
+    fontWeight: '600',
+    marginTop: 4,
+    fontSize: 16,
+  },
+  footerDescription: {
+    textAlign: 'center',
+    opacity: 0.8,
+    maxWidth: 300,
+    lineHeight: 18,
   },
   footerCopyright: {
     textAlign: 'center',
+    opacity: 0.6,
+    marginTop: 8,
+  },
+  footerVersion: {
+    textAlign: 'center',
     opacity: 0.5,
+    fontSize: 12,
+    marginTop: 4,
   },
 });
 
