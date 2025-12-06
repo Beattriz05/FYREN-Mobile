@@ -1,5 +1,18 @@
-import React, { createContext, useContext, useState, ReactNode, useRef, useCallback } from 'react';
-import { Animated, StyleSheet, View, Text, ViewStyle, TextStyle } from 'react-native';
+import React, { 
+  createContext, 
+  useContext, 
+  useState, 
+  ReactNode, 
+  useRef, 
+  useCallback 
+} from 'react';
+import { 
+  Animated, 
+  StyleSheet, 
+  View, 
+  Text,
+  TouchableOpacity
+} from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '../hooks/useTheme';
 import { useScreenInsets } from '../hooks/useScreenInsets';
@@ -9,51 +22,37 @@ type ToastType = 'success' | 'error' | 'info' | 'warning';
 interface ToastContextData {
   showToast: (type: ToastType, message: string, duration?: number) => void;
   hideToast: () => void;
-  toast: {
-    visible: boolean;
-    message: string;
-    type: ToastType;
-  };
 }
 
-const ToastContext = createContext<ToastContextData>({} as ToastContextData);
+const ToastContext = createContext<ToastContextData | undefined>(undefined);
 
 export const useToast = () => {
   const context = useContext(ToastContext);
-  
-  if (!context) {
-    throw new Error('useToast deve ser usado dentro de um ToastProvider');
-  }
-  
+  if (!context) throw new Error('useToast deve ser usado dentro de ToastProvider');
   return context;
 };
 
 interface ToastProviderProps {
   children: ReactNode;
   position?: 'top' | 'bottom';
-  offset?: number;
 }
 
 export const ToastProvider: React.FC<ToastProviderProps> = ({ 
   children, 
-  position = 'top',
-  offset = 50 
+  position = 'top' 
 }) => {
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState('');
   const [type, setType] = useState<ToastType>('info');
   const opacity = useRef(new Animated.Value(0)).current;
   
-  // Usar useTheme para obter cores dinâmicas
-  const { colors, isDark } = useTheme();
+  const { colors } = useTheme();
   const insets = useScreenInsets();
 
   const showToast = useCallback((toastType: ToastType, toastMessage: string, duration = 3000) => {
     setType(toastType);
     setMessage(toastMessage);
     setVisible(true);
-
-    // Reset da animação
     opacity.setValue(0);
 
     Animated.sequence([
@@ -68,98 +67,54 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
         duration: 300,
         useNativeDriver: true,
       }),
-    ]).start(({ finished }) => {
-      if (finished) {
-        setVisible(false);
-      }
-    });
+    ]).start(({ finished }) => finished && setVisible(false));
   }, [opacity]);
 
   const hideToast = useCallback(() => {
     Animated.timing(opacity, {
       toValue: 0,
-      duration: 300,
+      duration: 200,
       useNativeDriver: true,
-    }).start(({ finished }) => {
-      if (finished) {
-        setVisible(false);
-      }
-    });
+    }).start(({ finished }) => finished && setVisible(false));
   }, [opacity]);
 
-  const getToastColor = (): string => {
+  const getToastColor = () => {
+    const colorsObj = colors as any;
     switch (type) {
-      case 'success':
-        return colors.success || colors.bombeiros?.success || '#4CAF50';
-      case 'error':
-        return colors.error || colors.bombeiros?.emergency || '#F44336';
-      case 'warning':
-        return colors.warning || colors.bombeiros?.warning || '#FF9800';
-      case 'info':
-        return colors.info || colors.bombeiros?.info || '#2196F3';
-      default:
-        return colors.info || '#2196F3';
+      case 'success': return colorsObj?.bombeiros?.success || '#4CAF50';
+      case 'error': return colorsObj?.bombeiros?.emergency || '#F44336';
+      case 'warning': return colorsObj?.bombeiros?.warning || '#FF9800';
+      case 'info': return colorsObj?.bombeiros?.info || '#2196F3';
+      default: return '#2196F3';
     }
   };
 
-  const getToastIcon = (): React.ComponentProps<typeof MaterialIcons>['name'] => {
+  const getToastIcon = () => {
     switch (type) {
-      case 'success':
-        return 'check-circle';
-      case 'error':
-        return 'error-outline';
-      case 'warning':
-        return 'warning';
-      case 'info':
-        return 'info';
-      default:
-        return 'info';
+      case 'success': return 'check-circle';
+      case 'error': return 'error-outline';
+      case 'warning': return 'warning';
+      case 'info': return 'info';
+      default: return 'info';
     }
   };
 
-  const getPositionStyle = (): ViewStyle => {
-    const baseStyle: ViewStyle = {
-      position: 'absolute',
-      left: 20,
-      right: 20,
-      flexDirection: 'row',
-      alignItems: 'center',
-      padding: 16,
-      borderRadius: 12,
-      zIndex: 9999,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.25,
-      shadowRadius: 3.84,
-      elevation: 5,
-    };
-
-    if (position === 'top') {
-      return {
-        ...baseStyle,
-        top: insets.top + offset,
-      };
-    } else {
-      return {
-        ...baseStyle,
-        bottom: insets.bottom + offset,
-      };
-    }
-  };
-
-  const contextValue: ToastContextData = {
-    showToast,
-    hideToast,
-    toast: { visible, message, type },
+  const positionStyle = {
+    position: 'absolute' as const,
+    left: 20,
+    right: 20,
+    top: position === 'top' ? insets.top + 50 : undefined,
+    bottom: position === 'bottom' ? insets.bottom + 50 : undefined,
   };
 
   return (
-    <ToastContext.Provider value={contextValue}>
+    <ToastContext.Provider value={{ showToast, hideToast }}>
       {children}
       {visible && (
         <Animated.View
           style={[
-            getPositionStyle(),
+            styles.container,
+            positionStyle,
             {
               opacity,
               backgroundColor: getToastColor(),
@@ -174,76 +129,38 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
             },
           ]}
         >
-          <MaterialIcons 
-            name={getToastIcon()} 
-            size={24} 
-            color="#FFFFFF" 
-            style={styles.icon}
-          />
-          <View style={styles.messageContainer}>
-            <Text style={styles.messageText} numberOfLines={3}>
-              {message}
-            </Text>
-          </View>
-          <MaterialIcons
-            name="close"
-            size={20}
-            color="#FFFFFF"
-            onPress={hideToast}
-            style={styles.closeIcon}
-          />
+          <MaterialIcons name={getToastIcon()} size={24} color="#FFF" style={styles.icon} />
+          <Text style={styles.message} numberOfLines={3}>{message}</Text>
+          <TouchableOpacity onPress={hideToast}>
+            <MaterialIcons name="close" size={20} color="#FFF" />
+          </TouchableOpacity>
         </Animated.View>
       )}
     </ToastContext.Provider>
   );
 };
 
-// Componente para Toast rápido (hook simplificado)
-export const useQuickToast = () => {
-  const { showToast } = useToast();
-  
-  return {
-    success: (message: string, duration?: number) => 
-      showToast('success', message, duration),
-    error: (message: string, duration?: number) => 
-      showToast('error', message, duration),
-    info: (message: string, duration?: number) => 
-      showToast('info', message, duration),
-    warning: (message: string, duration?: number) => 
-      showToast('warning', message, duration),
-  };
-};
-
 const styles = StyleSheet.create({
-  toastContainer: {
-    position: 'absolute',
-    left: 20,
-    right: 20,
+  container: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
     borderRadius: 12,
-    zIndex: 9999,
+    zIndex: 10000,
+    elevation: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowRadius: 4,
   },
   icon: {
     marginRight: 12,
   },
-  messageContainer: {
+  message: {
     flex: 1,
-    marginRight: 12,
-  },
-  messageText: {
-    color: '#FFFFFF',
+    color: '#FFF',
     fontSize: 14,
     fontWeight: '500',
-    lineHeight: 20,
-  },
-  closeIcon: {
-    padding: 4,
+    marginRight: 12,
   },
 });
