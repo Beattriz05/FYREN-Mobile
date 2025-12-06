@@ -81,8 +81,11 @@ const ProfileScreen = () => {
     Linking.openURL('https://www.bombeiros.ms.gov.br/termos-de-uso');
   };
 
-  // Verificar se o usuário é administrador
-  const isAdmin = user?.role === 'Admin' || user?.role === 'Administrador' || user?.role === 'admin';
+  // CORREÇÃO 1: Verificar se o usuário é administrador de forma segura
+  const isAdmin = user?.role && ['Admin', 'Administrador', 'admin'].includes(user.role);
+
+  // CORREÇÃO 2: Converter mode para tipo aceito pelo ThemeToggle
+  const themeMode = mode === 'highContrast' ? 'auto' : (mode === 'light' || mode === 'dark' || mode === 'auto' ? mode : 'auto');
 
   return (
     <ThemedView style={styles.container}>
@@ -111,12 +114,13 @@ const ProfileScreen = () => {
                 {user?.name || 'Administrador'}
               </ThemedText>
               
-              <ThemedText type="default" style={styles.userEmail}>
+              {/* CORREÇÃO 3: Remover type="default" que não existe no ThemedText */}
+              <ThemedText style={styles.userEmail}>
                 {user?.email || 'admin@cbmpe.com'}
               </ThemedText>
               
               <View style={styles.roleContainer}>
-                <View style={[styles.roleBadge, { backgroundColor: colors.bombeiros.primary }]}>
+                <View style={[styles.roleBadge, { backgroundColor: colors.bombeiros?.primary || Colors.bombeiros.primary }]}>
                   <MaterialIcons name="verified" size={16} color="#FFF" />
                   <Spacer size="xs" horizontal />
                   <ThemedText style={styles.roleText}>
@@ -157,7 +161,8 @@ const ProfileScreen = () => {
             description="Escolha o tema do aplicativo"
             value={mode === 'light' ? 'Claro' : mode === 'dark' ? 'Escuro' : 'Automático'}
           >
-            <ThemeToggle value={mode} onChange={toggleTheme} />
+            {/* CORREÇÃO 4: Usar themeMode convertido */}
+            <ThemeToggle value={themeMode} onChange={toggleTheme} />
           </SettingRow>
 
           <View style={styles.divider} />
@@ -175,7 +180,7 @@ const ProfileScreen = () => {
                     styles.fontSizeOption,
                     fontSizeScale === option.value && styles.fontSizeOptionActive,
                     fontSizeScale === option.value && {
-                      backgroundColor: colors.bombeiros.primary,
+                      backgroundColor: colors.bombeiros?.primary || Colors.bombeiros.primary,
                     },
                   ]}
                   onPress={() => setFontSize(option.value)}
@@ -299,8 +304,8 @@ const ProfileScreen = () => {
 
         <Spacer size="l" />
 
-        {/* Botão de Sair */}
-        <Card style={[styles.sectionCard, styles.dangerCard]}>
+        {/* CORREÇÃO 5: Botão de Sair - corrigir estilo do Card */}
+        <Card style={StyleSheet.compose(styles.sectionCard, styles.dangerCard)}>
           <SettingRow
             icon="logout"
             label="Sair da Conta"
@@ -382,12 +387,13 @@ const ProfileScreen = () => {
 
         {/* Rodapé */}
         <View style={styles.footer}>
-          <MaterialIcons name="local-fire-department" size={32} color={colors.bombeiros.primary} />
+          <MaterialIcons name="local-fire-department" size={32} color={colors.bombeiros?.primary || Colors.bombeiros.primary} />
           <Spacer size="s" />
           <ThemedText type="title" style={styles.footerText}>
             FYREN Mobile
           </ThemedText>
-          <ThemedText type="default" style={styles.footerSubtitle}>
+          {/* CORREÇÃO 6: Remover type="default" */}
+          <ThemedText style={styles.footerSubtitle}>
             Corpo de Bombeiros Militar de Pernambuco
           </ThemedText>
           <Spacer size="s" />
@@ -456,11 +462,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 2,
   },
   roleText: {
     color: '#FFFFFF',
@@ -470,11 +471,6 @@ const styles = StyleSheet.create({
   sectionCard: {
     padding: 20,
     borderRadius: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
   },
   sectionTitleContainer: {
     flexDirection: 'row',
@@ -504,7 +500,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.05)',
   },
   fontSizeOptionActive: {
-    backgroundColor: Colors.bombeiros.primary,
+    // Cor definida dinamicamente
   },
   fontSizeText: {
     fontSize: 14,

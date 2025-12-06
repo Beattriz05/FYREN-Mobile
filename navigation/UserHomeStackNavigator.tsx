@@ -2,8 +2,9 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HistoryScreen from '@/screens/HistoryScreen';
-import IncidentDetailScreen from '@/screens/IncidentDetailScreen'; // Você precisa criar esta tela
+import IncidentDetailScreen from '@/screens/IncidentDetailScreen';
 import UserHomeScreen from '@/screens/UserHomeScreen';
+import RegisterIncidentScreen from '@/screens/RegisterIncidentScreen';
 import { Incident } from '@/utils/storage';
 import { HeaderTitle } from '@/components/HeaderTitle';
 import { useTheme } from '@/hooks/useTheme';
@@ -13,7 +14,7 @@ export type UserHomeStackParamList = {
   Home: undefined;
   History: undefined;
   IncidentDetail: { incident: Incident };
-  // Adicione outras rotas conforme necessário
+  RegisterIncident: { incident?: Incident };
 };
 
 const Stack = createNativeStackNavigator<UserHomeStackParamList>();
@@ -21,11 +22,15 @@ const Stack = createNativeStackNavigator<UserHomeStackParamList>();
 export default function UserHomeStackNavigator() {
   const { colors } = useTheme();
 
+  // Use cores que existem no seu tema
+  const headerBackgroundColor = colors.backgroundRoot || colors.backgroundDefault || '#FFFFFF';
+  const contentBackgroundColor = colors.backgroundRoot || colors.backgroundDefault || '#FFFFFF';
+
   return (
     <Stack.Navigator
       screenOptions={{
         headerStyle: {
-          backgroundColor: colors.background,
+          backgroundColor: headerBackgroundColor,
         },
         headerTintColor: colors.text,
         headerTitleStyle: {
@@ -33,21 +38,15 @@ export default function UserHomeStackNavigator() {
         },
         headerShadowVisible: false,
         contentStyle: {
-          backgroundColor: colors.background,
+          backgroundColor: contentBackgroundColor,
         },
       }}
     >
       <Stack.Screen
         name="Home"
-        component={HomeScreen}
+        component={UserHomeScreen}
         options={{
-          headerTitle: () => (
-            <HeaderTitle
-              title="Início"
-              subtitle="Painel principal"
-              icon="home"
-            />
-          ),
+          headerShown: false, // Tela Home geralmente não tem header
         }}
       />
       <Stack.Screen
@@ -73,6 +72,20 @@ export default function UserHomeStackNavigator() {
               title="Detalhes"
               subtitle={route.params.incident.title}
               icon="alert-circle"
+            />
+          ),
+          headerBackTitle: "Voltar",
+        })}
+      />
+      <Stack.Screen
+        name="RegisterIncident"
+        component={RegisterIncidentScreen}
+        options={({ route }) => ({
+          headerTitle: () => (
+            <HeaderTitle
+              title={route.params?.incident ? "Editar Ocorrência" : "Nova Ocorrência"}
+              subtitle="Registro de ocorrência"
+              icon="edit-3"
             />
           ),
           headerBackTitle: "Voltar",

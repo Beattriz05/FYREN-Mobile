@@ -80,6 +80,7 @@ export default function IncidentDetailScreen({ route, navigation }: Props) {
           </Pressable>
         )}
 
+        {/* Resto do código permanece igual... */}
         {/* Abas de Navegação */}
         <View style={styles.tabRow}>
           <Pressable 
