@@ -54,6 +54,18 @@ export default function IncidentDetailScreen({ route, navigation }: Props) {
     return colors.success;
   };
 
+  // Verifica se há imagens
+  const hasImages = incident.images && incident.images.length > 0;
+  
+  // Verifica se há vídeos
+  const hasVideos = incident.videos && incident.videos.length > 0;
+  
+  // Verifica se há mídia (imagens ou vídeos)
+  const hasMedia = hasImages || hasVideos;
+  
+  // Verifica se há timeline
+  const hasTimeline = incident.timeline && incident.timeline.length > 0;
+
   return (
     <ScreenScrollView>
       <View style={styles.container}>
@@ -111,13 +123,13 @@ export default function IncidentDetailScreen({ route, navigation }: Props) {
 
               <ThemedText style={[styles.description, { color: colors.text }]}>{incident.description}</ThemedText>
 
-              {/* Mídia */}
-              {(incident.images?.length > 0 || incident.videos?.length > 0) && (
+              {/* Mídia - Verificação segura */}
+              {hasMedia && (
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.imageScroll}>
-                  {incident.images?.map((uri, index) => (
+                  {hasImages && incident.images?.map((uri, index) => (
                     <Image key={`i-${index}`} source={{ uri }} style={styles.image} contentFit="cover" />
                   ))}
-                  {incident.videos?.map((uri, index) => (
+                  {hasVideos && incident.videos?.map((uri, index) => (
                     <View key={`v-${index}`} style={[styles.image, { backgroundColor: '#000', justifyContent: 'center', alignItems: 'center' }]}>
                       <Feather name="play" size={24} color="#fff" />
                     </View>
@@ -159,22 +171,27 @@ export default function IncidentDetailScreen({ route, navigation }: Props) {
           <Card style={styles.card}>
             <ThemedText style={styles.title}>Histórico de Eventos</ThemedText>
             <View style={styles.timelineContainer}>
-              {incident.timeline?.map((event, index) => (
-                <View key={event.id} style={styles.timelineItem}>
-                  <View style={styles.timelineLeft}>
-                    <View style={[styles.timelineDot, { backgroundColor: colors.primary }]} />
-                    {index < (incident.timeline?.length || 0) - 1 && <View style={[styles.timelineLine, { backgroundColor: colors.border }]} />}
+              {hasTimeline ? (
+                incident.timeline?.map((event, index) => (
+                  <View key={event.id || `event-${index}`} style={styles.timelineItem}>
+                    <View style={styles.timelineLeft}>
+                      <View style={[styles.timelineDot, { backgroundColor: colors.primary }]} />
+                      {index < (incident.timeline?.length || 0) - 1 && <View style={[styles.timelineLine, { backgroundColor: colors.border }]} />}
+                    </View>
+                    <View style={styles.timelineContent}>
+                      <ThemedText style={styles.timelineTitle}>{event.title}</ThemedText>
+                      <ThemedText style={[styles.timelineDesc, { color: colors.tabIconDefault }]}>{event.description}</ThemedText>
+                      <ThemedText style={[styles.timelineDate, { color: colors.tabIconDefault }]}>
+                        {new Date(event.date).toLocaleString('pt-BR')}
+                      </ThemedText>
+                    </View>
                   </View>
-                  <View style={styles.timelineContent}>
-                    <ThemedText style={styles.timelineTitle}>{event.title}</ThemedText>
-                    <ThemedText style={[styles.timelineDesc, { color: colors.tabIconDefault }]}>{event.description}</ThemedText>
-                    <ThemedText style={[styles.timelineDate, { color: colors.tabIconDefault }]}>
-                      {new Date(event.date).toLocaleString('pt-BR')}
-                    </ThemedText>
-                  </View>
-                </View>
-              ))}
-              {!incident.timeline && <ThemedText>Nenhum evento registrado.</ThemedText>}
+                ))
+              ) : (
+                <ThemedText style={[styles.emptyTimeline, { color: colors.tabIconDefault }]}>
+                  Nenhum evento registrado.
+                </ThemedText>
+              )}
             </View>
           </Card>
         )}
@@ -185,37 +202,161 @@ export default function IncidentDetailScreen({ route, navigation }: Props) {
 
 const styles = StyleSheet.create({
   container: { padding: Spacing.lg, gap: Spacing.lg },
-  editButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 12, borderRadius: 8, gap: 8 },
-  tabRow: { flexDirection: 'row', marginBottom: 4 },
-  tab: { flex: 1, alignItems: 'center', paddingVertical: 12 },
-  card: { padding: Spacing.lg, gap: Spacing.md },
-  headerRow: { flexDirection: 'row', gap: Spacing.sm },
-  badge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 4 },
-  badgeText: { fontSize: 12, fontWeight: '700' },
-  title: { fontSize: 22, fontWeight: '700' },
-  infoBox: { flexDirection: 'row', padding: Spacing.md, borderRadius: BorderRadius.sm, gap: Spacing.xl },
-  infoCol: { flex: 1 },
-  label: { fontSize: 12, opacity: 0.7, marginBottom: 2 },
-  value: { fontSize: 16, fontWeight: '600' },
-  description: { fontSize: 16, lineHeight: 24 },
-  imageScroll: { flexDirection: 'row', marginTop: Spacing.xs },
-  image: { width: 120, height: 120, borderRadius: 8, marginRight: 8 },
-  signatureBox: { marginTop: Spacing.sm, borderTopWidth: 1, borderTopColor: '#eee', paddingTop: Spacing.sm },
-  signatureImage: { width: '100%', height: 80, backgroundColor: '#f9f9f9', marginTop: 4 },
-  comment: { padding: 12, borderRadius: 8, gap: 4, marginBottom: 8 },
-  commentAuthor: { fontWeight: '700', fontSize: 14 },
-  commentText: { fontSize: 14 },
-  commentInput: { flexDirection: 'row', gap: 8 },
-  input: { flex: 1, height: 44, borderWidth: 1, borderRadius: 8, paddingHorizontal: 12 },
-  sendButton: { width: 44, height: 44, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
+  editButton: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    padding: 12, 
+    borderRadius: 8, 
+    gap: 8 
+  },
+  tabRow: { 
+    flexDirection: 'row', 
+    marginBottom: 4 
+  },
+  tab: { 
+    flex: 1, 
+    alignItems: 'center', 
+    paddingVertical: 12 
+  },
+  card: { 
+    padding: Spacing.lg, 
+    gap: Spacing.md 
+  },
+  headerRow: { 
+    flexDirection: 'row', 
+    gap: Spacing.sm 
+  },
+  badge: { 
+    paddingHorizontal: 8, 
+    paddingVertical: 4, 
+    borderRadius: 4 
+  },
+  badgeText: { 
+    fontSize: 12, 
+    fontWeight: '700' 
+  },
+  title: { 
+    fontSize: 22, 
+    fontWeight: '700' 
+  },
+  infoBox: { 
+    flexDirection: 'row', 
+    padding: Spacing.md, 
+    borderRadius: BorderRadius.sm, 
+    gap: Spacing.xl 
+  },
+  infoCol: { 
+    flex: 1 
+  },
+  label: { 
+    fontSize: 12, 
+    opacity: 0.7, 
+    marginBottom: 2 
+  },
+  value: { 
+    fontSize: 16, 
+    fontWeight: '600' 
+  },
+  description: { 
+    fontSize: 16, 
+    lineHeight: 24 
+  },
+  imageScroll: { 
+    flexDirection: 'row', 
+    marginTop: Spacing.xs 
+  },
+  image: { 
+    width: 120, 
+    height: 120, 
+    borderRadius: 8, 
+    marginRight: 8 
+  },
+  signatureBox: { 
+    marginTop: Spacing.sm, 
+    borderTopWidth: 1, 
+    borderTopColor: '#eee', 
+    paddingTop: Spacing.sm 
+  },
+  signatureImage: { 
+    width: '100%', 
+    height: 80, 
+    backgroundColor: '#f9f9f9', 
+    marginTop: 4 
+  },
+  comment: { 
+    padding: 12, 
+    borderRadius: 8, 
+    gap: 4, 
+    marginBottom: 8 
+  },
+  commentAuthor: { 
+    fontWeight: '700', 
+    fontSize: 14 
+  },
+  commentText: { 
+    fontSize: 14 
+  },
+  commentInput: { 
+    flexDirection: 'row', 
+    gap: 8 
+  },
+  input: { 
+    flex: 1, 
+    height: 44, 
+    borderWidth: 1, 
+    borderRadius: 8, 
+    paddingHorizontal: 12 
+  },
+  sendButton: { 
+    width: 44, 
+    height: 44, 
+    borderRadius: 8, 
+    alignItems: 'center', 
+    justifyContent: 'center' 
+  },
   // Estilos da Timeline
-  timelineContainer: { marginTop: Spacing.md },
-  timelineItem: { flexDirection: 'row', marginBottom: 24 },
-  timelineLeft: { width: 20, alignItems: 'center' },
-  timelineDot: { width: 12, height: 12, borderRadius: 6, zIndex: 1 },
-  timelineLine: { width: 2, flex: 1, marginTop: 4 },
-  timelineContent: { flex: 1, paddingLeft: 12 },
-  timelineTitle: { fontWeight: '700', fontSize: 16 },
-  timelineDesc: { fontSize: 14, marginTop: 2 },
-  timelineDate: { fontSize: 12, marginTop: 4 },
+  timelineContainer: { 
+    marginTop: Spacing.md 
+  },
+  timelineItem: { 
+    flexDirection: 'row', 
+    marginBottom: 24 
+  },
+  timelineLeft: { 
+    width: 20, 
+    alignItems: 'center' 
+  },
+  timelineDot: { 
+    width: 12, 
+    height: 12, 
+    borderRadius: 6, 
+    zIndex: 1 
+  },
+  timelineLine: { 
+    width: 2, 
+    flex: 1, 
+    marginTop: 4 
+  },
+  timelineContent: { 
+    flex: 1, 
+    paddingLeft: 12 
+  },
+  timelineTitle: { 
+    fontWeight: '700', 
+    fontSize: 16 
+  },
+  timelineDesc: { 
+    fontSize: 14, 
+    marginTop: 2 
+  },
+  timelineDate: { 
+    fontSize: 12, 
+    marginTop: 4 
+  },
+  emptyTimeline: {
+    textAlign: 'center',
+    paddingVertical: Spacing.xl,
+    fontSize: 16,
+  },
 });

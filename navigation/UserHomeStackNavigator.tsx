@@ -1,68 +1,83 @@
-// components/HeaderTitle.tsx - versão corrigida
+// navigation/UserHomeStackNavigator.tsx
 import React from 'react';
-import { View, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import HistoryScreen from '@/screens/HistoryScreen';
+import IncidentDetailScreen from '@/screens/IncidentDetailScreen'; // Você precisa criar esta tela
+import UserHomeScreen from '@/screens/UserHomeScreen';
+import { Incident } from '@/utils/storage';
+import { HeaderTitle } from '@/components/HeaderTitle';
 import { useTheme } from '@/hooks/useTheme';
 
-interface HeaderTitleProps {
-  title: string;
-  subtitle?: string;
-  icon?: string;
-  style?: ViewStyle;
-  titleStyle?: TextStyle;
-  subtitleStyle?: TextStyle;
-}
+// Exporte o tipo dos parâmetros
+export type UserHomeStackParamList = {
+  Home: undefined;
+  History: undefined;
+  IncidentDetail: { incident: Incident };
+  // Adicione outras rotas conforme necessário
+};
 
-export const HeaderTitle: React.FC<HeaderTitleProps> = ({
-  title,
-  subtitle,
-  icon,
-  style,
-  titleStyle,
-  subtitleStyle,
-}) => {
+const Stack = createNativeStackNavigator<UserHomeStackParamList>();
+
+export default function UserHomeStackNavigator() {
   const { colors } = useTheme();
 
   return (
-    <View style={[styles.container, style]}>
-      {icon && (
-        <Text style={[styles.icon, { color: colors.bombeiros?.primary }]}>
-          {icon}
-        </Text>
-      )}
-      <View style={styles.textContainer}>
-        <Text style={[styles.title, { color: colors.text }, titleStyle]}>
-          {title}
-        </Text>
-        {subtitle && (
-          <Text style={[styles.subtitle, { color: colors.secondary }, subtitleStyle]}>
-            {subtitle}
-          </Text>
-        )}
-      </View>
-    </View>
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: colors.background,
+        },
+        headerTintColor: colors.text,
+        headerTitleStyle: {
+          fontWeight: '600',
+        },
+        headerShadowVisible: false,
+        contentStyle: {
+          backgroundColor: colors.background,
+        },
+      }}
+    >
+      <Stack.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
+          headerTitle: () => (
+            <HeaderTitle
+              title="Início"
+              subtitle="Painel principal"
+              icon="home"
+            />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="History"
+        component={HistoryScreen}
+        options={{
+          headerTitle: () => (
+            <HeaderTitle
+              title="Histórico"
+              subtitle="Ocorrências registradas"
+              icon="list"
+            />
+          ),
+          headerBackTitle: "Voltar",
+        }}
+      />
+      <Stack.Screen
+        name="IncidentDetail"
+        component={IncidentDetailScreen}
+        options={({ route }) => ({
+          headerTitle: () => (
+            <HeaderTitle
+              title="Detalhes"
+              subtitle={route.params.incident.title}
+              icon="alert-circle"
+            />
+          ),
+          headerBackTitle: "Voltar",
+        })}
+      />
+    </Stack.Navigator>
   );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  icon: {
-    fontSize: 24,
-    marginRight: 8,
-  },
-  textContainer: {
-    alignItems: 'flex-start',
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: '700',
-    lineHeight: 24,
-  },
-  subtitle: {
-    fontSize: 12,
-    opacity: 0.8,
-    marginTop: 2,
-  },
-});
+}
