@@ -1,51 +1,68 @@
+// components/HeaderTitle.tsx - versão corrigida
 import React from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { View, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 import { useTheme } from '@/hooks/useTheme';
-import { getCommonScreenOptions } from '@/navigation/screenOptions';
-import UserHomeScreen from '@/screens/UserHomeScreen';
-import RegisterIncidentScreen from '@/screens/RegisterIncidentScreen';
-import HistoryScreen from '@/screens/HistoryScreen';
-import IncidentDetailScreen from '@/screens/IncidentDetailScreen';
-import MapScreen from '@/screens/MapScreen';
-import ProfileScreen from '@/screens/ProfileScreen';
-import { HeaderTitle } from '@/components/HeaderTitle';
-import { Incident } from '@/utils/storage';
 
-export type UserHomeStackParamList = {
-  UserHome: undefined;
-  // Agora aceita um incidente opcional para edição
-  RegisterIncident: { incident?: Incident } | undefined; 
-  History: undefined;
-  IncidentDetail: { incident: Incident };
-  Map: undefined;
-  Profile: undefined;
-};
+interface HeaderTitleProps {
+  title: string;
+  subtitle?: string;
+  icon?: string;
+  style?: ViewStyle;
+  titleStyle?: TextStyle;
+  subtitleStyle?: TextStyle;
+}
 
-const Stack = createNativeStackNavigator<UserHomeStackParamList>();
-
-export default function UserHomeStackNavigator() {
-  const { colors, isDark } = useTheme();
-  const commonOptions = getCommonScreenOptions({ colors, isDark }); 
+export const HeaderTitle: React.FC<HeaderTitleProps> = ({
+  title,
+  subtitle,
+  icon,
+  style,
+  titleStyle,
+  subtitleStyle,
+}) => {
+  const { colors } = useTheme();
 
   return (
-    <Stack.Navigator screenOptions={commonOptions}>
-      <Stack.Screen
-        name="UserHome"
-        component={UserHomeScreen}
-        options={{ headerTitle: () => <HeaderTitle title="Fyren" /> }}
-      />
-      <Stack.Screen
-        name="RegisterIncident"
-        component={RegisterIncidentScreen}
-        options={({ route }) => ({
-          // Muda o título dinamicamente
-          title: route.params?.incident ? 'Editar Ocorrência' : 'Nova Ocorrência',
-        })}
-      />
-      <Stack.Screen name="History" component={HistoryScreen} options={{ title: 'Histórico' }} />
-      <Stack.Screen name="IncidentDetail" component={IncidentDetailScreen} options={{ title: 'Detalhes' }} />
-      <Stack.Screen name="Map" component={MapScreen} options={{ title: 'Mapa' }} />
-      <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Perfil' }} />
-    </Stack.Navigator>
+    <View style={[styles.container, style]}>
+      {icon && (
+        <Text style={[styles.icon, { color: colors.bombeiros?.primary }]}>
+          {icon}
+        </Text>
+      )}
+      <View style={styles.textContainer}>
+        <Text style={[styles.title, { color: colors.text }, titleStyle]}>
+          {title}
+        </Text>
+        {subtitle && (
+          <Text style={[styles.subtitle, { color: colors.secondary }, subtitleStyle]}>
+            {subtitle}
+          </Text>
+        )}
+      </View>
+    </View>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  icon: {
+    fontSize: 24,
+    marginRight: 8,
+  },
+  textContainer: {
+    alignItems: 'flex-start',
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: '700',
+    lineHeight: 24,
+  },
+  subtitle: {
+    fontSize: 12,
+    opacity: 0.8,
+    marginTop: 2,
+  },
+});
