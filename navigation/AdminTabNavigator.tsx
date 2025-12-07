@@ -1,5 +1,8 @@
 import React from 'react';
-import { createBottomTabNavigator, BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
+import {
+  createBottomTabNavigator,
+  BottomTabNavigationOptions,
+} from '@react-navigation/bottom-tabs';
 import { Feather } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { Platform, StyleSheet, View, Text } from 'react-native';
@@ -22,14 +25,19 @@ export default function AdminTabNavigator() {
   const { colors, isDark } = useTheme();
 
   // Extrair cores de forma segura
-  const backgroundColor = (colors as any).background || (colors as any).backgroundRoot || (isDark ? '#121212' : '#FFFFFF');
+  const backgroundColor =
+    (colors as any).background ||
+    (colors as any).backgroundRoot ||
+    (isDark ? '#121212' : '#FFFFFF');
   const secondaryColor = (colors as any).secondary || '#757575';
   const primaryColor = colors.bombeiros?.primary || '#2196F3';
   const textColor = colors.text || (isDark ? '#FFFFFF' : '#000000');
 
   // Configurações de tabBar
   const tabBarStyle = {
-    backgroundColor: isDark ? 'rgba(18, 18, 18, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+    backgroundColor: isDark
+      ? 'rgba(18, 18, 18, 0.95)'
+      : 'rgba(255, 255, 255, 0.95)',
     borderTopWidth: 0,
     elevation: 8,
     shadowColor: '#000',
@@ -84,8 +92,8 @@ export default function AdminTabNavigator() {
           style={[
             StyleSheet.absoluteFill,
             {
-              backgroundColor: isDark 
-                ? 'rgba(18, 18, 18, 0.95)' 
+              backgroundColor: isDark
+                ? 'rgba(18, 18, 18, 0.95)'
                 : 'rgba(255, 255, 255, 0.95)',
             },
           ]}
@@ -110,25 +118,32 @@ export default function AdminTabNavigator() {
           title: 'Dashboard',
           tabBarIcon: ({ color, size, focused }) => (
             <View style={styles.iconContainer}>
-              <Feather 
-                name="home" 
-                size={focused ? size + 2 : size} 
-                color={color} 
+              <Feather
+                name="home"
+                size={focused ? size + 2 : size}
+                color={color}
               />
-              {focused && <View style={[styles.activeDot, { backgroundColor: color }]} />}
+              {focused && (
+                <View style={[styles.activeDot, { backgroundColor: color }]} />
+              )}
             </View>
           ),
           headerTitle: () => (
             <View style={styles.headerTitle}>
               <Feather name="home" size={22} color={primaryColor} />
-              <Text style={[styles.headerTitleText, { color: textColor, marginLeft: 8 }]}>
+              <Text
+                style={[
+                  styles.headerTitleText,
+                  { color: textColor, marginLeft: 8 },
+                ]}
+              >
                 Dashboard Administrativo
               </Text>
             </View>
           ),
         }}
       />
-      
+
       <Tab.Screen
         name="UserManagement"
         component={UserManagementScreen}
@@ -136,25 +151,32 @@ export default function AdminTabNavigator() {
           title: 'Usuários',
           tabBarIcon: ({ color, size, focused }) => (
             <View style={styles.iconContainer}>
-              <Feather 
-                name="users" 
-                size={focused ? size + 2 : size} 
-                color={color} 
+              <Feather
+                name="users"
+                size={focused ? size + 2 : size}
+                color={color}
               />
-              {focused && <View style={[styles.activeDot, { backgroundColor: color }]} />}
+              {focused && (
+                <View style={[styles.activeDot, { backgroundColor: color }]} />
+              )}
             </View>
           ),
           headerTitle: () => (
             <View style={styles.headerTitle}>
               <Feather name="users" size={22} color={primaryColor} />
-              <Text style={[styles.headerTitleText, { color: textColor, marginLeft: 8 }]}>
+              <Text
+                style={[
+                  styles.headerTitleText,
+                  { color: textColor, marginLeft: 8 },
+                ]}
+              >
                 Gerenciamento de Usuários
               </Text>
             </View>
           ),
         }}
       />
-      
+
       <Tab.Screen
         name="Audit"
         component={AuditScreen}
@@ -162,25 +184,32 @@ export default function AdminTabNavigator() {
           title: 'Auditoria',
           tabBarIcon: ({ color, size, focused }) => (
             <View style={styles.iconContainer}>
-              <Feather 
-                name="file-text" 
-                size={focused ? size + 2 : size} 
-                color={color} 
+              <Feather
+                name="file-text"
+                size={focused ? size + 2 : size}
+                color={color}
               />
-              {focused && <View style={[styles.activeDot, { backgroundColor: color }]} />}
+              {focused && (
+                <View style={[styles.activeDot, { backgroundColor: color }]} />
+              )}
             </View>
           ),
           headerTitle: () => (
             <View style={styles.headerTitle}>
               <Feather name="file-text" size={22} color={primaryColor} />
-              <Text style={[styles.headerTitleText, { color: textColor, marginLeft: 8 }]}>
+              <Text
+                style={[
+                  styles.headerTitleText,
+                  { color: textColor, marginLeft: 8 },
+                ]}
+              >
                 Auditoria do Sistema
               </Text>
             </View>
           ),
         }}
       />
-      
+
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
@@ -188,12 +217,14 @@ export default function AdminTabNavigator() {
           title: 'Perfil',
           tabBarIcon: ({ color, size, focused }) => (
             <View style={styles.iconContainer}>
-              <Feather 
-                name="user" 
-                size={focused ? size + 2 : size} 
-                color={color} 
+              <Feather
+                name="user"
+                size={focused ? size + 2 : size}
+                color={color}
               />
-              {focused && <View style={[styles.activeDot, { backgroundColor: color }]} />}
+              {focused && (
+                <View style={[styles.activeDot, { backgroundColor: color }]} />
+              )}
             </View>
           ),
           headerShown: false,

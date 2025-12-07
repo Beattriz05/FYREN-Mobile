@@ -34,7 +34,7 @@ const LOCKOUT_TIME = 30000; // 30 segundos em milissegundos
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // Estados para controle de segurança (F-01)
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [lockoutUntil, setLockoutUntil] = useState<number | null>(null);
@@ -63,8 +63,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (now < lockoutUntil) {
         const remainingSeconds = Math.ceil((lockoutUntil - now) / 1000);
         Alert.alert(
-          'Acesso Bloqueado', 
-          `Muitas tentativas falhas. Tente novamente em ${remainingSeconds} segundos.`
+          'Acesso Bloqueado',
+          `Muitas tentativas falhas. Tente novamente em ${remainingSeconds} segundos.`,
         );
         throw new Error('Locked out');
       } else {
@@ -83,13 +83,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (newAttempts >= MAX_ATTEMPTS) {
         setLockoutUntil(Date.now() + LOCKOUT_TIME);
         Alert.alert(
-          'Bloqueado', 
-          'Número máximo de tentativas excedido. Aguarde 30s.'
+          'Bloqueado',
+          'Número máximo de tentativas excedido. Aguarde 30s.',
         );
       } else {
         Alert.alert(
-          'Credenciais Inválidas', 
-          `Senha incorreta. Tentativa ${newAttempts} de ${MAX_ATTEMPTS}.`
+          'Credenciais Inválidas',
+          `Senha incorreta. Tentativa ${newAttempts} de ${MAX_ATTEMPTS}.`,
         );
       }
       throw new Error('Invalid credentials');
@@ -102,7 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Define o cargo baseado no e-mail (Lógica Mockada)
     let role: UserRole = 'user';
     const emailLower = email.toLowerCase();
-    
+
     if (emailLower.includes('chief') || emailLower.includes('chefe')) {
       role = 'chief';
     } else if (emailLower.includes('admin')) {

@@ -1,4 +1,10 @@
-import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
+import React, {
+  createContext,
+  useState,
+  useContext,
+  ReactNode,
+  useEffect,
+} from 'react';
 import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -28,13 +34,13 @@ interface ThemeProviderProps {
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const systemColorScheme = useColorScheme();
-  
+
   // Estado para o tema
   const [mode, setMode] = useState<ThemeMode>(() => {
     // Valor inicial: tentar carregar do AsyncStorage ou usar sistema
     return (systemColorScheme as ThemeMode) || 'light';
   });
-  
+
   const [fontSizeScale, setFontSizeScale] = useState(1);
   const [isHighContrast, setIsHighContrast] = useState(false);
 
@@ -52,14 +58,14 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       if (savedMode && ['light', 'dark', 'highContrast'].includes(savedMode)) {
         setMode(savedMode as ThemeMode);
       }
-      
+
       if (savedFontScale) {
         const scale = parseFloat(savedFontScale);
         if (!isNaN(scale) && scale >= 0.8 && scale <= 1.5) {
           setFontSizeScale(scale);
         }
       }
-      
+
       if (savedHighContrast) {
         setIsHighContrast(savedHighContrast === 'true');
       }
@@ -98,20 +104,20 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     if (isHighContrast) {
       return Colors.highContrast;
     }
-    
+
     if (mode === 'dark') {
       return Colors.dark;
     }
-    
+
     if (mode === 'light') {
       return Colors.light;
     }
-    
+
     // Fallback para highContrast se mode for 'highContrast'
     if (mode === 'highContrast') {
       return Colors.highContrast;
     }
-    
+
     return Colors.light;
   };
 
@@ -119,7 +125,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     const newMode = mode === 'light' ? 'dark' : 'light';
     setMode(newMode);
     saveMode(newMode);
-    
+
     // Se estiver mudando para light/dark, desativa alto contraste
     if (isHighContrast) {
       setIsHighContrast(false);
@@ -130,7 +136,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const setThemeMode = (newMode: ThemeMode) => {
     setMode(newMode);
     saveMode(newMode);
-    
+
     // Se mudar para highContrast mode, ativa alto contraste
     if (newMode === 'highContrast') {
       setIsHighContrast(true);
@@ -148,7 +154,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     const newValue = !isHighContrast;
     setIsHighContrast(newValue);
     saveHighContrast(newValue);
-    
+
     // Se ativar alto contraste, muda mode para highContrast
     if (newValue) {
       setMode('highContrast');
@@ -183,19 +189,17 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   };
 
   return (
-    <ThemeContext.Provider value={value}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
 };
 
 // Hook personalizado para usar o tema
 export const useTheme = () => {
   const context = useContext(ThemeContext);
-  
+
   if (!context) {
     throw new Error('useTheme deve ser usado dentro de um ThemeProvider');
   }
-  
+
   return context;
 };

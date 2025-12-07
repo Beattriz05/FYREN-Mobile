@@ -1,5 +1,8 @@
 import React from 'react';
-import { createBottomTabNavigator, BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
+import {
+  createBottomTabNavigator,
+  BottomTabNavigationOptions,
+} from '@react-navigation/bottom-tabs';
 import { Feather } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { Platform, StyleSheet, View } from 'react-native';
@@ -13,7 +16,10 @@ import ProfileScreen from '@/screens/ProfileScreen';
 import LoginScreen from '@/screens/LoginScreen';
 import ChiefTabNavigator from './ChiefTabNavigator';
 import AdminTabNavigator from './AdminTabNavigator';
-import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react-navigation/native-stack';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationOptions,
+} from '@react-navigation/native-stack';
 import { HeaderTitle } from '@/components/HeaderTitle';
 import IncidentDetailScreen from '@/screens/IncidentDetailScreen';
 import { Incident } from '@/utils/storage';
@@ -40,7 +46,9 @@ function UserTabNavigator() {
       position: 'absolute' as const,
       backgroundColor: Platform.select({
         ios: 'transparent',
-        android: isDark ? 'rgba(18, 18, 18, 0.98)' : 'rgba(255, 255, 255, 0.98)',
+        android: isDark
+          ? 'rgba(18, 18, 18, 0.98)'
+          : 'rgba(255, 255, 255, 0.98)',
       }),
       borderTopWidth: 0,
       elevation: 8,
@@ -72,8 +80,8 @@ function UserTabNavigator() {
           style={[
             StyleSheet.absoluteFill,
             {
-              backgroundColor: isDark 
-                ? 'rgba(18, 18, 18, 0.98)' 
+              backgroundColor: isDark
+                ? 'rgba(18, 18, 18, 0.98)'
                 : 'rgba(255, 255, 255, 0.98)',
             },
           ]}
@@ -86,7 +94,10 @@ function UserTabNavigator() {
     headerStyle: {
       backgroundColor: Platform.select({
         ios: 'transparent',
-        android: (colors as any).background || (colors as any).backgroundRoot || (isDark ? '#121212' : '#FFFFFF'),
+        android:
+          (colors as any).background ||
+          (colors as any).backgroundRoot ||
+          (isDark ? '#121212' : '#FFFFFF'),
       }),
       elevation: 4,
       shadowColor: '#000',
@@ -114,8 +125,16 @@ function UserTabNavigator() {
           headerTitle: () => <HeaderTitle title="Fyren" subtitle="CBM-PE" />,
           tabBarIcon: ({ color, size, focused }) => (
             <View style={styles.iconContainer}>
-              <Feather name="home" size={focused ? size + 2 : size} color={color} />
-              {focused && <View style={[styles.activeIndicator, { backgroundColor: color }]} />}
+              <Feather
+                name="home"
+                size={focused ? size + 2 : size}
+                color={color}
+              />
+              {focused && (
+                <View
+                  style={[styles.activeIndicator, { backgroundColor: color }]}
+                />
+              )}
             </View>
           ),
         }}
@@ -127,8 +146,16 @@ function UserTabNavigator() {
           title: 'Registrar',
           tabBarIcon: ({ color, size, focused }) => (
             <View style={styles.iconContainer}>
-              <Feather name="plus-circle" size={focused ? size + 2 : size} color={color} />
-              {focused && <View style={[styles.activeIndicator, { backgroundColor: color }]} />}
+              <Feather
+                name="plus-circle"
+                size={focused ? size + 2 : size}
+                color={color}
+              />
+              {focused && (
+                <View
+                  style={[styles.activeIndicator, { backgroundColor: color }]}
+                />
+              )}
             </View>
           ),
           headerTitle: () => <HeaderTitle title="Registrar Ocorrência" />,
@@ -141,8 +168,16 @@ function UserTabNavigator() {
           title: 'Histórico',
           tabBarIcon: ({ color, size, focused }) => (
             <View style={styles.iconContainer}>
-              <Feather name="clock" size={focused ? size + 2 : size} color={color} />
-              {focused && <View style={[styles.activeIndicator, { backgroundColor: color }]} />}
+              <Feather
+                name="clock"
+                size={focused ? size + 2 : size}
+                color={color}
+              />
+              {focused && (
+                <View
+                  style={[styles.activeIndicator, { backgroundColor: color }]}
+                />
+              )}
             </View>
           ),
           headerTitle: () => <HeaderTitle title="Histórico de Ocorrências" />,
@@ -155,8 +190,16 @@ function UserTabNavigator() {
           title: 'Perfil',
           tabBarIcon: ({ color, size, focused }) => (
             <View style={styles.iconContainer}>
-              <Feather name="user" size={focused ? size + 2 : size} color={color} />
-              {focused && <View style={[styles.activeIndicator, { backgroundColor: color }]} />}
+              <Feather
+                name="user"
+                size={focused ? size + 2 : size}
+                color={color}
+              />
+              {focused && (
+                <View
+                  style={[styles.activeIndicator, { backgroundColor: color }]}
+                />
+              )}
             </View>
           ),
           headerShown: false,
@@ -184,7 +227,10 @@ export default function RootNavigator() {
   // Opções comuns para todas as telas do stack
   const commonStackOptions: NativeStackNavigationOptions = {
     headerStyle: {
-      backgroundColor: (colors as any).background || (colors as any).backgroundRoot || (isDark ? '#121212' : '#FFFFFF'),
+      backgroundColor:
+        (colors as any).background ||
+        (colors as any).backgroundRoot ||
+        (isDark ? '#121212' : '#FFFFFF'),
     },
     headerTintColor: colors.text,
     headerTitleStyle: {
@@ -193,7 +239,8 @@ export default function RootNavigator() {
     },
     headerBackTitleVisible: false,
     contentStyle: {
-      backgroundColor: (colors as any).background || (colors as any).backgroundRoot,
+      backgroundColor:
+        (colors as any).background || (colors as any).backgroundRoot,
     },
   };
 
@@ -223,15 +270,19 @@ export default function RootNavigator() {
   // Definir componente principal baseado no papel do usuário
   const getMainComponent = () => {
     const role = user.role?.toLowerCase();
-    
+
     if (role === 'chief' || role === 'comandante' || role === 'chefe') {
       return ChiefTabNavigator;
     }
-    
-    if (role === 'admin' || role === 'administrador' || role === 'administrator') {
+
+    if (
+      role === 'admin' ||
+      role === 'administrador' ||
+      role === 'administrator'
+    ) {
       return AdminTabNavigator;
     }
-    
+
     return UserTabNavigator;
   };
 
@@ -247,7 +298,7 @@ export default function RootNavigator() {
       <Stack.Screen
         name="Map"
         component={MapScreen}
-        options={{ 
+        options={{
           title: 'Mapa de Ocorrências',
           presentation: 'modal' as const,
         }}

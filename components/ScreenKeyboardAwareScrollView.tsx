@@ -1,26 +1,26 @@
-import { Platform, StyleSheet } from "react-native";
+import { Platform, StyleSheet } from 'react-native';
 import {
   KeyboardAwareScrollView,
   KeyboardAwareScrollViewProps,
-} from "react-native-keyboard-controller";
+} from 'react-native-keyboard-controller';
 
-import { useTheme } from "@/hooks/useTheme";
-import { useScreenInsets } from "@/hooks/useScreenInsets";
-import { Spacing } from "@/constants/theme";
-import { ScreenScrollView } from "./ScreenScrollView";
+import { useTheme } from '@/hooks/useTheme';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
+import { Spacing } from '@/constants/theme';
+import { ScreenScrollView } from './ScreenScrollView';
 
 export function ScreenKeyboardAwareScrollView({
   children,
   contentContainerStyle,
   style,
-  keyboardShouldPersistTaps = "handled",
+  keyboardShouldPersistTaps = 'handled',
   ...scrollViewProps
 }: KeyboardAwareScrollViewProps) {
   const { colors } = useTheme();
   // Aqui pegamos o "top" corrigido do nosso hook novo
   const { top, bottom, scrollInsetBottom } = useScreenInsets();
 
-  if (Platform.OS === "web") {
+  if (Platform.OS === 'web') {
     return (
       <ScreenScrollView
         style={style}

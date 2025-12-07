@@ -9,8 +9,8 @@ interface SpacerProps {
   horizontal?: boolean;
 }
 
-const Spacer: React.FC<SpacerProps> = ({ 
-  size = 'm', 
+const Spacer: React.FC<SpacerProps> = ({
+  size = 'm',
   width,
   height,
   horizontal = false,
@@ -20,21 +20,28 @@ const Spacer: React.FC<SpacerProps> = ({
     if (typeof sizeValue === 'number') {
       return sizeValue;
     }
-    
+
     switch (sizeValue) {
-      case 'xs': return 4;
-      case 's': return 8;
-      case 'm': return 16;
-      case 'l': return 24;
-      case 'xl': return 32;
-      case 'xxl': return 48;
-      default: return 16;
+      case 'xs':
+        return 4;
+      case 's':
+        return 8;
+      case 'm':
+        return 16;
+      case 'l':
+        return 24;
+      case 'xl':
+        return 32;
+      case 'xxl':
+        return 48;
+      default:
+        return 16;
     }
   };
 
   // Determinar estilo baseado nas props
   const style: ViewStyle = {};
-  
+
   if (width !== undefined) {
     style.width = width;
   } else if (height !== undefined) {

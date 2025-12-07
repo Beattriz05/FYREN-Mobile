@@ -14,9 +14,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 export default function MapScreen() {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
-  const [location, setLocation] = useState<Location.LocationObject | null>(null);
+  const [location, setLocation] = useState<Location.LocationObject | null>(
+    null,
+  );
   const [incidents, setIncidents] = useState<Incident[]>([]);
-  const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
+  const [selectedIncident, setSelectedIncident] = useState<Incident | null>(
+    null,
+  );
 
   useEffect(() => {
     loadData();
@@ -30,7 +34,7 @@ export default function MapScreen() {
     }
 
     const data = await getIncidents();
-    setIncidents(data.filter(i => i.location));
+    setIncidents(data.filter((i) => i.location));
   };
 
   const getStatusColor = (status: string) => {
@@ -59,7 +63,7 @@ export default function MapScreen() {
         }}
         showsUserLocation
       >
-        {incidents.map((incident, index) => (
+        {incidents.map((incident, index) =>
           incident.location ? (
             <Marker
               key={incident.id || index}
@@ -70,12 +74,17 @@ export default function MapScreen() {
               pinColor={getStatusColor(incident.status)}
               onPress={() => setSelectedIncident(incident)}
             />
-          ) : null
-        ))}
+          ) : null,
+        )}
       </MapView>
 
       {selectedIncident ? (
-        <Card style={StyleSheet.flatten([styles.detailCard, { bottom: insets.bottom + Spacing.xl }])}>
+        <Card
+          style={StyleSheet.flatten([
+            styles.detailCard,
+            { bottom: insets.bottom + Spacing.xl },
+          ])}
+        >
           <View style={styles.detailHeader}>
             <ThemedText style={[styles.detailTitle, { color: colors.text }]}>
               {selectedIncident.title}
@@ -84,7 +93,10 @@ export default function MapScreen() {
               <Feather name="x" size={24} color={colors.tabIconDefault} />
             </Pressable>
           </View>
-          <ThemedText style={[styles.detailDesc, { color: colors.tabIconDefault }]} numberOfLines={2}>
+          <ThemedText
+            style={[styles.detailDesc, { color: colors.tabIconDefault }]}
+            numberOfLines={2}
+          >
             {selectedIncident.description}
           </ThemedText>
         </Card>

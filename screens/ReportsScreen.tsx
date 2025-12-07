@@ -25,12 +25,19 @@ export default function ReportsScreen() {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-    const monthAgo = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
+    const monthAgo = new Date(
+      today.getFullYear(),
+      today.getMonth() - 1,
+      today.getDate(),
+    );
 
     setReport({
-      totalToday: incidents.filter(i => new Date(i.createdAt) >= today).length,
-      totalWeek: incidents.filter(i => new Date(i.createdAt) >= weekAgo).length,
-      totalMonth: incidents.filter(i => new Date(i.createdAt) >= monthAgo).length,
+      totalToday: incidents.filter((i) => new Date(i.createdAt) >= today)
+        .length,
+      totalWeek: incidents.filter((i) => new Date(i.createdAt) >= weekAgo)
+        .length,
+      totalMonth: incidents.filter((i) => new Date(i.createdAt) >= monthAgo)
+        .length,
       avgResolutionTime: '2.5h',
     });
   };
@@ -44,7 +51,9 @@ export default function ReportsScreen() {
           </ThemedText>
 
           <View style={styles.reportRow}>
-            <ThemedText style={[styles.label, { color: colors.tabIconDefault }]}>
+            <ThemedText
+              style={[styles.label, { color: colors.tabIconDefault }]}
+            >
               Hoje:
             </ThemedText>
             <ThemedText style={[styles.value, { color: colors.text }]}>
@@ -53,7 +62,9 @@ export default function ReportsScreen() {
           </View>
 
           <View style={styles.reportRow}>
-            <ThemedText style={[styles.label, { color: colors.tabIconDefault }]}>
+            <ThemedText
+              style={[styles.label, { color: colors.tabIconDefault }]}
+            >
               Últimos 7 dias:
             </ThemedText>
             <ThemedText style={[styles.value, { color: colors.text }]}>
@@ -62,7 +73,9 @@ export default function ReportsScreen() {
           </View>
 
           <View style={styles.reportRow}>
-            <ThemedText style={[styles.label, { color: colors.tabIconDefault }]}>
+            <ThemedText
+              style={[styles.label, { color: colors.tabIconDefault }]}
+            >
               Último mês:
             </ThemedText>
             <ThemedText style={[styles.value, { color: colors.text }]}>
@@ -71,7 +84,9 @@ export default function ReportsScreen() {
           </View>
 
           <View style={styles.reportRow}>
-            <ThemedText style={[styles.label, { color: colors.tabIconDefault }]}>
+            <ThemedText
+              style={[styles.label, { color: colors.tabIconDefault }]}
+            >
               Tempo médio de resolução:
             </ThemedText>
             <ThemedText style={[styles.value, { color: colors.text }]}>

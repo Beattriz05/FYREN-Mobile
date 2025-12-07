@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Pressable, FlatList, RefreshControl } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Pressable,
+  FlatList,
+  RefreshControl,
+} from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/Card';
@@ -18,7 +24,9 @@ export default function IncidentListScreen({ navigation }: Props) {
   const { colors } = useTheme();
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [refreshing, setRefreshing] = useState(false);
-  const [filter, setFilter] = useState<'all' | 'pending' | 'in_progress' | 'resolved'>('all');
+  const [filter, setFilter] = useState<
+    'all' | 'pending' | 'in_progress' | 'resolved'
+  >('all');
   const insets = useSafeAreaInsets();
   const tabBarHeight = useBottomTabBarHeight();
 
@@ -28,7 +36,8 @@ export default function IncidentListScreen({ navigation }: Props) {
 
   const loadIncidents = async () => {
     const data = await getIncidents();
-    const filtered = filter === 'all' ? data : data.filter(i => i.status === filter);
+    const filtered =
+      filter === 'all' ? data : data.filter((i) => i.status === filter);
     setIncidents(filtered);
   };
 
@@ -38,7 +47,10 @@ export default function IncidentListScreen({ navigation }: Props) {
     setRefreshing(false);
   };
 
-  const handleStatusUpdate = async (incident: Incident, newStatus: 'pending' | 'in_progress' | 'resolved') => {
+  const handleStatusUpdate = async (
+    incident: Incident,
+    newStatus: 'pending' | 'in_progress' | 'resolved',
+  ) => {
     if (incident.id) {
       await updateIncident(incident.id, { status: newStatus });
       await loadIncidents();
@@ -77,13 +89,23 @@ export default function IncidentListScreen({ navigation }: Props) {
         <ThemedText style={[styles.title, { color: colors.text }]}>
           {item.title}
         </ThemedText>
-        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) + '20' }]}>
-          <ThemedText style={[styles.statusText, { color: getStatusColor(item.status) }]}>
+        <View
+          style={[
+            styles.statusBadge,
+            { backgroundColor: getStatusColor(item.status) + '20' },
+          ]}
+        >
+          <ThemedText
+            style={[styles.statusText, { color: getStatusColor(item.status) }]}
+          >
             {getStatusLabel(item.status)}
           </ThemedText>
         </View>
       </View>
-      <ThemedText style={[styles.description, { color: colors.tabIconDefault }]} numberOfLines={2}>
+      <ThemedText
+        style={[styles.description, { color: colors.tabIconDefault }]}
+        numberOfLines={2}
+      >
         {item.description}
       </ThemedText>
       <View style={styles.actions}>
@@ -91,7 +113,10 @@ export default function IncidentListScreen({ navigation }: Props) {
           <Pressable
             style={({ pressed }) => [
               styles.actionBtn,
-              { backgroundColor: colors.info + '20', opacity: pressed ? 0.7 : 1 },
+              {
+                backgroundColor: colors.info + '20',
+                opacity: pressed ? 0.7 : 1,
+              },
             ]}
             onPress={() => handleStatusUpdate(item, 'in_progress')}
           >
@@ -104,11 +129,16 @@ export default function IncidentListScreen({ navigation }: Props) {
           <Pressable
             style={({ pressed }) => [
               styles.actionBtn,
-              { backgroundColor: colors.success + '20', opacity: pressed ? 0.7 : 1 },
+              {
+                backgroundColor: colors.success + '20',
+                opacity: pressed ? 0.7 : 1,
+              },
             ]}
             onPress={() => handleStatusUpdate(item, 'resolved')}
           >
-            <ThemedText style={[styles.actionBtnText, { color: colors.success }]}>
+            <ThemedText
+              style={[styles.actionBtnText, { color: colors.success }]}
+            >
               Resolver
             </ThemedText>
           </Pressable>
@@ -128,7 +158,12 @@ export default function IncidentListScreen({ navigation }: Props) {
           ]}
           onPress={() => setFilter('all')}
         >
-          <ThemedText style={[styles.filterText, { color: filter === 'all' ? colors.textLight : colors.text }]}>
+          <ThemedText
+            style={[
+              styles.filterText,
+              { color: filter === 'all' ? colors.textLight : colors.text },
+            ]}
+          >
             Todas
           </ThemedText>
         </Pressable>
@@ -140,7 +175,12 @@ export default function IncidentListScreen({ navigation }: Props) {
           ]}
           onPress={() => setFilter('pending')}
         >
-          <ThemedText style={[styles.filterText, { color: filter === 'pending' ? colors.textLight : colors.text }]}>
+          <ThemedText
+            style={[
+              styles.filterText,
+              { color: filter === 'pending' ? colors.textLight : colors.text },
+            ]}
+          >
             Pendentes
           </ThemedText>
         </Pressable>
@@ -152,7 +192,15 @@ export default function IncidentListScreen({ navigation }: Props) {
           ]}
           onPress={() => setFilter('in_progress')}
         >
-          <ThemedText style={[styles.filterText, { color: filter === 'in_progress' ? colors.textLight : colors.text }]}>
+          <ThemedText
+            style={[
+              styles.filterText,
+              {
+                color:
+                  filter === 'in_progress' ? colors.textLight : colors.text,
+              },
+            ]}
+          >
             Andamento
           </ThemedText>
         </Pressable>
@@ -164,7 +212,12 @@ export default function IncidentListScreen({ navigation }: Props) {
           ]}
           onPress={() => setFilter('resolved')}
         >
-          <ThemedText style={[styles.filterText, { color: filter === 'resolved' ? colors.textLight : colors.text }]}>
+          <ThemedText
+            style={[
+              styles.filterText,
+              { color: filter === 'resolved' ? colors.textLight : colors.text },
+            ]}
+          >
             Resolvidos
           </ThemedText>
         </Pressable>
@@ -179,12 +232,18 @@ export default function IncidentListScreen({ navigation }: Props) {
           { paddingBottom: tabBarHeight + Spacing.xl },
         ]}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.secondary} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.secondary}
+          />
         }
         ListEmptyComponent={
           <View style={styles.empty}>
             <Feather name="inbox" size={64} color={colors.tabIconDefault} />
-            <ThemedText style={[styles.emptyText, { color: colors.tabIconDefault }]}>
+            <ThemedText
+              style={[styles.emptyText, { color: colors.tabIconDefault }]}
+            >
               Nenhuma ocorrência encontrada
             </ThemedText>
           </View>

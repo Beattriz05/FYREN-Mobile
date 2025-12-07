@@ -12,7 +12,7 @@ interface ThemeToggleProps {
 
 const ThemeToggle: React.FC<ThemeToggleProps> = ({ value, onChange }) => {
   const { colors } = useTheme();
-  
+
   const options = [
     { id: 'light' as const, label: 'Claro', icon: 'wb-sunny' as const },
     { id: 'dark' as const, label: 'Escuro', icon: 'nights-stay' as const },
@@ -20,14 +20,21 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({ value, onChange }) => {
   ];
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.backgroundTertiary || 'rgba(0,0,0,0.05)' }]}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: colors.backgroundTertiary || 'rgba(0,0,0,0.05)' },
+      ]}
+    >
       {options.map((option) => (
         <TouchableOpacity
           key={option.id}
           style={[
             styles.option,
             value === option.id && styles.optionActive,
-            value === option.id && { backgroundColor: colors.bombeiros?.primary + '20' },
+            value === option.id && {
+              backgroundColor: colors.bombeiros?.primary + '20',
+            },
           ]}
           onPress={() => onChange(option.id)}
           activeOpacity={0.7}
@@ -35,15 +42,18 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({ value, onChange }) => {
           <MaterialIcons // Alterado de Icon para MaterialIcons
             name={option.icon}
             size={20}
-            color={value === option.id ? colors.bombeiros?.primary : colors.textLight}
+            color={
+              value === option.id ? colors.bombeiros?.primary : colors.textLight
+            }
           />
-          <Spacer size={4} /> {/* Alterado para número, já que o Spacer aceita number */}
+          <Spacer size={4} />{' '}
+          {/* Alterado para número, já que o Spacer aceita number */}
           <ThemedText
             style={[
               styles.optionLabel,
-              value === option.id && { 
-                color: colors.bombeiros?.primary || colors.primary, 
-                fontWeight: '600' 
+              value === option.id && {
+                color: colors.bombeiros?.primary || colors.primary,
+                fontWeight: '600',
               },
             ]}
           >

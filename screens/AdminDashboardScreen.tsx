@@ -14,7 +14,11 @@ type Props = NativeStackScreenProps<AdminTabParamList, 'AdminDashboard'>;
 
 export default function AdminDashboardScreen({ navigation }: Props) {
   const { colors } = useTheme();
-  const [stats, setStats] = useState({ users: 0, incidents: 0, activeUsers: 0 });
+  const [stats, setStats] = useState({
+    users: 0,
+    incidents: 0,
+    activeUsers: 0,
+  });
 
   useEffect(() => {
     loadStats();
@@ -25,7 +29,7 @@ export default function AdminDashboardScreen({ navigation }: Props) {
     const incidents = await getIncidents();
     setStats({
       users: users.length,
-      activeUsers: users.filter(u => u.active).length,
+      activeUsers: users.filter((u) => u.active).length,
       incidents: incidents.length,
     });
   };
@@ -37,35 +41,58 @@ export default function AdminDashboardScreen({ navigation }: Props) {
           <ThemedText style={[styles.title, { color: colors.text }]}>
             Painel Administrativo
           </ThemedText>
-          <ThemedText style={[styles.subtitle, { color: colors.tabIconDefault }]}>
+          <ThemedText
+            style={[styles.subtitle, { color: colors.tabIconDefault }]}
+          >
             Gestão do sistema Fyren
           </ThemedText>
         </Card>
 
         <View style={styles.statsGrid}>
-          <Card style={StyleSheet.flatten([styles.statCard, { borderLeftColor: colors.secondary, borderLeftWidth: 4 }])}>
+          <Card
+            style={StyleSheet.flatten([
+              styles.statCard,
+              { borderLeftColor: colors.secondary, borderLeftWidth: 4 },
+            ])}
+          >
             <ThemedText style={[styles.statValue, { color: colors.text }]}>
               {stats.users}
             </ThemedText>
-            <ThemedText style={[styles.statLabel, { color: colors.tabIconDefault }]}>
+            <ThemedText
+              style={[styles.statLabel, { color: colors.tabIconDefault }]}
+            >
               Total de Usuários
             </ThemedText>
           </Card>
 
-          <Card style={StyleSheet.flatten([styles.statCard, { borderLeftColor: colors.success, borderLeftWidth: 4 }])}>
+          <Card
+            style={StyleSheet.flatten([
+              styles.statCard,
+              { borderLeftColor: colors.success, borderLeftWidth: 4 },
+            ])}
+          >
             <ThemedText style={[styles.statValue, { color: colors.text }]}>
               {stats.activeUsers}
             </ThemedText>
-            <ThemedText style={[styles.statLabel, { color: colors.tabIconDefault }]}>
+            <ThemedText
+              style={[styles.statLabel, { color: colors.tabIconDefault }]}
+            >
               Usuários Ativos
             </ThemedText>
           </Card>
 
-          <Card style={StyleSheet.flatten([styles.statCard, { borderLeftColor: colors.accent, borderLeftWidth: 4 }])}>
+          <Card
+            style={StyleSheet.flatten([
+              styles.statCard,
+              { borderLeftColor: colors.accent, borderLeftWidth: 4 },
+            ])}
+          >
             <ThemedText style={[styles.statValue, { color: colors.text }]}>
               {stats.incidents}
             </ThemedText>
-            <ThemedText style={[styles.statLabel, { color: colors.tabIconDefault }]}>
+            <ThemedText
+              style={[styles.statLabel, { color: colors.tabIconDefault }]}
+            >
               Total de Ocorrências
             </ThemedText>
           </Card>
@@ -79,7 +106,10 @@ export default function AdminDashboardScreen({ navigation }: Props) {
           <Pressable
             style={({ pressed }) => [
               styles.actionButton,
-              { backgroundColor: colors.backgroundDefault, opacity: pressed ? 0.7 : 1 },
+              {
+                backgroundColor: colors.backgroundDefault,
+                opacity: pressed ? 0.7 : 1,
+              },
             ]}
             onPress={() => navigation.navigate('UserManagement')}
           >
@@ -87,13 +117,20 @@ export default function AdminDashboardScreen({ navigation }: Props) {
             <ThemedText style={[styles.actionText, { color: colors.text }]}>
               Gestão de Usuários
             </ThemedText>
-            <Feather name="chevron-right" size={20} color={colors.tabIconDefault} />
+            <Feather
+              name="chevron-right"
+              size={20}
+              color={colors.tabIconDefault}
+            />
           </Pressable>
 
           <Pressable
             style={({ pressed }) => [
               styles.actionButton,
-              { backgroundColor: colors.backgroundDefault, opacity: pressed ? 0.7 : 1 },
+              {
+                backgroundColor: colors.backgroundDefault,
+                opacity: pressed ? 0.7 : 1,
+              },
             ]}
             onPress={() => navigation.navigate('Audit')}
           >
@@ -101,7 +138,11 @@ export default function AdminDashboardScreen({ navigation }: Props) {
             <ThemedText style={[styles.actionText, { color: colors.text }]}>
               Auditoria do Sistema
             </ThemedText>
-            <Feather name="chevron-right" size={20} color={colors.tabIconDefault} />
+            <Feather
+              name="chevron-right"
+              size={20}
+              color={colors.tabIconDefault}
+            />
           </Pressable>
         </Card>
       </View>

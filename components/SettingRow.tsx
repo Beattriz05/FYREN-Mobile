@@ -4,7 +4,7 @@ import { ThemedText } from './ThemedText';
 import Spacer from './Spacer';
 import { useTheme } from '../hooks/useTheme';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Colors } from '@/constants/theme'; 
+import { Colors } from '@/constants/theme';
 
 interface SettingRowProps {
   icon?: string;
@@ -34,7 +34,7 @@ const SettingRow: React.FC<SettingRowProps> = ({
   type = 'default',
 }) => {
   const { colors } = useTheme();
-  
+
   const getIconColor = () => {
     if (type === 'danger') return colors.error || '#F44336'; // Usar colors.error
     return colors.textLight || '#9E9E9E';
@@ -49,16 +49,16 @@ const SettingRow: React.FC<SettingRowProps> = ({
     <View style={[styles.container, onPress && styles.pressable]}>
       {icon && (
         <>
-          <MaterialIcons 
-            name={icon as any} 
-            size={24} 
-            color={getIconColor()} 
-            style={styles.icon} 
+          <MaterialIcons
+            name={icon as any}
+            size={24}
+            color={getIconColor()}
+            style={styles.icon}
           />
           <Spacer size="s" horizontal />
         </>
       )}
-      
+
       <View style={styles.content}>
         <View style={styles.textContainer}>
           <ThemedText style={[styles.label, { color: getTextColor() }]}>
@@ -75,26 +75,28 @@ const SettingRow: React.FC<SettingRowProps> = ({
             </ThemedText>
           )}
         </View>
-        
+
         {children && <View style={styles.children}>{children}</View>}
-        
+
         {showSwitch && (
           <Switch
             value={switchValue}
             onValueChange={onSwitchChange}
-            trackColor={{ 
-              false: colors.border || '#E0E0E0', 
-              true: colors.primary || '#0E2345' 
+            trackColor={{
+              false: colors.border || '#E0E0E0',
+              true: colors.primary || '#0E2345',
             }}
-            thumbColor={switchValue ? '#FFFFFF' : colors.backgroundTertiary || '#F5F5F5'}
+            thumbColor={
+              switchValue ? '#FFFFFF' : colors.backgroundTertiary || '#F5F5F5'
+            }
           />
         )}
-        
+
         {showChevron && (
-          <MaterialIcons 
-            name="chevron-right" 
-            size={24} 
-            color={colors.textLight || '#9E9E9E'} 
+          <MaterialIcons
+            name="chevron-right"
+            size={24}
+            color={colors.textLight || '#9E9E9E'}
           />
         )}
       </View>

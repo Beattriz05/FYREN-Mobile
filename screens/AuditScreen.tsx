@@ -75,7 +75,12 @@ export default function AuditScreen() {
   const renderItem = ({ item }: { item: AuditLog }) => (
     <Card style={styles.logCard}>
       <View style={styles.logHeader}>
-        <View style={[styles.iconCircle, { backgroundColor: getTypeColor(item.type) + '20' }]}>
+        <View
+          style={[
+            styles.iconCircle,
+            { backgroundColor: getTypeColor(item.type) + '20' },
+          ]}
+        >
           <Feather
             name={getTypeIcon(item.type) as any}
             size={20}
@@ -86,10 +91,14 @@ export default function AuditScreen() {
           <ThemedText style={[styles.logAction, { color: colors.text }]}>
             {item.action}
           </ThemedText>
-          <ThemedText style={[styles.logUser, { color: colors.tabIconDefault }]}>
+          <ThemedText
+            style={[styles.logUser, { color: colors.tabIconDefault }]}
+          >
             Por: {item.user}
           </ThemedText>
-          <ThemedText style={[styles.logTime, { color: colors.tabIconDefault }]}>
+          <ThemedText
+            style={[styles.logTime, { color: colors.tabIconDefault }]}
+          >
             {new Date(item.timestamp).toLocaleString('pt-BR')}
           </ThemedText>
         </View>

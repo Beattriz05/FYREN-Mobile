@@ -24,17 +24,17 @@ import { Colors } from '@/constants/theme';
 
 const ProfileScreen = () => {
   const { user, logout } = useAuth();
-  const { 
-    mode, 
-    fontSizeScale, 
-    isHighContrast, 
+  const {
+    mode,
+    fontSizeScale,
+    isHighContrast,
     colors,
-    toggleTheme, 
-    setFontSize, 
+    toggleTheme,
+    setFontSize,
     toggleHighContrast,
   } = useTheme();
   const { showToast } = useToast();
-  
+
   const [loading, setLoading] = useState(false);
 
   const handleLogout = () => {
@@ -58,7 +58,7 @@ const ProfileScreen = () => {
             }
           },
         },
-      ]
+      ],
     );
   };
 
@@ -82,10 +82,16 @@ const ProfileScreen = () => {
   };
 
   // CORREÇÃO 1: Verificar se o usuário é administrador de forma segura
-  const isAdmin = user?.role && ['Admin', 'Administrador', 'admin'].includes(user.role);
+  const isAdmin =
+    user?.role && ['Admin', 'Administrador', 'admin'].includes(user.role);
 
   // CORREÇÃO 2: Converter mode para tipo aceito pelo ThemeToggle
-  const themeMode = mode === 'highContrast' ? 'auto' : (mode === 'light' || mode === 'dark' || mode === 'auto' ? mode : 'auto');
+  const themeMode =
+    mode === 'highContrast'
+      ? 'auto'
+      : mode === 'light' || mode === 'dark' || mode === 'auto'
+        ? mode
+        : 'auto';
 
   return (
     <ThemedView style={styles.container}>
@@ -106,21 +112,29 @@ const ProfileScreen = () => {
                 // Navegar para tela de edição de perfil
               }}
             />
-            
+
             <Spacer size="l" />
-            
+
             <View style={styles.userInfo}>
               <ThemedText type="title" style={styles.userName}>
                 {user?.name || 'Administrador'}
               </ThemedText>
-              
+
               {/* CORREÇÃO 3: Remover type="default" que não existe no ThemedText */}
               <ThemedText style={styles.userEmail}>
                 {user?.email || 'admin@cbmpe.com'}
               </ThemedText>
-              
+
               <View style={styles.roleContainer}>
-                <View style={[styles.roleBadge, { backgroundColor: colors.bombeiros?.primary || Colors.bombeiros.primary }]}>
+                <View
+                  style={[
+                    styles.roleBadge,
+                    {
+                      backgroundColor:
+                        colors.bombeiros?.primary || Colors.bombeiros.primary,
+                    },
+                  ]}
+                >
                   <MaterialIcons name="verified" size={16} color="#FFF" />
                   <Spacer size="xs" horizontal />
                   <ThemedText style={styles.roleText}>
@@ -129,9 +143,9 @@ const ProfileScreen = () => {
                 </View>
               </View>
             </View>
-            
+
             <Spacer size="l" />
-            
+
             <Button
               title="Editar Perfil"
               variant="outline"
@@ -159,7 +173,13 @@ const ProfileScreen = () => {
           <SettingRow
             label="Tema"
             description="Escolha o tema do aplicativo"
-            value={mode === 'light' ? 'Claro' : mode === 'dark' ? 'Escuro' : 'Automático'}
+            value={
+              mode === 'light'
+                ? 'Claro'
+                : mode === 'dark'
+                  ? 'Escuro'
+                  : 'Automático'
+            }
           >
             {/* CORREÇÃO 4: Usar themeMode convertido */}
             <ThemeToggle value={themeMode} onChange={toggleTheme} />
@@ -178,9 +198,11 @@ const ProfileScreen = () => {
                   key={option.value}
                   style={[
                     styles.fontSizeOption,
-                    fontSizeScale === option.value && styles.fontSizeOptionActive,
+                    fontSizeScale === option.value &&
+                      styles.fontSizeOptionActive,
                     fontSizeScale === option.value && {
-                      backgroundColor: colors.bombeiros?.primary || Colors.bombeiros.primary,
+                      backgroundColor:
+                        colors.bombeiros?.primary || Colors.bombeiros.primary,
                     },
                   ]}
                   onPress={() => setFontSize(option.value)}
@@ -188,7 +210,8 @@ const ProfileScreen = () => {
                   <ThemedText
                     style={[
                       styles.fontSizeText,
-                      fontSizeScale === option.value && styles.fontSizeTextActive,
+                      fontSizeScale === option.value &&
+                        styles.fontSizeTextActive,
                     ]}
                   >
                     {option.label.charAt(0)}
@@ -217,7 +240,9 @@ const ProfileScreen = () => {
           <View style={styles.sectionTitleContainer}>
             <MaterialIcons name="settings" size={20} color={colors.text} />
             <Spacer size="s" horizontal />
-            <ThemedText style={styles.sectionTitleText}>Preferências</ThemedText>
+            <ThemedText style={styles.sectionTitleText}>
+              Preferências
+            </ThemedText>
           </View>
 
           <Spacer size="m" />
@@ -284,11 +309,7 @@ const ProfileScreen = () => {
 
           <View style={styles.divider} />
 
-          <SettingRow
-            label="Termos de Uso"
-            showChevron
-            onPress={openTerms}
-          />
+          <SettingRow label="Termos de Uso" showChevron onPress={openTerms} />
 
           <View style={styles.divider} />
 
@@ -326,12 +347,18 @@ const ProfileScreen = () => {
         {isAdmin && (
           <>
             <Spacer size="l" />
-            
+
             <Card style={styles.adminCard}>
               <View style={styles.sectionTitleContainer}>
-                <MaterialIcons name="admin-panel-settings" size={20} color={Colors.bombeiros.info} />
+                <MaterialIcons
+                  name="admin-panel-settings"
+                  size={20}
+                  color={Colors.bombeiros.info}
+                />
                 <Spacer size="s" horizontal />
-                <ThemedText style={[styles.sectionTitleText, styles.adminTitle]}>
+                <ThemedText
+                  style={[styles.sectionTitleText, styles.adminTitle]}
+                >
                   Painel de Administração
                 </ThemedText>
               </View>
@@ -387,7 +414,11 @@ const ProfileScreen = () => {
 
         {/* Rodapé */}
         <View style={styles.footer}>
-          <MaterialIcons name="local-fire-department" size={32} color={colors.bombeiros?.primary || Colors.bombeiros.primary} />
+          <MaterialIcons
+            name="local-fire-department"
+            size={32}
+            color={colors.bombeiros?.primary || Colors.bombeiros.primary}
+          />
           <Spacer size="s" />
           <ThemedText type="title" style={styles.footerText}>
             FYREN Mobile

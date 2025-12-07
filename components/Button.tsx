@@ -88,17 +88,15 @@ const Button: React.FC<ButtonProps> = ({
       activeOpacity={0.8}
     >
       {loading ? (
-        <ActivityIndicator 
-          color={variant === 'primary' || variant === 'danger' ? '#FFFFFF' : '#2196F3'} 
+        <ActivityIndicator
+          color={
+            variant === 'primary' || variant === 'danger'
+              ? '#FFFFFF'
+              : '#2196F3'
+          }
         />
       ) : (
-        <ThemedText
-          style={[
-            styles.text,
-            getTextVariantStyle(),
-            textStyle,
-          ]}
-        >
+        <ThemedText style={[styles.text, getTextVariantStyle(), textStyle]}>
           {title}
         </ThemedText>
       )}

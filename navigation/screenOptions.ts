@@ -1,8 +1,8 @@
-import { Platform, StyleSheet } from "react-native";
-import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
-import * as GlassEffect from "expo-glass-effect";
-import { Colors } from "@/constants/theme";
-import React from "react";
+import { Platform, StyleSheet } from 'react-native';
+import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
+import * as GlassEffect from 'expo-glass-effect';
+import { Colors } from '@/constants/theme';
+import React from 'react';
 
 interface ScreenOptionsParams {
   theme: {
@@ -28,7 +28,7 @@ type HeaderStyleType = 'default' | 'transparent' | 'solid' | 'blurred';
 const getHeaderStyleConfig = (
   type: HeaderStyleType,
   theme: ScreenOptionsParams['theme'],
-  isDark: boolean
+  isDark: boolean,
 ) => {
   const configs = {
     default: {
@@ -43,14 +43,18 @@ const getHeaderStyleConfig = (
     },
     solid: {
       transparent: false,
-      backgroundColor: isDark ? 'rgba(18, 18, 18, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+      backgroundColor: isDark
+        ? 'rgba(18, 18, 18, 0.95)'
+        : 'rgba(255, 255, 255, 0.95)',
       blurEffect: undefined as any,
     },
     blurred: {
       transparent: false,
       backgroundColor: Platform.select({
         ios: 'transparent',
-        android: isDark ? 'rgba(18, 18, 18, 0.85)' : 'rgba(255, 255, 255, 0.85)',
+        android: isDark
+          ? 'rgba(18, 18, 18, 0.85)'
+          : 'rgba(255, 255, 255, 0.85)',
         web: isDark ? 'rgba(18,18,18,0.8)' : 'rgba(255,255,255,0.8)',
       }),
       blurEffect: isDark ? 'dark' : 'light',
@@ -73,10 +77,10 @@ const isGlassEffectAvailable = (): boolean => {
 // Gera opções de animação baseadas na plataforma
 const getAnimationOptions = () => {
   const glassAvailable = isGlassEffectAvailable();
-  
+
   return {
     gestureEnabled: true,
-    gestureDirection: "horizontal" as const,
+    gestureDirection: 'horizontal' as const,
     fullScreenGestureEnabled: glassAvailable ? false : Platform.OS === 'ios',
     animation: Platform.select({
       ios: 'slide_from_right',
@@ -101,13 +105,13 @@ export const getCommonScreenOptions = ({
 }: ScreenOptionsParams): NativeStackNavigationOptions => {
   const headerStyleConfig = getHeaderStyleConfig(headerType, theme, isDark);
   const animationOptions = getAnimationOptions();
-  
+
   // Cor do texto do header baseado no tema
   const headerTintColor = theme.text;
-  
+
   // Cor do título baseada no tema
   const headerTitleColor = theme.text;
-  
+
   // Estilo do header baseado na plataforma
   const headerStyle = {
     backgroundColor: headerStyleConfig.backgroundColor,
@@ -125,8 +129,8 @@ export const getCommonScreenOptions = ({
     color: headerTitleColor,
     fontSize: 18,
     fontWeight: '700' as const,
-    fontFamily: Platform.select({ 
-      ios: 'System', 
+    fontFamily: Platform.select({
+      ios: 'System',
       android: 'sans-serif-medium',
       web: 'system-ui',
     }),
@@ -136,36 +140,36 @@ export const getCommonScreenOptions = ({
   const baseOptions: NativeStackNavigationOptions = {
     // Configurações de header
     headerShown: showHeader && headerShown,
-    headerTitleAlign: "center" as const,
+    headerTitleAlign: 'center' as const,
     headerTransparent: headerStyleConfig.transparent,
     headerBlurEffect: headerStyleConfig.blurEffect,
     headerTintColor,
     headerTitleStyle,
     headerStyle,
-    
+
     // Configurações de navegação
     ...animationOptions,
     gestureEnabled,
-    
+
     // Configurações de conteúdo
     contentStyle: {
       backgroundColor: theme.backgroundRoot,
       flex: 1,
     },
-    
+
     // Configurações de status bar (se disponível)
     ...(Platform.OS === 'ios' && {
       statusBarStyle: isDark ? 'light' : 'dark',
       statusBarAnimation: 'fade',
     }),
-    
+
     // Configurações de apresentação
     presentation: Platform.select({
       ios: 'card',
       android: 'card',
       web: 'card',
     }) as 'card' | 'modal',
-    
+
     // Animação personalizada para Android
     ...(Platform.OS === 'android' && {
       animation: 'slide_from_right',
@@ -187,7 +191,7 @@ export const getCommonScreenOptions = ({
 
 // Opções específicas para telas de modal
 export const getModalScreenOptions = (
-  params: ScreenOptionsParams
+  params: ScreenOptionsParams,
 ): NativeStackNavigationOptions => ({
   ...getCommonScreenOptions({ ...params, headerType: 'solid' }),
   presentation: 'modal' as const,
@@ -195,13 +199,15 @@ export const getModalScreenOptions = (
   headerShown: true,
   headerTitleAlign: 'center' as const,
   ...(Platform.OS === 'ios' && {
-    headerBlurEffect: params.isDark ? 'systemUltraThinMaterialDark' : 'systemUltraThinMaterialLight',
+    headerBlurEffect: params.isDark
+      ? 'systemUltraThinMaterialDark'
+      : 'systemUltraThinMaterialLight',
   }),
 });
 
 // Opções para telas sem header (fullscreen)
 export const getFullScreenOptions = (
-  params: ScreenOptionsParams
+  params: ScreenOptionsParams,
 ): NativeStackNavigationOptions => ({
   ...getCommonScreenOptions({ ...params, headerShown: false }),
   headerTransparent: true,
@@ -220,14 +226,16 @@ export const getSolidHeaderOptions = (
   options?: {
     elevation?: number;
     showDivider?: boolean;
-  }
+  },
 ): NativeStackNavigationOptions => {
   const { elevation = 4, showDivider = true } = options || {};
-  
+
   return {
     ...getCommonScreenOptions({ ...params, headerType: 'solid' }),
     headerStyle: {
-      backgroundColor: params.isDark ? 'rgba(18, 18, 18, 0.98)' : 'rgba(255, 255, 255, 0.98)',
+      backgroundColor: params.isDark
+        ? 'rgba(18, 18, 18, 0.98)'
+        : 'rgba(255, 255, 255, 0.98)',
       ...(Platform.OS === 'android' && {
         elevation,
         shadowColor: '#000',
@@ -243,7 +251,7 @@ export const getSolidHeaderOptions = (
 
 // Opções para telas de formulário (com keyboard avoiding)
 export const getFormScreenOptions = (
-  params: ScreenOptionsParams
+  params: ScreenOptionsParams,
 ): NativeStackNavigationOptions => ({
   ...getCommonScreenOptions({ ...params, headerType: 'solid' }),
   headerShown: true,
@@ -260,7 +268,7 @@ export const getFormScreenOptions = (
 // Utilitário para gerar estilo de header personalizado
 export const createHeaderStyles = (
   theme: ScreenOptionsParams['theme'],
-  isDark: boolean
+  isDark: boolean,
 ) => {
   return StyleSheet.create({
     defaultHeader: {
@@ -275,7 +283,9 @@ export const createHeaderStyles = (
       shadowOpacity: 0,
     },
     solidHeader: {
-      backgroundColor: isDark ? 'rgba(18, 18, 18, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+      backgroundColor: isDark
+        ? 'rgba(18, 18, 18, 0.95)'
+        : 'rgba(255, 255, 255, 0.95)',
       borderBottomWidth: 1,
       borderBottomColor: isDark ? '#333' : '#EEE',
       elevation: 4,
@@ -287,7 +297,9 @@ export const createHeaderStyles = (
     blurredHeader: {
       backgroundColor: Platform.select({
         ios: 'transparent',
-        android: isDark ? 'rgba(18, 18, 18, 0.85)' : 'rgba(255, 255, 255, 0.85)',
+        android: isDark
+          ? 'rgba(18, 18, 18, 0.85)'
+          : 'rgba(255, 255, 255, 0.85)',
       }),
     },
     headerTitle: {
@@ -308,24 +320,27 @@ export const createHeaderStyles = (
 
 // Hook para usar as opções de tela (se precisar de contexto React)
 export const useScreenOptions = (params: ScreenOptionsParams) => {
-  const memoizedOptions = React.useMemo(() => ({
-    common: getCommonScreenOptions(params),
-    modal: getModalScreenOptions(params),
-    fullScreen: getFullScreenOptions(params),
-    solidHeader: getSolidHeaderOptions(params),
-    form: getFormScreenOptions(params),
-  }), [params]);
+  const memoizedOptions = React.useMemo(
+    () => ({
+      common: getCommonScreenOptions(params),
+      modal: getModalScreenOptions(params),
+      fullScreen: getFullScreenOptions(params),
+      solidHeader: getSolidHeaderOptions(params),
+      form: getFormScreenOptions(params),
+    }),
+    [params],
+  );
 
   return memoizedOptions;
 };
 
 // Exportando tipos para uso externo
 export type { ScreenOptionsParams, HeaderStyleType };
-export type ScreenOptionsPreset = 
-  | 'common' 
-  | 'modal' 
-  | 'fullScreen' 
-  | 'solidHeader' 
+export type ScreenOptionsPreset =
+  | 'common'
+  | 'modal'
+  | 'fullScreen'
+  | 'solidHeader'
   | 'form';
 
 // Função principal que exporta todas as opções

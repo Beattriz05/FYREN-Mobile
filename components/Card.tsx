@@ -1,7 +1,7 @@
-import React, { ReactNode } from "react";
-import { StyleSheet, View, ViewStyle, TouchableOpacity } from "react-native";
-import { useTheme } from "@/hooks/useTheme";
-import { BorderRadius, Spacing } from "@/constants/theme";
+import React, { ReactNode } from 'react';
+import { StyleSheet, View, ViewStyle, TouchableOpacity } from 'react-native';
+import { useTheme } from '@/hooks/useTheme';
+import { BorderRadius, Spacing } from '@/constants/theme';
 
 export interface CardProps {
   children: ReactNode;
@@ -15,17 +15,17 @@ export interface CardProps {
 const getCardStyles = (
   elevation: number,
   colors: any,
-  variant: 'default' | 'outlined' | 'elevated'
+  variant: 'default' | 'outlined' | 'elevated',
 ): ViewStyle => {
   const baseStyle: ViewStyle = {};
-  
+
   switch (variant) {
     case 'outlined':
       baseStyle.borderWidth = 1;
       baseStyle.borderColor = colors.border || '#E0E0E0';
       baseStyle.backgroundColor = colors.card || colors.backgroundSecondary;
       break;
-      
+
     case 'elevated':
       baseStyle.backgroundColor = colors.card || colors.backgroundSecondary;
       baseStyle.shadowColor = '#000';
@@ -34,7 +34,7 @@ const getCardStyles = (
       baseStyle.shadowRadius = elevation * 2;
       baseStyle.elevation = elevation;
       break;
-      
+
     case 'default':
     default:
       if (elevation > 0) {
@@ -50,38 +50,32 @@ const getCardStyles = (
             baseStyle.backgroundColor = colors.backgroundTertiary;
             break;
           default:
-            baseStyle.backgroundColor = colors.card || colors.backgroundSecondary;
+            baseStyle.backgroundColor =
+              colors.card || colors.backgroundSecondary;
         }
       } else {
         baseStyle.backgroundColor = colors.card || colors.backgroundSecondary;
       }
       break;
   }
-  
+
   return baseStyle;
 };
 
-export function Card({ 
-  children, 
-  style, 
+export function Card({
+  children,
+  style,
   elevation = 0,
   padding = true,
   onPress,
-  variant = 'default'
+  variant = 'default',
 }: CardProps) {
   const { colors } = useTheme();
-  
+
   const cardStyles = getCardStyles(elevation, colors, variant);
-  
+
   const Content = (
-    <View
-      style={[
-        styles.card,
-        cardStyles,
-        padding && styles.padding,
-        style,
-      ]}
-    >
+    <View style={[styles.card, cardStyles, padding && styles.padding, style]}>
       {children}
     </View>
   );

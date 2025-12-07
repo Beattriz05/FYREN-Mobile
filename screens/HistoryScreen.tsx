@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Pressable, FlatList, RefreshControl } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Pressable,
+  FlatList,
+  RefreshControl,
+} from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/Card';
@@ -71,13 +77,26 @@ export default function HistoryScreen({ navigation }: Props) {
           <ThemedText style={[styles.title, { color: colors.text }]}>
             {item.title}
           </ThemedText>
-          <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) + '20' }]}>
-            <ThemedText style={[styles.statusText, { color: getStatusColor(item.status) }]}>
+          <View
+            style={[
+              styles.statusBadge,
+              { backgroundColor: getStatusColor(item.status) + '20' },
+            ]}
+          >
+            <ThemedText
+              style={[
+                styles.statusText,
+                { color: getStatusColor(item.status) },
+              ]}
+            >
               {getStatusLabel(item.status)}
             </ThemedText>
           </View>
         </View>
-        <ThemedText style={[styles.description, { color: colors.tabIconDefault }]} numberOfLines={2}>
+        <ThemedText
+          style={[styles.description, { color: colors.tabIconDefault }]}
+          numberOfLines={2}
+        >
           {item.description}
         </ThemedText>
         <View style={styles.footer}>
@@ -108,12 +127,18 @@ export default function HistoryScreen({ navigation }: Props) {
           { paddingBottom: tabBarHeight + Spacing.xl },
         ]}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.secondary} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.secondary}
+          />
         }
         ListEmptyComponent={
           <View style={styles.empty}>
             <Feather name="inbox" size={64} color={colors.tabIconDefault} />
-            <ThemedText style={[styles.emptyText, { color: colors.tabIconDefault }]}>
+            <ThemedText
+              style={[styles.emptyText, { color: colors.tabIconDefault }]}
+            >
               Nenhuma ocorrência registrada
             </ThemedText>
           </View>

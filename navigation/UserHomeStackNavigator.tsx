@@ -23,8 +23,10 @@ export default function UserHomeStackNavigator() {
   const { colors } = useTheme();
 
   // Use cores que existem no seu tema
-  const headerBackgroundColor = colors.backgroundRoot || colors.backgroundDefault || '#FFFFFF';
-  const contentBackgroundColor = colors.backgroundRoot || colors.backgroundDefault || '#FFFFFF';
+  const headerBackgroundColor =
+    colors.backgroundRoot || colors.backgroundDefault || '#FFFFFF';
+  const contentBackgroundColor =
+    colors.backgroundRoot || colors.backgroundDefault || '#FFFFFF';
 
   return (
     <Stack.Navigator
@@ -60,7 +62,7 @@ export default function UserHomeStackNavigator() {
               icon="list"
             />
           ),
-          headerBackTitle: "Voltar",
+          headerBackTitle: 'Voltar',
         }}
       />
       <Stack.Screen
@@ -74,7 +76,7 @@ export default function UserHomeStackNavigator() {
               icon="alert-circle"
             />
           ),
-          headerBackTitle: "Voltar",
+          headerBackTitle: 'Voltar',
         })}
       />
       <Stack.Screen
@@ -83,12 +85,14 @@ export default function UserHomeStackNavigator() {
         options={({ route }) => ({
           headerTitle: () => (
             <HeaderTitle
-              title={route.params?.incident ? "Editar Ocorrência" : "Nova Ocorrência"}
+              title={
+                route.params?.incident ? 'Editar Ocorrência' : 'Nova Ocorrência'
+              }
               subtitle="Registro de ocorrência"
               icon="edit-3"
             />
           ),
-          headerBackTitle: "Voltar",
+          headerBackTitle: 'Voltar',
         })}
       />
     </Stack.Navigator>

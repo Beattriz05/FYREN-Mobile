@@ -38,7 +38,7 @@ export default function UserManagementScreen() {
             await loadUsers();
           },
         },
-      ]
+      ],
     );
   };
 
@@ -71,19 +71,30 @@ export default function UserManagementScreen() {
   const renderItem = ({ item }: { item: AppUser }) => (
     <Card style={styles.userCard}>
       <View style={styles.userHeader}>
-        <View style={[styles.avatar, { backgroundColor: colors.secondary + '20' }]}>
+        <View
+          style={[styles.avatar, { backgroundColor: colors.secondary + '20' }]}
+        >
           <Feather name="user" size={24} color={colors.secondary} />
         </View>
         <View style={styles.userInfo}>
           <ThemedText style={[styles.userName, { color: colors.text }]}>
             {item.name}
           </ThemedText>
-          <ThemedText style={[styles.userEmail, { color: colors.tabIconDefault }]}>
+          <ThemedText
+            style={[styles.userEmail, { color: colors.tabIconDefault }]}
+          >
             {item.email}
           </ThemedText>
         </View>
-        <View style={[styles.roleBadge, { backgroundColor: getRoleColor(item.role) + '20' }]}>
-          <ThemedText style={[styles.roleText, { color: getRoleColor(item.role) }]}>
+        <View
+          style={[
+            styles.roleBadge,
+            { backgroundColor: getRoleColor(item.role) + '20' },
+          ]}
+        >
+          <ThemedText
+            style={[styles.roleText, { color: getRoleColor(item.role) }]}
+          >
             {getRoleLabel(item.role)}
           </ThemedText>
         </View>
@@ -92,13 +103,20 @@ export default function UserManagementScreen() {
         style={({ pressed }) => [
           styles.statusButton,
           {
-            backgroundColor: item.active ? colors.error + '20' : colors.success + '20',
+            backgroundColor: item.active
+              ? colors.error + '20'
+              : colors.success + '20',
             opacity: pressed ? 0.7 : 1,
           },
         ]}
         onPress={() => toggleUserStatus(item)}
       >
-        <ThemedText style={[styles.statusText, { color: item.active ? colors.error : colors.success }]}>
+        <ThemedText
+          style={[
+            styles.statusText,
+            { color: item.active ? colors.error : colors.success },
+          ]}
+        >
           {item.active ? 'Desativar' : 'Ativar'}
         </ThemedText>
       </Pressable>

@@ -1,11 +1,11 @@
 import React, { useEffect, useRef } from 'react';
-import { 
-  View, 
-  ActivityIndicator, 
-  StyleSheet, 
-  Animated, 
+import {
+  View,
+  ActivityIndicator,
+  StyleSheet,
+  Animated,
   Easing,
-  Dimensions 
+  Dimensions,
 } from 'react-native';
 import { useTheme } from '@/hooks/useTheme';
 import { ThemedText } from '@/components/ThemedText';
@@ -29,7 +29,7 @@ export default function LoadingScreen({
   showProgress = false,
   progress = 0,
   timeout,
-  onTimeout
+  onTimeout,
 }: LoadingScreenProps) {
   const { colors, isDark } = useTheme();
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -63,11 +63,11 @@ export default function LoadingScreen({
         duration: 1500,
         easing: Easing.linear,
         useNativeDriver: true,
-      })
+      }),
     );
-    
+
     rotateAnimation.start();
-    
+
     return () => rotateAnimation.stop();
   }, []);
 
@@ -121,7 +121,7 @@ export default function LoadingScreen({
                 color={colors.bombeiros?.primary || colors.primary}
               />
             </Animated.View>
-            
+
             <View style={styles.logoContainer}>
               <MaterialIcons
                 name="water-drop"
@@ -141,7 +141,7 @@ export default function LoadingScreen({
             </View>
           </>
         )}
-        
+
         {!showLogo && (
           <ActivityIndicator
             size="large"
@@ -149,29 +149,34 @@ export default function LoadingScreen({
             style={styles.spinner}
           />
         )}
-        
+
         <ThemedText style={[styles.message, { color: colors.text }]}>
           {message}
         </ThemedText>
-        
+
         <ThemedText style={[styles.subtitle, { color: colors.secondary }]}>
           Corpo de Bombeiros Militar de Pernambuco
         </ThemedText>
 
         {showProgress && (
           <View style={styles.progressContainer}>
-            <View style={[styles.progressBar, { backgroundColor: colors.border }]}>
+            <View
+              style={[styles.progressBar, { backgroundColor: colors.border }]}
+            >
               <Animated.View
                 style={[
                   styles.progressFill,
                   {
                     width: progressWidth,
-                    backgroundColor: colors.bombeiros?.primary || colors.primary,
+                    backgroundColor:
+                      colors.bombeiros?.primary || colors.primary,
                   },
                 ]}
               />
             </View>
-            <ThemedText style={[styles.progressText, { color: colors.secondary }]}>
+            <ThemedText
+              style={[styles.progressText, { color: colors.secondary }]}
+            >
               {Math.round(progress * 100)}%
             </ThemedText>
           </View>
@@ -189,7 +194,7 @@ export default function LoadingScreen({
           </ThemedText>
         </View>
       </Animated.View>
-      
+
       <View style={styles.footer}>
         <ThemedText style={[styles.version, { color: colors.secondary }]}>
           v1.0.0 • CBM-PE
@@ -200,33 +205,30 @@ export default function LoadingScreen({
 }
 
 // Componente de loading rápido para uso em outros lugares
-export function InlineLoading({ 
-  size = 'small', 
-  color 
-}: { 
-  size?: 'small' | 'large'; 
-  color?: string; 
+export function InlineLoading({
+  size = 'small',
+  color,
+}: {
+  size?: 'small' | 'large';
+  color?: string;
 }) {
   const { colors } = useTheme();
-  
+
   return (
-    <ActivityIndicator
-      size={size}
-      color={color || colors.bombeiros?.primary}
-    />
+    <ActivityIndicator size={size} color={color || colors.bombeiros?.primary} />
   );
 }
 
 // Componente de loading com texto
-export function LoadingWithText({ 
-  text, 
-  showSpinner = true 
-}: { 
-  text: string; 
-  showSpinner?: boolean; 
+export function LoadingWithText({
+  text,
+  showSpinner = true,
+}: {
+  text: string;
+  showSpinner?: boolean;
 }) {
   const { colors } = useTheme();
-  
+
   return (
     <View style={inlineStyles.container}>
       {showSpinner && (
@@ -400,10 +402,12 @@ export const LoadingOverlay: React.FC<{
 
   return (
     <View style={overlayStyles.overlay}>
-      <View style={[
-        overlayStyles.container,
-        { backgroundColor: `rgba(0,0,0,${opacity})` }
-      ]}>
+      <View
+        style={[
+          overlayStyles.container,
+          { backgroundColor: `rgba(0,0,0,${opacity})` },
+        ]}
+      >
         <ActivityIndicator
           size="large"
           color={colors.bombeiros?.primary || '#FFFFFF'}

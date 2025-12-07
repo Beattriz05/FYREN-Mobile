@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { 
-  View, 
-  TextInput, 
-  Pressable, 
-  StyleSheet, 
-  Alert, 
-  Modal, 
+import {
+  View,
+  TextInput,
+  Pressable,
+  StyleSheet,
+  Alert,
+  Modal,
   TouchableOpacity,
   ActivityIndicator,
   Platform,
-  Linking
+  Linking,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -57,23 +57,29 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
   const editingIncident = route.params?.incident;
 
   const [title, setTitle] = useState(editingIncident?.title || '');
-  const [description, setDescription] = useState(editingIncident?.description || '');
+  const [description, setDescription] = useState(
+    editingIncident?.description || '',
+  );
   const [vehicle, setVehicle] = useState(editingIncident?.vehicle || '');
   const [team, setTeam] = useState(editingIncident?.team || '');
   const [type, setType] = useState(editingIncident?.type || 'Resgate');
-  
+
   const [location, setLocation] = useState<Location.LocationObject | null>(
-    editingIncident?.location ? { 
-      coords: { 
-        latitude: editingIncident.location.latitude, 
-        longitude: editingIncident.location.longitude 
-      } 
-    } as Location.LocationObject : null
+    editingIncident?.location
+      ? ({
+          coords: {
+            latitude: editingIncident.location.latitude,
+            longitude: editingIncident.location.longitude,
+          },
+        } as Location.LocationObject)
+      : null,
   );
-  
+
   const [images, setImages] = useState<string[]>(editingIncident?.images || []);
   const [videos, setVideos] = useState<string[]>(editingIncident?.videos || []);
-  const [signature, setSignature] = useState<string | null>(editingIncident?.signature || null);
+  const [signature, setSignature] = useState<string | null>(
+    editingIncident?.signature || null,
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [showSignatureModal, setShowSignatureModal] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState<string | null>(null);
@@ -89,20 +95,31 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
 
   const requestPermissions = async () => {
     try {
-      const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
+      const { status: cameraStatus } =
+        await ImagePicker.requestCameraPermissionsAsync();
       const { status: micStatus } = await Audio.requestPermissionsAsync();
-      const { status: locStatus } = await Location.requestForegroundPermissionsAsync();
-      
+      const { status: locStatus } =
+        await Location.requestForegroundPermissionsAsync();
+
       if (cameraStatus !== 'granted') {
-        Alert.alert('Permissão da Câmera', 'É necessário acesso à câmera para capturar fotos e vídeos.');
+        Alert.alert(
+          'Permissão da Câmera',
+          'É necessário acesso à câmera para capturar fotos e vídeos.',
+        );
         return false;
       }
       if (micStatus !== 'granted') {
-        Alert.alert('Permissão do Microfone', 'É necessário acesso ao microfone para gravar vídeos.');
+        Alert.alert(
+          'Permissão do Microfone',
+          'É necessário acesso ao microfone para gravar vídeos.',
+        );
         return false;
       }
       if (locStatus !== 'granted') {
-        Alert.alert('Permissão de Localização', 'É necessário acesso à localização para registrar a posição.');
+        Alert.alert(
+          'Permissão de Localização',
+          'É necessário acesso à localização para registrar a posição.',
+        );
         return false;
       }
       return true;
@@ -117,9 +134,9 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
     try {
       const hasPermission = await requestPermissions();
       if (!hasPermission) return;
-      
+
       setIsTakingMedia(true);
-      
+
       // CORREÇÃO: Removida a propriedade 'timeout' que não existe em LocationOptions
       // Usando apenas propriedades válidas: accuracy, maximumAge, distanceInterval
       const loc = await Location.getCurrentPositionAsync({
@@ -127,24 +144,27 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
         maximumAge: 10000, // Aceita localização com até 10 segundos -- resolver esse erro na parte de localização
         distanceInterval: 10, // Atualizar apenas após mover 10 metros
       });
-      
+
       setLocation(loc);
       Alert.alert('Sucesso', 'Localização atualizada com sucesso!');
     } catch (error) {
       console.error('Erro ao capturar localização:', error);
-      
+
       // Verificar tipo de erro
       if (error instanceof Error) {
         const errorMessage = error.message.toLowerCase();
-        
-        if (errorMessage.includes('permission') || errorMessage.includes('denied')) {
+
+        if (
+          errorMessage.includes('permission') ||
+          errorMessage.includes('denied')
+        ) {
           Alert.alert(
             'Permissão Necessária',
             'Para usar a localização, você precisa permitir o acesso nas configurações do aplicativo.',
             [
               { text: 'Cancelar', style: 'cancel' },
-              { 
-                text: 'Abrir Configurações', 
+              {
+                text: 'Abrir Configurações',
                 onPress: () => {
                   // Redirecionar para configurações do app
                   if (Platform.OS === 'ios') {
@@ -152,20 +172,29 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
                   } else {
                     Linking.openSettings();
                   }
-                }
-              }
-            ]
+                },
+              },
+            ],
           );
-        } else if (errorMessage.includes('unavailable') || errorMessage.includes('disabled')) {
+        } else if (
+          errorMessage.includes('unavailable') ||
+          errorMessage.includes('disabled')
+        ) {
           Alert.alert(
             'GPS Desativado',
-            'O GPS parece estar desativado. Ative-o nas configurações do dispositivo e tente novamente.'
+            'O GPS parece estar desativado. Ative-o nas configurações do dispositivo e tente novamente.',
           );
         } else {
-          Alert.alert('Erro', 'Não foi possível obter a localização. Tente novamente.');
+          Alert.alert(
+            'Erro',
+            'Não foi possível obter a localização. Tente novamente.',
+          );
         }
       } else {
-        Alert.alert('Erro', 'Ocorreu um erro desconhecido ao tentar obter a localização.');
+        Alert.alert(
+          'Erro',
+          'Ocorreu um erro desconhecido ao tentar obter a localização.',
+        );
       }
     } finally {
       setIsTakingMedia(false);
@@ -177,13 +206,14 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
     try {
       const hasPermission = await requestPermissions();
       if (!hasPermission) return;
-      
+
       setIsTakingMedia(true);
-      
+
       const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: mediaType === 'photo' 
-          ? ImagePicker.MediaTypeOptions.Images 
-          : ImagePicker.MediaTypeOptions.Videos,
+        mediaTypes:
+          mediaType === 'photo'
+            ? ImagePicker.MediaTypeOptions.Images
+            : ImagePicker.MediaTypeOptions.Videos,
         allowsEditing: false,
         quality: 0.8,
         videoMaxDuration: 60,
@@ -193,10 +223,10 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
 
       if (!result.canceled && result.assets[0]) {
         if (mediaType === 'photo') {
-          setImages(prev => [...prev, result.assets[0].uri]);
+          setImages((prev) => [...prev, result.assets[0].uri]);
           Alert.alert('Sucesso', 'Foto capturada com sucesso!');
         } else {
-          setVideos(prev => [...prev, result.assets[0].uri]);
+          setVideos((prev) => [...prev, result.assets[0].uri]);
           Alert.alert('Sucesso', 'Vídeo capturado com sucesso!');
         }
       }
@@ -242,25 +272,31 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
     setIsLoading(true);
     try {
       // Definir status baseado no incidente existente
-      const status: IncidentStatus = editingIncident ? editingIncident.status : 'pending';
-      
+      const status: IncidentStatus = editingIncident
+        ? editingIncident.status
+        : 'pending';
+
       // Definir syncStatus com tipo correto
-      const syncStatus: SyncStatus = editingIncident ? editingIncident.syncStatus : 'pending_sync';
-      
+      const syncStatus: SyncStatus = editingIncident
+        ? editingIncident.syncStatus
+        : 'pending_sync';
+
       const incidentData = {
         id: editingIncident?.id || Date.now().toString(),
-        title: title.trim(), 
-        description: description.trim(), 
-        vehicle: vehicle.trim(), 
-        team: team.trim(), 
-        type: type.trim(), 
-        signature, 
-        images, 
+        title: title.trim(),
+        description: description.trim(),
+        vehicle: vehicle.trim(),
+        team: team.trim(),
+        type: type.trim(),
+        signature,
+        images,
         videos,
-        location: location ? { 
-          latitude: location.coords.latitude, 
-          longitude: location.coords.longitude 
-        } : undefined,
+        location: location
+          ? {
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+            }
+          : undefined,
         status,
         syncStatus,
         createdAt: editingIncident?.createdAt || new Date().toISOString(),
@@ -271,64 +307,59 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
         // Usar Partial<IncidentData> para atualização
         await updateIncident(editingIncident.id, incidentData as any);
         Alert.alert('Sucesso', 'Ocorrência atualizada com sucesso!', [
-          { 
-            text: 'OK', 
-            onPress: () => navigation.goBack()
-          }
+          {
+            text: 'OK',
+            onPress: () => navigation.goBack(),
+          },
         ]);
       } else {
         await saveIncident(incidentData as any);
         Alert.alert('Sucesso', 'Ocorrência registrada com sucesso!', [
-          { 
-            text: 'OK', 
-            onPress: () => navigation.goBack()
-          }
+          {
+            text: 'OK',
+            onPress: () => navigation.goBack(),
+          },
         ]);
       }
     } catch (error) {
       console.error('Erro ao salvar ocorrência:', error);
-      Alert.alert('Erro', 'Não foi possível salvar a ocorrência. Tente novamente.');
-    } finally { 
-      setIsLoading(false); 
+      Alert.alert(
+        'Erro',
+        'Não foi possível salvar a ocorrência. Tente novamente.',
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const removeImage = (index: number) => {
-    Alert.alert(
-      'Remover Foto',
-      'Tem certeza que deseja remover esta foto?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        { 
-          text: 'Remover', 
-          style: 'destructive',
-          onPress: () => {
-            const newImages = [...images];
-            newImages.splice(index, 1);
-            setImages(newImages);
-          }
-        }
-      ]
-    );
+    Alert.alert('Remover Foto', 'Tem certeza que deseja remover esta foto?', [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Remover',
+        style: 'destructive',
+        onPress: () => {
+          const newImages = [...images];
+          newImages.splice(index, 1);
+          setImages(newImages);
+        },
+      },
+    ]);
   };
 
   const removeVideo = (index: number) => {
-    Alert.alert(
-      'Remover Vídeo',
-      'Tem certeza que deseja remover este vídeo?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        { 
-          text: 'Remover', 
-          style: 'destructive',
-          onPress: () => {
-            const newVideos = [...videos];
-            newVideos.splice(index, 1);
-            setVideos(newVideos);
-          }
-        }
-      ]
-    );
+    Alert.alert('Remover Vídeo', 'Tem certeza que deseja remover este vídeo?', [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Remover',
+        style: 'destructive',
+        onPress: () => {
+          const newVideos = [...videos];
+          newVideos.splice(index, 1);
+          setVideos(newVideos);
+        },
+      },
+    ]);
   };
 
   const openMediaViewer = (uri: string, type: 'image' | 'video') => {
@@ -341,7 +372,11 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
     setMediaType(null);
   };
 
-  const renderMediaItem = (uri: string, index: number, type: 'image' | 'video') => {
+  const renderMediaItem = (
+    uri: string,
+    index: number,
+    type: 'image' | 'video',
+  ) => {
     return (
       <View key={`${type}-${index}`} style={styles.mediaItem}>
         <TouchableOpacity onPress={() => openMediaViewer(uri, type)}>
@@ -353,9 +388,11 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
             </View>
           )}
         </TouchableOpacity>
-        <Pressable 
+        <Pressable
           style={styles.removeButton}
-          onPress={() => type === 'image' ? removeImage(index) : removeVideo(index)}
+          onPress={() =>
+            type === 'image' ? removeImage(index) : removeVideo(index)
+          }
         >
           <Feather name="x" size={12} color="#FFFFFF" />
         </Pressable>
@@ -377,21 +414,27 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
               <ThemedText style={styles.label}>Tipo de Ocorrência *</ThemedText>
               <View style={styles.typeRow}>
                 {['Resgate', 'Incêndio', 'Salvamento'].map((t) => (
-                  <Pressable 
-                    key={t} 
+                  <Pressable
+                    key={t}
                     style={[
-                      styles.typeButton, 
-                      { 
-                        backgroundColor: type === t ? colors.primary : colors.backgroundDefault,
-                        borderColor: type === t ? colors.primary : colors.border
-                      }
-                    ]} 
+                      styles.typeButton,
+                      {
+                        backgroundColor:
+                          type === t
+                            ? colors.primary
+                            : colors.backgroundDefault,
+                        borderColor:
+                          type === t ? colors.primary : colors.border,
+                      },
+                    ]}
                     onPress={() => setType(t)}
                   >
-                    <ThemedText style={{ 
-                      color: type === t ? colors.buttonText : colors.text,
-                      fontWeight: type === t ? '600' : '400'
-                    }}>
+                    <ThemedText
+                      style={{
+                        color: type === t ? colors.buttonText : colors.text,
+                        fontWeight: type === t ? '600' : '400',
+                      }}
+                    >
                       {t}
                     </ThemedText>
                   </Pressable>
@@ -404,18 +447,18 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
               <View style={styles.row}>
                 <View style={styles.inputGroup}>
                   <ThemedText style={styles.label}>Viatura *</ThemedText>
-                  <TextInput 
+                  <TextInput
                     style={[
-                      styles.input, 
-                      { 
-                        borderColor: colors.border, 
+                      styles.input,
+                      {
+                        borderColor: colors.border,
                         color: colors.text,
-                        backgroundColor: colors.backgroundDefault
-                      }
-                    ]} 
-                    value={vehicle} 
-                    onChangeText={handleVehicleChange} 
-                    placeholder="Ex: ABT-12" 
+                        backgroundColor: colors.backgroundDefault,
+                      },
+                    ]}
+                    value={vehicle}
+                    onChangeText={handleVehicleChange}
+                    placeholder="Ex: ABT-12"
                     placeholderTextColor={colors.tabIconDefault}
                     maxLength={10}
                     autoCapitalize="characters"
@@ -423,18 +466,18 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
                 </View>
                 <View style={styles.inputGroup}>
                   <ThemedText style={styles.label}>Equipe *</ThemedText>
-                  <TextInput 
+                  <TextInput
                     style={[
-                      styles.input, 
-                      { 
-                        borderColor: colors.border, 
+                      styles.input,
+                      {
+                        borderColor: colors.border,
                         color: colors.text,
-                        backgroundColor: colors.backgroundDefault
-                      }
-                    ]} 
-                    value={team} 
-                    onChangeText={setTeam} 
-                    placeholder="Ex: Alfa" 
+                        backgroundColor: colors.backgroundDefault,
+                      },
+                    ]}
+                    value={team}
+                    onChangeText={setTeam}
+                    placeholder="Ex: Alfa"
                     placeholderTextColor={colors.tabIconDefault}
                     maxLength={20}
                   />
@@ -445,37 +488,39 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
             {/* Título e Descrição */}
             <View style={styles.formSection}>
               <ThemedText style={styles.label}>Título *</ThemedText>
-              <TextInput 
+              <TextInput
                 style={[
-                  styles.input, 
-                  { 
-                    borderColor: colors.border, 
+                  styles.input,
+                  {
+                    borderColor: colors.border,
                     color: colors.text,
-                    backgroundColor: colors.backgroundDefault
-                  }
-                ]} 
-                value={title} 
-                onChangeText={setTitle} 
-                placeholder="Descreva brevemente a ocorrência" 
+                    backgroundColor: colors.backgroundDefault,
+                  },
+                ]}
+                value={title}
+                onChangeText={setTitle}
+                placeholder="Descreva brevemente a ocorrência"
                 placeholderTextColor={colors.tabIconDefault}
                 maxLength={100}
               />
 
-              <ThemedText style={[styles.label, { marginTop: Spacing.md }]}>Descrição *</ThemedText>
-              <TextInput 
+              <ThemedText style={[styles.label, { marginTop: Spacing.md }]}>
+                Descrição *
+              </ThemedText>
+              <TextInput
                 style={[
-                  styles.textArea, 
-                  { 
-                    borderColor: colors.border, 
+                  styles.textArea,
+                  {
+                    borderColor: colors.border,
                     color: colors.text,
-                    backgroundColor: colors.backgroundDefault
-                  }
-                ]} 
-                value={description} 
-                onChangeText={setDescription} 
-                multiline 
+                    backgroundColor: colors.backgroundDefault,
+                  },
+                ]}
+                value={description}
+                onChangeText={setDescription}
+                multiline
                 numberOfLines={6}
-                placeholder="Descreva os detalhes da ocorrência..." 
+                placeholder="Descreva os detalhes da ocorrência..."
                 placeholderTextColor={colors.tabIconDefault}
                 textAlignVertical="top"
               />
@@ -485,14 +530,14 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
             <View style={styles.formSection}>
               <ThemedText style={styles.label}>Anexos</ThemedText>
               <View style={styles.actionRow}>
-                <Pressable 
+                <Pressable
                   style={[
-                    styles.actionButton, 
-                    { 
+                    styles.actionButton,
+                    {
                       borderColor: colors.border,
-                      backgroundColor: colors.backgroundDefault
-                    }
-                  ]} 
+                      backgroundColor: colors.backgroundDefault,
+                    },
+                  ]}
                   onPress={captureLocation}
                   disabled={isTakingMedia}
                 >
@@ -500,10 +545,10 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
                     <ActivityIndicator size="small" color={colors.secondary} />
                   ) : (
                     <>
-                      <Feather 
-                        name="map-pin" 
-                        size={20} 
-                        color={location ? colors.success : colors.secondary} 
+                      <Feather
+                        name="map-pin"
+                        size={20}
+                        color={location ? colors.success : colors.secondary}
                       />
                       <ThemedText type="caption" style={{ marginTop: 2 }}>
                         GPS
@@ -511,15 +556,15 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
                     </>
                   )}
                 </Pressable>
-                
-                <Pressable 
+
+                <Pressable
                   style={[
-                    styles.actionButton, 
-                    { 
+                    styles.actionButton,
+                    {
                       borderColor: colors.border,
-                      backgroundColor: colors.backgroundDefault
-                    }
-                  ]} 
+                      backgroundColor: colors.backgroundDefault,
+                    },
+                  ]}
                   onPress={() => captureMedia('photo')}
                   disabled={isTakingMedia}
                 >
@@ -527,10 +572,12 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
                     <ActivityIndicator size="small" color={colors.secondary} />
                   ) : (
                     <>
-                      <Feather 
-                        name="camera" 
-                        size={20} 
-                        color={images.length > 0 ? colors.success : colors.secondary} 
+                      <Feather
+                        name="camera"
+                        size={20}
+                        color={
+                          images.length > 0 ? colors.success : colors.secondary
+                        }
                       />
                       <ThemedText type="caption" style={{ marginTop: 2 }}>
                         Foto ({images.length})
@@ -538,15 +585,15 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
                     </>
                   )}
                 </Pressable>
-                
-                <Pressable 
+
+                <Pressable
                   style={[
-                    styles.actionButton, 
-                    { 
+                    styles.actionButton,
+                    {
                       borderColor: colors.border,
-                      backgroundColor: colors.backgroundDefault
-                    }
-                  ]} 
+                      backgroundColor: colors.backgroundDefault,
+                    },
+                  ]}
                   onPress={() => captureMedia('video')}
                   disabled={isTakingMedia}
                 >
@@ -554,10 +601,12 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
                     <ActivityIndicator size="small" color={colors.secondary} />
                   ) : (
                     <>
-                      <Feather 
-                        name="video" 
-                        size={20} 
-                        color={videos.length > 0 ? colors.success : colors.secondary} 
+                      <Feather
+                        name="video"
+                        size={20}
+                        color={
+                          videos.length > 0 ? colors.success : colors.secondary
+                        }
                       />
                       <ThemedText type="caption" style={{ marginTop: 2 }}>
                         Vídeo ({videos.length})
@@ -565,21 +614,21 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
                     </>
                   )}
                 </Pressable>
-                
-                <Pressable 
+
+                <Pressable
                   style={[
-                    styles.actionButton, 
-                    { 
+                    styles.actionButton,
+                    {
                       borderColor: colors.border,
-                      backgroundColor: colors.backgroundDefault
-                    }
-                  ]} 
+                      backgroundColor: colors.backgroundDefault,
+                    },
+                  ]}
                   onPress={() => setShowSignatureModal(true)}
                 >
-                  <Feather 
-                    name="pen-tool" 
-                    size={20} 
-                    color={signature ? colors.success : colors.secondary} 
+                  <Feather
+                    name="pen-tool"
+                    size={20}
+                    color={signature ? colors.success : colors.secondary}
                   />
                   <ThemedText type="caption" style={{ marginTop: 2 }}>
                     Assinar
@@ -603,20 +652,23 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
             {signature && (
               <View style={styles.formSection}>
                 <ThemedText style={styles.label}>Assinatura</ThemedText>
-                <Pressable 
-                  onPress={() => setShowSignatureModal(true)} 
+                <Pressable
+                  onPress={() => setShowSignatureModal(true)}
                   style={[
-                    styles.signaturePreview, 
-                    { borderColor: colors.border }
+                    styles.signaturePreview,
+                    { borderColor: colors.border },
                   ]}
                 >
-                  <Image 
-                    source={{ uri: signature }} 
-                    style={styles.signatureImage} 
-                    contentFit="contain" 
+                  <Image
+                    source={{ uri: signature }}
+                    style={styles.signatureImage}
+                    contentFit="contain"
                   />
                   <View style={styles.signatureOverlay}>
-                    <ThemedText type="caption" style={{ color: colors.textLight }}>
+                    <ThemedText
+                      type="caption"
+                      style={{ color: colors.textLight }}
+                    >
                       Toque para editar
                     </ThemedText>
                   </View>
@@ -627,11 +679,11 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
             {/* Botão de Envio */}
             <Pressable
               style={({ pressed }) => [
-                styles.submitButton, 
-                { 
+                styles.submitButton,
+                {
                   backgroundColor: colors.primary,
-                  opacity: pressed || isLoading || isTakingMedia ? 0.7 : 1 
-                }
+                  opacity: pressed || isLoading || isTakingMedia ? 0.7 : 1,
+                },
               ]}
               onPress={handleSubmit}
               disabled={isLoading || isTakingMedia}
@@ -639,19 +691,27 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
               {isLoading ? (
                 <ActivityIndicator color={colors.buttonText} />
               ) : (
-                <ThemedText style={{ 
-                  color: colors.buttonText, 
-                  fontSize: 18, 
-                  fontWeight: '600' 
-                }}>
-                  {editingIncident ? 'ATUALIZAR OCORRÊNCIA' : 'REGISTRAR OCORRÊNCIA'}
+                <ThemedText
+                  style={{
+                    color: colors.buttonText,
+                    fontSize: 18,
+                    fontWeight: '600',
+                  }}
+                >
+                  {editingIncident
+                    ? 'ATUALIZAR OCORRÊNCIA'
+                    : 'REGISTRAR OCORRÊNCIA'}
                 </ThemedText>
               )}
             </Pressable>
 
             {/* Contador de caracteres */}
-            <ThemedText type="caption" style={[styles.counter, { color: colors.textLight }]}>
-              {title.length}/100 caracteres • {description.length}/500 caracteres
+            <ThemedText
+              type="caption"
+              style={[styles.counter, { color: colors.textLight }]}
+            >
+              {title.length}/100 caracteres • {description.length}/500
+              caracteres
             </ThemedText>
           </Card>
         </View>
@@ -660,9 +720,9 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
       {/* Modal de Assinatura */}
       <SignatureModal
         visible={showSignatureModal}
-        onOK={(sig) => { 
-          setSignature(sig); 
-          setShowSignatureModal(false); 
+        onOK={(sig) => {
+          setSignature(sig);
+          setShowSignatureModal(false);
         }}
         onCancel={() => setShowSignatureModal(false)}
       />
@@ -675,12 +735,15 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
         onRequestClose={closeMediaViewer}
       >
         <View style={styles.mediaModal}>
-          <Pressable style={styles.mediaModalBackdrop} onPress={closeMediaViewer}>
+          <Pressable
+            style={styles.mediaModalBackdrop}
+            onPress={closeMediaViewer}
+          >
             {mediaType === 'image' && selectedMedia && (
-              <Image 
-                source={{ uri: selectedMedia }} 
-                style={styles.mediaFullSize} 
-                contentFit="contain" 
+              <Image
+                source={{ uri: selectedMedia }}
+                style={styles.mediaFullSize}
+                contentFit="contain"
               />
             )}
             {mediaType === 'video' && selectedMedia && (
@@ -701,13 +764,13 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: { 
+  container: {
     padding: Spacing.lg,
-    flex: 1 
+    flex: 1,
   },
-  card: { 
-    padding: Spacing.xl, 
-    gap: Spacing.lg 
+  card: {
+    padding: Spacing.xl,
+    gap: Spacing.lg,
   },
   sectionTitle: {
     marginBottom: Spacing.md,
@@ -716,86 +779,86 @@ const styles = StyleSheet.create({
   formSection: {
     marginBottom: Spacing.lg,
   },
-  label: { 
-    fontSize: 15, 
-    fontWeight: '600', 
-    marginBottom: 8 
+  label: {
+    fontSize: 15,
+    fontWeight: '600',
+    marginBottom: 8,
   },
-  input: { 
-    height: Spacing.inputHeight, 
-    borderRadius: BorderRadius.sm, 
-    paddingHorizontal: Spacing.md, 
-    fontSize: 16, 
+  input: {
+    height: Spacing.inputHeight,
+    borderRadius: BorderRadius.sm,
+    paddingHorizontal: Spacing.md,
+    fontSize: 16,
     borderWidth: 1,
     fontFamily: 'System',
   },
-  textArea: { 
-    minHeight: 120, 
-    borderRadius: BorderRadius.sm, 
-    paddingHorizontal: Spacing.md, 
-    paddingVertical: Spacing.md, 
-    fontSize: 16, 
-    borderWidth: 1, 
+  textArea: {
+    minHeight: 120,
+    borderRadius: BorderRadius.sm,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.md,
+    fontSize: 16,
+    borderWidth: 1,
     textAlignVertical: 'top',
     fontFamily: 'System',
   },
-  row: { 
-    flexDirection: 'row', 
-    gap: Spacing.md 
+  row: {
+    flexDirection: 'row',
+    gap: Spacing.md,
   },
   inputGroup: {
     flex: 1,
   },
-  typeRow: { 
-    flexDirection: 'row', 
-    gap: Spacing.sm, 
-    flexWrap: 'wrap' 
+  typeRow: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+    flexWrap: 'wrap',
   },
-  typeButton: { 
-    paddingVertical: 10, 
-    paddingHorizontal: 20, 
-    borderRadius: BorderRadius.md, 
+  typeButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: BorderRadius.md,
     borderWidth: 1,
     minWidth: 100,
     alignItems: 'center',
   },
-  actionRow: { 
-    flexDirection: 'row', 
+  actionRow: {
+    flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: Spacing.sm,
   },
-  actionButton: { 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    padding: Spacing.md, 
-    borderRadius: BorderRadius.sm, 
-    borderWidth: 1, 
+  actionButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: Spacing.md,
+    borderRadius: BorderRadius.sm,
+    borderWidth: 1,
     width: 75,
     height: 75,
   },
-  submitButton: { 
-    height: Spacing.buttonHeight, 
-    borderRadius: BorderRadius.md, 
-    justifyContent: 'center', 
-    alignItems: 'center', 
+  submitButton: {
+    height: Spacing.buttonHeight,
+    borderRadius: BorderRadius.md,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginTop: Spacing.lg,
     marginBottom: Spacing.md,
   },
   mediaContainer: {
     marginTop: Spacing.md,
   },
-  mediaGrid: { 
-    flexDirection: 'row', 
-    flexWrap: 'wrap', 
-    gap: 12, 
-    marginTop: 12 
+  mediaGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+    marginTop: 12,
   },
   mediaItem: {
     position: 'relative',
   },
-  thumbnail: { 
-    width: 80, 
-    height: 80, 
+  thumbnail: {
+    width: 80,
+    height: 80,
     borderRadius: 8,
     backgroundColor: '#F0F0F0',
   },
@@ -817,9 +880,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#FFFFFF',
   },
-  signaturePreview: { 
-    borderRadius: BorderRadius.sm, 
-    borderWidth: 1, 
+  signaturePreview: {
+    borderRadius: BorderRadius.sm,
+    borderWidth: 1,
     padding: 12,
     height: 120,
     justifyContent: 'center',

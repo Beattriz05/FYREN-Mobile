@@ -53,12 +53,17 @@ export default function UserHomeScreen({ navigation }: Props) {
   ];
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.backgroundRoot }]}>
+    <View
+      style={[styles.container, { backgroundColor: colors.backgroundRoot }]}
+    >
       <View style={styles.header}>
         <ThemedText type="title" style={styles.welcomeTitle}>
           Bem-vindo!
         </ThemedText>
-        <ThemedText type="defaultSemiBold" style={[styles.welcomeSubtitle, { color: colors.textLight }]}>
+        <ThemedText
+          type="defaultSemiBold"
+          style={[styles.welcomeSubtitle, { color: colors.textLight }]}
+        >
           O que você gostaria de fazer?
         </ThemedText>
       </View>
@@ -69,25 +74,37 @@ export default function UserHomeScreen({ navigation }: Props) {
             key={index}
             style={({ pressed }) => [
               styles.menuItem,
-              { 
+              {
                 opacity: pressed ? 0.8 : 1,
                 transform: [{ scale: pressed ? 0.98 : 1 }],
-              }
+              },
             ]}
             onPress={item.onPress}
           >
-            <Card style={[styles.card, { borderLeftColor: item.color, borderLeftWidth: 4 }]}>
+            <Card
+              style={[
+                styles.card,
+                { borderLeftColor: item.color, borderLeftWidth: 4 },
+              ]}
+            >
               <View style={styles.menuContent}>
                 <Feather name={item.icon} size={32} color={item.color} />
                 <View style={styles.menuText}>
                   <ThemedText type="h4" style={styles.menuTitle}>
                     {item.title}
                   </ThemedText>
-                  <ThemedText type="caption" style={[styles.menuSubtitle, { color: colors.textLight }]}>
+                  <ThemedText
+                    type="caption"
+                    style={[styles.menuSubtitle, { color: colors.textLight }]}
+                  >
                     {item.subtitle}
                   </ThemedText>
                 </View>
-                <Feather name="chevron-right" size={20} color={colors.tabIconDefault} />
+                <Feather
+                  name="chevron-right"
+                  size={20}
+                  color={colors.tabIconDefault}
+                />
               </View>
             </Card>
           </Pressable>
@@ -95,7 +112,10 @@ export default function UserHomeScreen({ navigation }: Props) {
       </View>
 
       <View style={styles.footer}>
-        <ThemedText type="caption" style={[styles.footerText, { color: colors.tabIconDefault }]}>
+        <ThemedText
+          type="caption"
+          style={[styles.footerText, { color: colors.tabIconDefault }]}
+        >
           Versão 1.0.0 • Última sincronização: Hoje, 10:30
         </ThemedText>
       </View>

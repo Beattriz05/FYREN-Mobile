@@ -1,10 +1,20 @@
 import React from 'react';
-import { createBottomTabNavigator, BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
+import {
+  createBottomTabNavigator,
+  BottomTabNavigationOptions,
+} from '@react-navigation/bottom-tabs';
 import { useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { Feather } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
-import { Platform, StyleSheet, View, Text, TouchableOpacity, Animated } from 'react-native';
+import {
+  Platform,
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  Animated,
+} from 'react-native';
 import { useTheme } from '@/hooks/useTheme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ChiefDashboardScreen from '@/screens/ChiefDashboardScreen';
@@ -28,7 +38,10 @@ export default function ChiefTabNavigator() {
   const insets = useSafeAreaInsets();
 
   // Cores extraídas de forma segura
-  const backgroundColor = (colors as any).background || (colors as any).backgroundRoot || (isDark ? '#121212' : '#FFFFFF');
+  const backgroundColor =
+    (colors as any).background ||
+    (colors as any).backgroundRoot ||
+    (isDark ? '#121212' : '#FFFFFF');
   const primaryColor = colors.bombeiros?.primary || Colors.bombeiros.primary;
   const textColor = colors.text || (isDark ? '#FFFFFF' : '#000000');
   const secondaryColor = (colors as any).secondary || '#757575';
@@ -107,15 +120,15 @@ export default function ChiefTabNavigator() {
   };
 
   // Componente para ícone com animação
-  const AnimatedTabIcon = ({ 
-    name, 
-    color, 
-    size, 
-    focused 
-  }: { 
-    name: keyof typeof Feather.glyphMap; 
-    color: string; 
-    size: number; 
+  const AnimatedTabIcon = ({
+    name,
+    color,
+    size,
+    focused,
+  }: {
+    name: keyof typeof Feather.glyphMap;
+    color: string;
+    size: number;
     focused: boolean;
   }) => {
     const scale = React.useRef(new Animated.Value(1)).current;
@@ -178,14 +191,16 @@ export default function ChiefTabNavigator() {
   };
 
   // Componente de header personalizado
-  const CustomHeaderTitle = ({ routeName }: { routeName: keyof ChiefTabParamList }) => (
+  const CustomHeaderTitle = ({
+    routeName,
+  }: {
+    routeName: keyof ChiefTabParamList;
+  }) => (
     <View style={styles.headerTitleContainer}>
-      <Feather 
-        name={getHeaderIcon(routeName)} 
-        size={22} 
-        color={primaryColor} 
-      />
-      <Text style={[styles.headerTitleText, { color: textColor, marginLeft: 8 }]}>
+      <Feather name={getHeaderIcon(routeName)} size={22} color={primaryColor} />
+      <Text
+        style={[styles.headerTitleText, { color: textColor, marginLeft: 8 }]}
+      >
         {getHeaderTitle(routeName)}
       </Text>
     </View>
@@ -203,28 +218,37 @@ export default function ChiefTabNavigator() {
           title: 'Dashboard',
           tabBarIcon: ({ color, size, focused }) => (
             <View style={styles.iconContainer}>
-              <AnimatedTabIcon 
-                name="home" 
-                color={color} 
-                size={size} 
-                focused={focused} 
+              <AnimatedTabIcon
+                name="home"
+                color={color}
+                size={size}
+                focused={focused}
               />
-              {focused && <View style={[styles.activeIndicator, { backgroundColor: color }]} />}
+              {focused && (
+                <View
+                  style={[styles.activeIndicator, { backgroundColor: color }]}
+                />
+              )}
             </View>
           ),
           headerTitle: () => <CustomHeaderTitle routeName="ChiefDashboard" />,
           headerRight: () => (
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.headerButton}
               onPress={() => console.log('Notificações')}
             >
               <Feather name="bell" size={22} color={textColor} />
-              <View style={[styles.notificationBadge, { backgroundColor: Colors.bombeiros.emergency }]} />
+              <View
+                style={[
+                  styles.notificationBadge,
+                  { backgroundColor: Colors.bombeiros.emergency },
+                ]}
+              />
             </TouchableOpacity>
           ),
         })}
       />
-      
+
       <Tab.Screen
         name="IncidentList"
         component={IncidentListScreen}
@@ -232,18 +256,22 @@ export default function ChiefTabNavigator() {
           title: 'Ocorrências',
           tabBarIcon: ({ color, size, focused }) => (
             <View style={styles.iconContainer}>
-              <AnimatedTabIcon 
-                name="list" 
-                color={color} 
-                size={size} 
-                focused={focused} 
+              <AnimatedTabIcon
+                name="list"
+                color={color}
+                size={size}
+                focused={focused}
               />
-              {focused && <View style={[styles.activeIndicator, { backgroundColor: color }]} />}
+              {focused && (
+                <View
+                  style={[styles.activeIndicator, { backgroundColor: color }]}
+                />
+              )}
             </View>
           ),
           headerTitle: () => <CustomHeaderTitle routeName="IncidentList" />,
           headerRight: () => (
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.headerButton}
               onPress={() => console.log('Filtrar ocorrências')}
             >
@@ -252,7 +280,7 @@ export default function ChiefTabNavigator() {
           ),
         })}
       />
-      
+
       <Tab.Screen
         name="Reports"
         component={ReportsScreen}
@@ -260,18 +288,22 @@ export default function ChiefTabNavigator() {
           title: 'Relatórios',
           tabBarIcon: ({ color, size, focused }) => (
             <View style={styles.iconContainer}>
-              <AnimatedTabIcon 
-                name="bar-chart-2" 
-                color={color} 
-                size={size} 
-                focused={focused} 
+              <AnimatedTabIcon
+                name="bar-chart-2"
+                color={color}
+                size={size}
+                focused={focused}
               />
-              {focused && <View style={[styles.activeIndicator, { backgroundColor: color }]} />}
+              {focused && (
+                <View
+                  style={[styles.activeIndicator, { backgroundColor: color }]}
+                />
+              )}
             </View>
           ),
           headerTitle: () => <CustomHeaderTitle routeName="Reports" />,
           headerRight: () => (
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.headerButton}
               onPress={() => console.log('Gerar relatório')}
             >
@@ -280,7 +312,7 @@ export default function ChiefTabNavigator() {
           ),
         })}
       />
-      
+
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
@@ -288,13 +320,17 @@ export default function ChiefTabNavigator() {
           title: 'Perfil',
           tabBarIcon: ({ color, size, focused }) => (
             <View style={styles.iconContainer}>
-              <AnimatedTabIcon 
-                name="user" 
-                color={color} 
-                size={size} 
-                focused={focused} 
+              <AnimatedTabIcon
+                name="user"
+                color={color}
+                size={size}
+                focused={focused}
               />
-              {focused && <View style={[styles.activeIndicator, { backgroundColor: color }]} />}
+              {focused && (
+                <View
+                  style={[styles.activeIndicator, { backgroundColor: color }]}
+                />
+              )}
             </View>
           ),
           headerShown: false,
@@ -341,20 +377,21 @@ const styles = StyleSheet.create({
 
 // Hook para navegação entre tabs
 export const useChiefNavigation = () => {
-  const navigation = useNavigation<BottomTabNavigationProp<ChiefTabParamList>>();
-  
+  const navigation =
+    useNavigation<BottomTabNavigationProp<ChiefTabParamList>>();
+
   return {
     navigateToDashboard: () => navigation.navigate('ChiefDashboard'),
     navigateToIncidents: () => navigation.navigate('IncidentList'),
     navigateToReports: () => navigation.navigate('Reports'),
     navigateToProfile: () => navigation.navigate('Profile'),
-    
+
     // Funções com parâmetros
     navigateToIncidentDetail: (incidentId: string) => {
       // Navegar para detalhe de ocorrência (precisa de tela adicional)
       console.log('Navegar para detalhe:', incidentId);
     },
-    
+
     navigateToReportDetail: (reportId: string) => {
       // Navegar para detalhe de relatório
       console.log('Navegar para relatório:', reportId);
@@ -369,20 +406,20 @@ export const TabBadge: React.FC<{
   size?: number;
 }> = ({ count, color = '#FF3B30', size = 18 }) => {
   if (count <= 0) return null;
-  
+
   return (
-    <View style={[
-      badgeStyles.container,
-      { 
-        backgroundColor: color,
-        width: size,
-        height: size,
-        borderRadius: size / 2,
-      }
-    ]}>
-      <Text style={badgeStyles.text}>
-        {count > 99 ? '99+' : count}
-      </Text>
+    <View
+      style={[
+        badgeStyles.container,
+        {
+          backgroundColor: color,
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+        },
+      ]}
+    >
+      <Text style={badgeStyles.text}>{count > 99 ? '99+' : count}</Text>
     </View>
   );
 };
@@ -414,9 +451,7 @@ export const CustomTabBarButton: React.FC<{
       onPress={onPress}
       activeOpacity={0.7}
     >
-      <View style={tabButtonStyles.content}>
-        {children}
-      </View>
+      <View style={tabButtonStyles.content}>{children}</View>
     </TouchableOpacity>
   );
 };
@@ -438,12 +473,12 @@ const tabButtonStyles = StyleSheet.create({
 
 // Função para obter ícone baseado na rota
 export const getTabIcon = (
-  routeName: keyof ChiefTabParamList, 
-  isFocused: boolean, 
-  color: string
+  routeName: keyof ChiefTabParamList,
+  isFocused: boolean,
+  color: string,
 ) => {
   const iconSize = isFocused ? 24 : 22;
-  
+
   switch (routeName) {
     case 'ChiefDashboard':
       return <Feather name="home" size={iconSize} color={color} />;

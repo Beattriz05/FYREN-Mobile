@@ -14,7 +14,12 @@ type Props = NativeStackScreenProps<ChiefTabParamList, 'ChiefDashboard'>;
 
 export default function ChiefDashboardScreen({ navigation }: Props) {
   const { colors } = useTheme();
-  const [stats, setStats] = useState({ total: 0, pending: 0, inProgress: 0, resolved: 0 });
+  const [stats, setStats] = useState({
+    total: 0,
+    pending: 0,
+    inProgress: 0,
+    resolved: 0,
+  });
 
   useEffect(() => {
     loadStats();
@@ -24,9 +29,9 @@ export default function ChiefDashboardScreen({ navigation }: Props) {
     const incidents = await getIncidents();
     setStats({
       total: incidents.length,
-      pending: incidents.filter(i => i.status === 'pending').length,
-      inProgress: incidents.filter(i => i.status === 'in_progress').length,
-      resolved: incidents.filter(i => i.status === 'resolved').length,
+      pending: incidents.filter((i) => i.status === 'pending').length,
+      inProgress: incidents.filter((i) => i.status === 'in_progress').length,
+      resolved: incidents.filter((i) => i.status === 'resolved').length,
     });
   };
 
@@ -37,44 +42,74 @@ export default function ChiefDashboardScreen({ navigation }: Props) {
           <ThemedText style={[styles.title, { color: colors.text }]}>
             Dashboard do Chefe
           </ThemedText>
-          <ThemedText style={[styles.subtitle, { color: colors.tabIconDefault }]}>
+          <ThemedText
+            style={[styles.subtitle, { color: colors.tabIconDefault }]}
+          >
             Visão geral das ocorrências
           </ThemedText>
         </Card>
 
         <View style={styles.statsGrid}>
-          <Card style={StyleSheet.flatten([styles.statCard, { borderLeftColor: colors.secondary, borderLeftWidth: 4 }])}>
+          <Card
+            style={StyleSheet.flatten([
+              styles.statCard,
+              { borderLeftColor: colors.secondary, borderLeftWidth: 4 },
+            ])}
+          >
             <ThemedText style={[styles.statValue, { color: colors.text }]}>
               {stats.total}
             </ThemedText>
-            <ThemedText style={[styles.statLabel, { color: colors.tabIconDefault }]}>
+            <ThemedText
+              style={[styles.statLabel, { color: colors.tabIconDefault }]}
+            >
               Total
             </ThemedText>
           </Card>
 
-          <Card style={StyleSheet.flatten([styles.statCard, { borderLeftColor: colors.warning, borderLeftWidth: 4 }])}>
+          <Card
+            style={StyleSheet.flatten([
+              styles.statCard,
+              { borderLeftColor: colors.warning, borderLeftWidth: 4 },
+            ])}
+          >
             <ThemedText style={[styles.statValue, { color: colors.text }]}>
               {stats.pending}
             </ThemedText>
-            <ThemedText style={[styles.statLabel, { color: colors.tabIconDefault }]}>
+            <ThemedText
+              style={[styles.statLabel, { color: colors.tabIconDefault }]}
+            >
               Pendentes
             </ThemedText>
           </Card>
 
-          <Card style={StyleSheet.flatten([styles.statCard, { borderLeftColor: colors.info, borderLeftWidth: 4 }])}>
+          <Card
+            style={StyleSheet.flatten([
+              styles.statCard,
+              { borderLeftColor: colors.info, borderLeftWidth: 4 },
+            ])}
+          >
             <ThemedText style={[styles.statValue, { color: colors.text }]}>
               {stats.inProgress}
             </ThemedText>
-            <ThemedText style={[styles.statLabel, { color: colors.tabIconDefault }]}>
+            <ThemedText
+              style={[styles.statLabel, { color: colors.tabIconDefault }]}
+            >
               Em Andamento
             </ThemedText>
           </Card>
 
-          <Card style={StyleSheet.flatten([styles.statCard, { borderLeftColor: colors.success, borderLeftWidth: 4 }])}>
+          <Card
+            style={StyleSheet.flatten([
+              styles.statCard,
+              { borderLeftColor: colors.success, borderLeftWidth: 4 },
+            ])}
+          >
             <ThemedText style={[styles.statValue, { color: colors.text }]}>
               {stats.resolved}
             </ThemedText>
-            <ThemedText style={[styles.statLabel, { color: colors.tabIconDefault }]}>
+            <ThemedText
+              style={[styles.statLabel, { color: colors.tabIconDefault }]}
+            >
               Resolvidos
             </ThemedText>
           </Card>
@@ -88,7 +123,10 @@ export default function ChiefDashboardScreen({ navigation }: Props) {
           <Pressable
             style={({ pressed }) => [
               styles.actionButton,
-              { backgroundColor: colors.backgroundDefault, opacity: pressed ? 0.7 : 1 },
+              {
+                backgroundColor: colors.backgroundDefault,
+                opacity: pressed ? 0.7 : 1,
+              },
             ]}
             onPress={() => navigation.navigate('IncidentList')}
           >
@@ -96,13 +134,20 @@ export default function ChiefDashboardScreen({ navigation }: Props) {
             <ThemedText style={[styles.actionText, { color: colors.text }]}>
               Ver Todas as Ocorrências
             </ThemedText>
-            <Feather name="chevron-right" size={20} color={colors.tabIconDefault} />
+            <Feather
+              name="chevron-right"
+              size={20}
+              color={colors.tabIconDefault}
+            />
           </Pressable>
 
           <Pressable
             style={({ pressed }) => [
               styles.actionButton,
-              { backgroundColor: colors.backgroundDefault, opacity: pressed ? 0.7 : 1 },
+              {
+                backgroundColor: colors.backgroundDefault,
+                opacity: pressed ? 0.7 : 1,
+              },
             ]}
             onPress={() => navigation.navigate('Reports')}
           >
@@ -110,7 +155,11 @@ export default function ChiefDashboardScreen({ navigation }: Props) {
             <ThemedText style={[styles.actionText, { color: colors.text }]}>
               Relatórios
             </ThemedText>
-            <Feather name="chevron-right" size={20} color={colors.tabIconDefault} />
+            <Feather
+              name="chevron-right"
+              size={20}
+              color={colors.tabIconDefault}
+            />
           </Pressable>
         </Card>
       </View>

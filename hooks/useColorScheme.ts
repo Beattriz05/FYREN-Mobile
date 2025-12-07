@@ -1,9 +1,9 @@
-import { useColorScheme as useRNColorScheme } from "react-native";
-import { useEffect, useState } from "react";
-import { Appearance } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useColorScheme as useRNColorScheme } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Appearance } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export type ColorSchemePreference = "light" | "dark" | "auto";
+export type ColorSchemePreference = 'light' | 'dark' | 'auto';
 
 interface UseColorSchemeOptions {
   persist?: boolean;
@@ -13,23 +13,20 @@ interface UseColorSchemeOptions {
 
 /**
  * Hook robusto para gerenciamento de esquema de cores
- * 
+ *
  * @param options Configurações do hook
  * @returns Objeto com informações do esquema de cores
  */
-export function useColorScheme(
-  options: UseColorSchemeOptions = {}
-) {
+export function useColorScheme(options: UseColorSchemeOptions = {}) {
   const {
     persist = true,
-    storageKey = "app_color_scheme",
-    defaultPreference = "auto",
+    storageKey = 'app_color_scheme',
+    defaultPreference = 'auto',
   } = options;
 
   const systemScheme = useRNColorScheme();
-  const [preference, setPreference] = useState<ColorSchemePreference>(
-    defaultPreference
-  );
+  const [preference, setPreference] =
+    useState<ColorSchemePreference>(defaultPreference);
 
   // Carregar preferência salva
   useEffect(() => {
@@ -38,11 +35,11 @@ export function useColorScheme(
     const loadPreference = async () => {
       try {
         const saved = await AsyncStorage.getItem(storageKey);
-        if (saved && ["light", "dark", "auto"].includes(saved)) {
+        if (saved && ['light', 'dark', 'auto'].includes(saved)) {
           setPreference(saved as ColorSchemePreference);
         }
       } catch (error) {
-        console.warn("Erro ao carregar preferência de tema:", error);
+        console.warn('Erro ao carregar preferência de tema:', error);
       }
     };
 
@@ -51,7 +48,7 @@ export function useColorScheme(
 
   // Calcular esquema atual
   const currentScheme =
-    preference === "auto" ? systemScheme || "light" : preference;
+    preference === 'auto' ? systemScheme || 'light' : preference;
 
   // Salvar preferência
   const updatePreference = async (newPreference: ColorSchemePreference) => {
@@ -59,21 +56,21 @@ export function useColorScheme(
       try {
         await AsyncStorage.setItem(storageKey, newPreference);
       } catch (error) {
-        console.error("Erro ao salvar preferência de tema:", error);
+        console.error('Erro ao salvar preferência de tema:', error);
         throw error;
       }
     }
-    
+
     setPreference(newPreference);
   };
 
   // Escutar mudanças no sistema (apenas para modo auto)
   useEffect(() => {
-    if (preference !== "auto") return;
+    if (preference !== 'auto') return;
 
     const subscription = Appearance.addChangeListener(({ colorScheme }) => {
       // Atualiza quando o sistema muda
-      setPreference("auto"); // Força recálculo
+      setPreference('auto'); // Força recálculo
     });
 
     return () => subscription.remove();
@@ -84,29 +81,32 @@ export function useColorScheme(
     scheme: currentScheme,
     preference,
     systemScheme,
-    
+
     // Boolean helpers
-    isDark: currentScheme === "dark",
-    isLight: currentScheme === "light",
-    isAuto: preference === "auto",
-    
+    isDark: currentScheme === 'dark',
+    isLight: currentScheme === 'light',
+    isAuto: preference === 'auto',
+
     // Métodos
     setPreference: updatePreference,
     toggle: () => {
-      const newPref: ColorSchemePreference = 
-        preference === "light" ? "dark" : 
-        preference === "dark" ? "auto" : "light";
+      const newPref: ColorSchemePreference =
+        preference === 'light'
+          ? 'dark'
+          : preference === 'dark'
+            ? 'auto'
+            : 'light';
       updatePreference(newPref);
     },
-    
+
     // Para uso condicional
     when: <T>(lightValue: T, darkValue: T): T => {
-      return currentScheme === "dark" ? darkValue : lightValue;
+      return currentScheme === 'dark' ? darkValue : lightValue;
     },
-    
+
     // Para estilos
     select: <T>(options: { light: T; dark: T }): T => {
-      return currentScheme === "dark" ? options.dark : options.light;
+      return currentScheme === 'dark' ? options.dark : options.light;
     },
   };
 }
@@ -118,10 +118,7 @@ export function useDarkMode() {
 }
 
 // Hook para cores dinâmicas
-export function useDynamicColor(
-  lightColor: string,
-  darkColor: string
-) {
+export function useDynamicColor(lightColor: string, darkColor: string) {
   const { scheme } = useColorScheme();
-  return scheme === "dark" ? darkColor : lightColor;
+  return scheme === 'dark' ? darkColor : lightColor;
 }

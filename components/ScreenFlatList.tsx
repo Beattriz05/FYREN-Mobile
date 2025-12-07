@@ -1,9 +1,9 @@
-import React from "react";
-import { FlatList, FlatListProps, StyleSheet, ViewStyle } from "react-native";
+import React from 'react';
+import { FlatList, FlatListProps, StyleSheet, ViewStyle } from 'react-native';
 
-import { useTheme } from "@/hooks/useTheme";
-import { useScreenInsets } from "@/hooks/useScreenInsets";
-import { Spacing } from "@/constants/theme";
+import { useTheme } from '@/hooks/useTheme';
+import { useScreenInsets } from '@/hooks/useScreenInsets';
+import { Spacing } from '@/constants/theme';
 
 interface ScreenFlatListProps<T> extends FlatListProps<T> {
   noHorizontalPadding?: boolean;
@@ -54,7 +54,7 @@ export function ScreenFlatListWithFixedHeader<T>({
   ...props
 }: ScreenFlatListProps<T> & { headerHeight: number }) {
   const insets = useScreenInsets();
-  
+
   return (
     <ScreenFlatList
       {...props}

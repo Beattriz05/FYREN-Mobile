@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { View, TextInput, Pressable, StyleSheet, Alert, Image } from 'react-native';
+import {
+  View,
+  TextInput,
+  Pressable,
+  StyleSheet,
+  Alert,
+  Image,
+} from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { useTheme } from '@/hooks/useTheme';
 import { useAuth } from '@/hooks/useAuth';
@@ -45,7 +52,14 @@ export default function LoginScreen() {
 
         <View style={styles.formContainer}>
           <TextInput
-            style={[styles.input, { backgroundColor: colors.backgroundSecondary, color: colors.text, borderColor: colors.border }]}
+            style={[
+              styles.input,
+              {
+                backgroundColor: colors.backgroundSecondary,
+                color: colors.text,
+                borderColor: colors.border,
+              },
+            ]}
             placeholder="Email"
             placeholderTextColor={colors.tabIconDefault}
             value={email}
@@ -55,7 +69,14 @@ export default function LoginScreen() {
           />
 
           <TextInput
-            style={[styles.input, { backgroundColor: colors.backgroundSecondary, color: colors.text, borderColor: colors.border }]}
+            style={[
+              styles.input,
+              {
+                backgroundColor: colors.backgroundSecondary,
+                color: colors.text,
+                borderColor: colors.border,
+              },
+            ]}
             placeholder="Senha"
             placeholderTextColor={colors.tabIconDefault}
             value={password}
@@ -71,7 +92,9 @@ export default function LoginScreen() {
             onPress={handleLogin}
             disabled={isLoading}
           >
-            <ThemedText style={[styles.buttonText, { color: colors.textLight }]}>
+            <ThemedText
+              style={[styles.buttonText, { color: colors.textLight }]}
+            >
               {isLoading ? 'Entrando...' : 'Entrar'}
             </ThemedText>
           </Pressable>
