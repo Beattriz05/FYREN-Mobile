@@ -1,1 +1,1 @@
-aqui será a descrição
+aqui será a descrição do projeto
