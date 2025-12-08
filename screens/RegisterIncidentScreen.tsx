@@ -141,7 +141,7 @@ export default function RegisterIncidentScreen({ navigation, route }: Props) {
       // Usando apenas propriedades válidas: accuracy, maximumAge, distanceInterval
       const loc = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Balanced,
-        maximumAge: 10000, // Aceita localização com até 10 segundos -- resolver esse erro na parte de localização
+
         distanceInterval: 10, // Atualizar apenas após mover 10 metros
       });
 
