@@ -108,37 +108,93 @@ Auxiliar:
 
 📋 Requisitos do Sistema
 
-- Node.js 18+
+No Computador de Desenvolvimento:
 
-- Expo CLI 6.x
+- Node.js
 
-- iOS Simulator (para desenvolvimento iOS)
+- Expo CLI instalado globalmente (npm install -g expo-cli)
 
-- Android Studio (para desenvolvimento Android)
+- Git para clonar o repositório
 
-- Dispositivos físicos recomendados para testes reais
+No Dispositivo Móvel:
+
+- Expo Go instalado (disponível na App Store e Play Store)
+
+- Conexão com a internet (Wi-Fi ou dados móveis)
 
 🚀 Como Executar
 
-´´´
+1. Clonar e Instalar Dependências
+```
+# Clonar o repositório
+git clone [URL_DO_REPOSITORIO]
+cd [NOME_DO_PROJETO]
+
 # Instalar dependências
 npm install
+```
 
-# Iniciar em modo desenvolvimento
-npm start
+2. Iniciar o Servidor de Desenvolvimento
+```
+# Iniciar o projeto Expo
+npx expo start
+```
+3. Escanear o QR Code no Dispositivo Móvel
+   
+- Abra o aplicativo Expo Go no seu celular
 
-# Executar em iOS
-npm run ios
+- Toque em "Scan QR Code" e aponte a câmera para o QR Code exibido no terminal
 
-# Executar em Android
-npm run android
+- Aguarde o carregamento do aplicativo (pode levar alguns minutos na primeira vez)
 
-# Executar na web
-npm run web
+4. Modos de Execução Alternativos
+```
+# Modo desenvolvimento com tunnel (para redes diferentes)
+npx expo start --tunnel
 
-# Verificar formatação
+# Modo específico para iOS
+npx expo start --ios
+
+# Modo específico para Android
+npx expo start --android
+
+# Modo web (para teste no navegador)
+npx expo start --web
+```
+
+5. Credenciais de Teste
+
+- Para testar a aplicação, utilize:
+
+- Usuário Comum: qualquer email + senha 123456
+
+- Chefe: email contendo "chief" ou "chefe" + senha 123456
+
+- Administrador: email contendo "admin" + senha 123456
+
+⚠️ Limitações do Expo Go
+
+- Algumas funcionalidades nativas podem ter comportamento limitado
+
+- Performance pode ser inferior a um build nativo
+
+- Funcionalidades de background podem não funcionar completamente
+
+- Recomendado para testes de desenvolvimento e demonstrações
+
+🔧 Scripts Disponíveis
+
+```
+# Verificar formatação do código
 npm run check:format
 
-# Formatar código
+# Formatar automaticamente o código
 npm run format
-´´´
+
+# Verificar problemas de linting
+npm run lint
+
+# Iniciar com configuração específica para Replit
+npm run dev
+```
+
