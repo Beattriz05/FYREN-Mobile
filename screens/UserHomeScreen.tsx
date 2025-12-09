@@ -6,33 +6,41 @@ import { useTheme } from '@/hooks/useTheme';
 import { Spacing, BorderRadius } from '@/constants/theme';
 import { Feather } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-// CORREÇÃO: Importar do arquivo central de tipos para evitar ciclos
 import { UserHomeStackParamList } from '@/types/navigation';
 
 type Props = NativeStackScreenProps<UserHomeStackParamList, 'Home'>;
 
+// Interface para garantir que o ícone seja válido
+interface MenuItem {
+  title: string;
+  subtitle: string;
+  icon: keyof typeof Feather.glyphMap; // AQUI ESTÁ A CORREÇÃO PRINCIPAL
+  color: string;
+  onPress: () => void;
+}
+
 export default function UserHomeScreen({ navigation }: Props) {
   const { colors } = useTheme();
 
-  const menuItems = [
+  const menuItems: MenuItem[] = [
     {
       title: 'Nova Ocorrência',
       subtitle: 'Registrar nova ocorrência',
-      icon: 'plus-circle' as const,
+      icon: 'plus-circle',
       color: colors.primary,
       onPress: () => navigation.navigate('RegisterIncident', { incident: undefined }),
     },
     {
       title: 'Histórico',
       subtitle: 'Ver ocorrências registradas',
-      icon: 'list' as const,
+      icon: 'list',
       color: colors.secondary,
       onPress: () => navigation.navigate('History'),
     },
     {
       title: 'Sincronizar',
       subtitle: 'Enviar dados para nuvem',
-      icon: 'cloud-upload' as const,
+      icon: 'upload',
       color: colors.accent,
       onPress: () => {
         console.log('Sincronizar');
@@ -41,7 +49,7 @@ export default function UserHomeScreen({ navigation }: Props) {
     {
       title: 'Configurações',
       subtitle: 'Ajustes do aplicativo',
-      icon: 'settings' as const,
+      icon: 'settings',
       color: colors.text,
       onPress: () => {
         console.log('Configurações');
@@ -58,7 +66,8 @@ export default function UserHomeScreen({ navigation }: Props) {
           Bem-vindo!
         </ThemedText>
         <ThemedText
-          style={[styles.welcomeSubtitle, { color: colors.textLight }]}
+          // Usando style para peso da fonte, já que 'defaultSemiBold' pode não existir no seu ThemedText atual
+          style={[styles.welcomeSubtitle, { color: colors.textLight, fontWeight: '600' }]}
         >
           O que você gostaria de fazer?
         </ThemedText>
@@ -84,6 +93,7 @@ export default function UserHomeScreen({ navigation }: Props) {
               ]}
             >
               <View style={styles.menuContent}>
+                {/* Agora o TypeScript sabe que item.icon é válido */}
                 <Feather name={item.icon} size={32} color={item.color} />
                 <View style={styles.menuText}>
                   <ThemedText type="h4" style={styles.menuTitle}>

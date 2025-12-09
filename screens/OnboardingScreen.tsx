@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../navigation/RootNavigator';
+import { RootStackParamList } from '@/types/navigation';
+import { useAuth } from '@/hooks/useAuth';
 
 type OnboardingScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Onboarding'>;
@@ -9,8 +10,6 @@ type OnboardingScreenProps = {
 
 export default function OnboardingScreen({ navigation }: OnboardingScreenProps) {
   const handleComplete = () => {
-    // Marcar onboarding como completo e navegar para Login
-    // Você precisará implementar a lógica de storage aqui
     navigation.navigate('Login');
   };
 

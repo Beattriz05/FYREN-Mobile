@@ -1,63 +1,80 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
-import { Alert } from 'react-native'; // Adicionado Alert
+import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-export type UserRole = 'user' | 'chief' | 'admin';
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: UserRole;
-}
+// Importamos o tipo centralizado para garantir compatibilidade com ProfileScreen e outros
+import { AppUser } from '@/utils/storage';
 
 interface AuthContextType {
-  user: User | null;
+  user: AppUser | null;
   isLoading: boolean;
+  hasCompletedOnboarding: boolean; // <--- Adicionado
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  completeOnboarding: () => Promise<void>; // <--- Adicionado
   isAuthenticated: boolean;
 }
 
 export const AuthContext = createContext<AuthContextType>({
   user: null,
   isLoading: true,
+  hasCompletedOnboarding: false,
   login: async () => {},
   logout: async () => {},
+  completeOnboarding: async () => {},
   isAuthenticated: false,
 });
 
 const STORAGE_KEY = '@fyren_user';
+const ONBOARDING_KEY = '@fyren_onboarding';
 const MAX_ATTEMPTS = 3;
-const LOCKOUT_TIME = 30000; // 30 segundos em milissegundos
+const LOCKOUT_TIME = 30000;
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AppUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
 
-  // Estados para controle de segurança (F-01)
+  // Estados para controle de segurança
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [lockoutUntil, setLockoutUntil] = useState<number | null>(null);
 
   useEffect(() => {
-    loadUser();
+    loadStorageData();
   }, []);
 
-  const loadUser = async () => {
+  const loadStorageData = async () => {
     try {
-      const storedUser = await AsyncStorage.getItem(STORAGE_KEY);
+      // Carrega usuário e status do onboarding simultaneamente
+      const [storedUser, onboardingStatus] = await Promise.all([
+        AsyncStorage.getItem(STORAGE_KEY),
+        AsyncStorage.getItem(ONBOARDING_KEY),
+      ]);
+
       if (storedUser) {
         setUser(JSON.parse(storedUser));
       }
+
+      if (onboardingStatus === 'true') {
+        setHasCompletedOnboarding(true);
+      }
     } catch (error) {
-      console.error('Error loading user:', error);
+      console.error('Error loading auth data:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
+  const completeOnboarding = async () => {
+    try {
+      await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
+      setHasCompletedOnboarding(true);
+    } catch (error) {
+      console.error('Error saving onboarding status:', error);
+    }
+  };
+
   const login = async (email: string, password: string) => {
-    // 1. Verifica se está bloqueado
+    // 1. Verifica bloqueio
     if (lockoutUntil) {
       const now = Date.now();
       if (now < lockoutUntil) {
@@ -68,39 +85,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         );
         throw new Error('Locked out');
       } else {
-        // Tempo passou, reseta o bloqueio
         setLockoutUntil(null);
         setFailedAttempts(0);
       }
     }
 
-    // 2. Simulação de validação de senha (F-01)
-    // Para o MVP, a senha correta é sempre "123456"
+    // 2. Validação de senha (F-01) - Senha padrão: 123456
     if (password !== '123456') {
       const newAttempts = failedAttempts + 1;
       setFailedAttempts(newAttempts);
 
       if (newAttempts >= MAX_ATTEMPTS) {
         setLockoutUntil(Date.now() + LOCKOUT_TIME);
-        Alert.alert(
-          'Bloqueado',
-          'Número máximo de tentativas excedido. Aguarde 30s.',
-        );
+        Alert.alert('Bloqueado', 'Número máximo de tentativas excedido. Aguarde 30s.');
       } else {
-        Alert.alert(
-          'Credenciais Inválidas',
-          `Senha incorreta. Tentativa ${newAttempts} de ${MAX_ATTEMPTS}.`,
-        );
+        Alert.alert('Credenciais Inválidas', `Senha incorreta. Tentativa ${newAttempts} de ${MAX_ATTEMPTS}.`);
       }
       throw new Error('Invalid credentials');
     }
 
-    // 3. Sucesso - Reseta contadores
+    // 3. Sucesso
     setFailedAttempts(0);
     setLockoutUntil(null);
 
-    // Define o cargo baseado no e-mail (Lógica Mockada)
-    let role: UserRole = 'user';
+    // Define cargo baseado no email
+    let role: 'user' | 'chief' | 'admin' = 'user';
     const emailLower = email.toLowerCase();
 
     if (emailLower.includes('chief') || emailLower.includes('chefe')) {
@@ -109,11 +118,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       role = 'admin';
     }
 
-    const userData: User = {
+    // Cria objeto compatível com AppUser do storage.ts
+    const userData: AppUser = {
       id: Math.random().toString(36).substring(7),
-      name: email.split('@')[0], // Usa a parte antes do @ como nome
+      name: email.split('@')[0],
       email,
       role,
+      active: true, // Necessário para o ProfileScreen
+      createdAt: new Date().toISOString(),
     };
 
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
@@ -130,8 +142,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         user,
         isLoading,
+        hasCompletedOnboarding,
         login,
         logout,
+        completeOnboarding,
         isAuthenticated: !!user,
       }}
     >
