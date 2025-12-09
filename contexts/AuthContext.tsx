@@ -7,10 +7,10 @@ import { AppUser } from '@/utils/storage';
 interface AuthContextType {
   user: AppUser | null;
   isLoading: boolean;
-  hasCompletedOnboarding: boolean; // <--- Adicionado
+  hasCompletedOnboarding: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  completeOnboarding: () => Promise<void>; // <--- Adicionado
+  completeOnboarding: () => Promise<void>;
   isAuthenticated: boolean;
 }
 
@@ -34,7 +34,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
 
-  // Estados para controle de segurança
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [lockoutUntil, setLockoutUntil] = useState<number | null>(null);
 
@@ -44,7 +43,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loadStorageData = async () => {
     try {
-      // Carrega usuário e status do onboarding simultaneamente
       const [storedUser, onboardingStatus] = await Promise.all([
         AsyncStorage.getItem(STORAGE_KEY),
         AsyncStorage.getItem(ONBOARDING_KEY),
@@ -73,8 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const login = async (email: string, password: string) => {
-    // 1. Verifica bloqueio
+ const login = async (email: string, password: string) => {
     if (lockoutUntil) {
       const now = Date.now();
       if (now < lockoutUntil) {
@@ -90,7 +87,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    // 2. Validação de senha (F-01) - Senha padrão: 123456
     if (password !== '123456') {
       const newAttempts = failedAttempts + 1;
       setFailedAttempts(newAttempts);
@@ -104,11 +100,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw new Error('Invalid credentials');
     }
 
-    // 3. Sucesso
     setFailedAttempts(0);
     setLockoutUntil(null);
 
-    // Define cargo baseado no email
     let role: 'user' | 'chief' | 'admin' = 'user';
     const emailLower = email.toLowerCase();
 
@@ -118,17 +112,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       role = 'admin';
     }
 
-    // Cria objeto compatível com AppUser do storage.ts
     const userData: AppUser = {
       id: Math.random().toString(36).substring(7),
       name: email.split('@')[0],
       email,
       role,
-      active: true, // Necessário para o ProfileScreen
+      active: true,
       createdAt: new Date().toISOString(),
     };
 
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
+    await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
+    
+    setHasCompletedOnboarding(true);
     setUser(userData);
   };
 

@@ -6,7 +6,7 @@ export type UserHomeStackParamList = {
   History: undefined;
   IncidentDetail: { incident: Incident };
   RegisterIncident: { incident?: Incident };
-  Profile: undefined; // <--- Adicionado para corrigir o erro no Tab
+  Profile: undefined;
 };
 
 // Rotas para o Tab Bar do Chefe

@@ -10,19 +10,17 @@ import { UserHomeStackParamList } from '@/types/navigation';
 
 type Props = NativeStackScreenProps<UserHomeStackParamList, 'Home'>;
 
-// Interface para garantir que o ícone seja válido
-interface MenuItem {
-  title: string;
-  subtitle: string;
-  icon: keyof typeof Feather.glyphMap; // AQUI ESTÁ A CORREÇÃO PRINCIPAL
-  color: string;
-  onPress: () => void;
-}
-
 export default function UserHomeScreen({ navigation }: Props) {
   const { colors } = useTheme();
 
-  const menuItems: MenuItem[] = [
+  // Tipagem explícita para corrigir o erro do ícone
+  const menuItems: {
+    title: string;
+    subtitle: string;
+    icon: keyof typeof Feather.glyphMap;
+    color: string;
+    onPress: () => void;
+  }[] = [
     {
       title: 'Nova Ocorrência',
       subtitle: 'Registrar nova ocorrência',
@@ -52,7 +50,7 @@ export default function UserHomeScreen({ navigation }: Props) {
       icon: 'settings',
       color: colors.text,
       onPress: () => {
-        console.log('Configurações');
+        navigation.navigate('Profile');
       },
     },
   ];
@@ -66,7 +64,7 @@ export default function UserHomeScreen({ navigation }: Props) {
           Bem-vindo!
         </ThemedText>
         <ThemedText
-          // Usando style para peso da fonte, já que 'defaultSemiBold' pode não existir no seu ThemedText atual
+          // Removido type="defaultSemiBold" que não existia, usando style direto
           style={[styles.welcomeSubtitle, { color: colors.textLight, fontWeight: '600' }]}
         >
           O que você gostaria de fazer?
@@ -93,7 +91,6 @@ export default function UserHomeScreen({ navigation }: Props) {
               ]}
             >
               <View style={styles.menuContent}>
-                {/* Agora o TypeScript sabe que item.icon é válido */}
                 <Feather name={item.icon} size={32} color={item.color} />
                 <View style={styles.menuText}>
                   <ThemedText type="h4" style={styles.menuTitle}>

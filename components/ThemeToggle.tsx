@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { ThemedText } from './ThemedText';
 import { useTheme } from '../hooks/useTheme';
+import { Feather } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons'; // Importar MaterialIcons
 import Spacer from './Spacer'; // Importar Spacer
 

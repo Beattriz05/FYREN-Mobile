@@ -16,7 +16,7 @@ import Button from '../components/Button';
 import { Card } from '../components/Card';
 import Spacer from '../components/Spacer';
 import SettingRow from '../components/SettingRow';
-import Avatar from '@/contexts/Avatar';
+import Avatar from '@/components/Avatar';
 import ThemeToggle from '../components/ThemeToggle';
 import { MaterialIcons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
