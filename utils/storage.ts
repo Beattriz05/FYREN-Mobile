@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const INCIDENTS_KEY = '@fyren_incidents';
 const USERS_KEY = '@fyren_users';
 const COMMENTS_KEY = '@fyren_comments';
-
+const API_URL = 'https://fyren-backend-dntd.onrender.com'
 // F-12: Interface para eventos da Linha do Tempo
 export interface TimelineEvent {
   id: string;

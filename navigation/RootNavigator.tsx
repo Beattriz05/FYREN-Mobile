@@ -303,14 +303,14 @@ export default function RootNavigator() {
           presentation: 'modal' as const,
         }}
       />
-      <Stack.Screen
-        name="IncidentDetail"
-        component={IncidentDetailScreen}
-        options={({ route }) => ({
-          title: `Ocorrência #${route.params.incident.id.substring(0, 8)}`,
-          headerBackTitle: 'Voltar',
-        })}
-      />
+     <Stack.Screen
+  name="IncidentDetail"
+  component={IncidentDetailScreen}
+  options={({ route }) => ({
+    title: `Ocorrência #${route.params?.incident?.id?.substring(0, 8) || ''}`,
+    headerBackTitle: 'Voltar',
+  })}
+/>
     </Stack.Navigator>
   );
 }

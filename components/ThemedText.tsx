@@ -1,99 +1,47 @@
-// components/ThemedText.tsx
-import React from 'react';
-import { Text, TextProps, StyleSheet } from 'react-native';
-import { useTheme } from '../contexts/ThemeContext';
+import { Text, type TextProps, StyleSheet } from 'react-native';
+import { useTheme } from '@/hooks/useTheme';
 
-export type ThemedTextType =
-  | 'h1'
-  | 'h2'
-  | 'h3'
-  | 'h4'
-  | 'body'
-  | 'small'
-  | 'link'
-  | 'caption';
+export type ThemedTextProps = TextProps & {
+  lightColor?: string;
+  darkColor?: string;
+  // AQUI ESTÁ A CORREÇÃO: Adicionei 'title', 'caption' e 'h4' na lista abaixo
+  type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link' | 'caption' | 'h4';
+};
 
-interface ThemedTextProps extends TextProps {
-  type?: ThemedTextType;
-  children: React.ReactNode;
-}
-
-export const ThemedText: React.FC<ThemedTextProps> = ({
-  type = 'body',
+export function ThemedText({
   style,
-  children,
-  ...props
-}) => {
-  const { colors, fontSizeScale } = useTheme();
-
-  const getFontSize = () => {
-    switch (type) {
-      case 'h1':
-        return 32 * fontSizeScale;
-      case 'h2':
-        return 28 * fontSizeScale;
-      case 'h3':
-        return 24 * fontSizeScale;
-      case 'h4':
-        return 20 * fontSizeScale;
-      case 'body':
-        return 16 * fontSizeScale;
-      case 'small':
-        return 14 * fontSizeScale;
-      case 'link':
-        return 16 * fontSizeScale;
-      case 'caption':
-        return 12 * fontSizeScale; // Adicionado
-      default:
-        return 16 * fontSizeScale;
-    }
-  };
-
-  const getFontWeight = () => {
-    switch (type) {
-      case 'h1':
-        return '700';
-      case 'h2':
-        return '700';
-      case 'h3':
-        return '600';
-      case 'h4':
-        return '600';
-      case 'body':
-        return '400';
-      case 'small':
-        return '400';
-      case 'link':
-        return '400';
-      case 'caption':
-        return '400'; // Adicionado
-      default:
-        return '400';
-    }
-  };
-
-  const getColor = () => {
-    if (type === 'link') {
-      return colors.link || '#2D74FF';
-    }
-    return colors.text || '#2c3e50';
-  };
+  lightColor,
+  darkColor,
+  type = 'default',
+  ...rest
+}: ThemedTextProps) {
+  const { colors } = useTheme();
+  const color = colors.text;
 
   return (
     <Text
       style={[
-        {
-          color: getColor(),
-          fontSize: getFontSize(),
-          fontWeight: getFontWeight(),
-        },
-        type === 'caption' && { opacity: 0.7 },
-        type === 'small' && { opacity: 0.7 },
+        { color },
+        type === 'default' ? styles.default : undefined,
+        type === 'title' ? styles.title : undefined,
+        type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,
+        type === 'subtitle' ? styles.subtitle : undefined,
+        type === 'link' ? { color: colors.tabIconSelected } : undefined,
+        type === 'caption' ? styles.caption : undefined,
+        type === 'h4' ? styles.h4 : undefined,
         style,
       ]}
-      {...props}
-    >
-      {children}
-    </Text>
+      {...rest}
+    />
   );
-};
+}
+
+const styles = StyleSheet.create({
+  default: { fontSize: 16, lineHeight: 24 },
+  defaultSemiBold: { fontSize: 16, lineHeight: 24, fontWeight: '600' },
+  title: { fontSize: 32, fontWeight: 'bold', lineHeight: 32 },
+  subtitle: { fontSize: 20, fontWeight: 'bold' },
+  link: { lineHeight: 30, fontSize: 16, color: '#0a7ea4' },
+  caption: { fontSize: 12, lineHeight: 18 },
+  h4: { fontSize: 18, fontWeight: '700', lineHeight: 24 },
+});

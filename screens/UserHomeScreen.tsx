@@ -6,9 +6,9 @@ import { useTheme } from '@/hooks/useTheme';
 import { Spacing, BorderRadius } from '@/constants/theme';
 import { Feather } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { UserHomeStackParamList } from '@/navigation/UserHomeStackNavigator';
+// CORREÇÃO: Importar do arquivo central de tipos para evitar ciclos
+import { UserHomeStackParamList } from '@/types/navigation';
 
-// Define as props da tela
 type Props = NativeStackScreenProps<UserHomeStackParamList, 'Home'>;
 
 export default function UserHomeScreen({ navigation }: Props) {
@@ -20,7 +20,7 @@ export default function UserHomeScreen({ navigation }: Props) {
       subtitle: 'Registrar nova ocorrência',
       icon: 'plus-circle' as const,
       color: colors.primary,
-      onPress: () => navigation.navigate('RegisterIncident'),
+      onPress: () => navigation.navigate('RegisterIncident', { incident: undefined }),
     },
     {
       title: 'Histórico',
@@ -35,7 +35,6 @@ export default function UserHomeScreen({ navigation }: Props) {
       icon: 'cloud-upload' as const,
       color: colors.accent,
       onPress: () => {
-        // Adicione função de sincronização aqui
         console.log('Sincronizar');
       },
     },
@@ -45,7 +44,6 @@ export default function UserHomeScreen({ navigation }: Props) {
       icon: 'settings' as const,
       color: colors.text,
       onPress: () => {
-        // Adicione navegação para configurações aqui
         console.log('Configurações');
       },
     },
@@ -60,7 +58,6 @@ export default function UserHomeScreen({ navigation }: Props) {
           Bem-vindo!
         </ThemedText>
         <ThemedText
-          type="defaultSemiBold"
           style={[styles.welcomeSubtitle, { color: colors.textLight }]}
         >
           O que você gostaria de fazer?

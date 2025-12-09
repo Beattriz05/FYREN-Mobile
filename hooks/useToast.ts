@@ -1,10 +1,10 @@
-// hooks/useToast.ts - VERSÃO SIMPLIFICADA QUE FUNCIONA
 import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from './useTheme';
 
-type ToastType = 'success' | 'error' | 'info' | 'warning';
+// Definição dos tipos
+export type ToastType = 'success' | 'error' | 'info' | 'warning';
 
 interface ToastContextData {
   showToast: (type: ToastType, message: string, duration?: number) => void;
@@ -26,28 +26,34 @@ interface ToastProviderProps {
   position?: 'top' | 'bottom';
 }
 
-export function ToastProvider({ children, position = 'top' }: ToastProviderProps): React.ReactElement {
+export function ToastProvider({ children, position = 'top' }: ToastProviderProps) {
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState('');
   const [type, setType] = useState<ToastType>('info');
+  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
   
   const { colors } = useTheme();
 
   const showToast = useCallback((toastType: ToastType, toastMessage: string, duration = 3000) => {
+    // Limpa timer anterior se existir
+    if (timer) clearTimeout(timer);
+
     setType(toastType);
     setMessage(toastMessage);
     setVisible(true);
 
     if (duration > 0) {
-      setTimeout(() => {
+      const newTimer = setTimeout(() => {
         setVisible(false);
       }, duration);
+      setTimer(newTimer);
     }
-  }, []);
+  }, [timer]);
 
   const hideToast = useCallback(() => {
     setVisible(false);
-  }, []);
+    if (timer) clearTimeout(timer);
+  }, [timer]);
 
   const getToastColor = () => {
     switch (type) {
@@ -62,20 +68,15 @@ export function ToastProvider({ children, position = 'top' }: ToastProviderProps
   const getToastIcon = () => {
     switch (type) {
       case 'success': return 'check-circle';
-      case 'error': return 'error-outline';
+      case 'error': return 'error';
       case 'warning': return 'warning';
       case 'info': return 'info';
       default: return 'info';
     }
   };
 
-  const contextValue: ToastContextData = {
-    showToast,
-    hideToast,
-  };
-
   return (
-    <ToastContext.Provider value={contextValue}>
+    <ToastContext.Provider value={{ showToast, hideToast }}>
       {children}
       {visible && (
         <View style={[styles.container, { 
@@ -117,20 +118,7 @@ const styles = StyleSheet.create({
     flex: 1,
     color: '#FFF',
     fontSize: 14,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     marginRight: 12,
   },
 });
-
-// Hook de conveniência
-export const useToastHook = () => {
-  const toast = useToast();
-  
-  return {
-    success: (message: string, duration?: number) => toast.showToast('success', message, duration),
-    error: (message: string, duration?: number) => toast.showToast('error', message, duration),
-    info: (message: string, duration?: number) => toast.showToast('info', message, duration),
-    warning: (message: string, duration?: number) => toast.showToast('warning', message, duration),
-    hide: toast.hideToast,
-  };
-};
