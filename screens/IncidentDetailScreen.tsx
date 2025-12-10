@@ -385,7 +385,8 @@ const styles = StyleSheet.create({
   tab: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingTop: 120,
+    paddingBottom: 12,
   },
   card: {
     padding: Spacing.lg,

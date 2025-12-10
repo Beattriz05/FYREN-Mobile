@@ -1,18 +1,20 @@
 import React from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { Feather, MaterialIcons } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 
 import { useTheme } from '@/hooks/useTheme';
 import { useAuth } from '@/hooks/useAuth';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { Spacing, BorderRadius } from '@/constants/theme';
+import { useScreenInsets } from '@/hooks/useScreenInsets'; // Importando hook de insets
 
 export default function UserHomeScreen({ navigation }: any) {
   const { colors, isDark } = useTheme();
   const { user } = useAuth();
+  const insets = useScreenInsets(); // Hook para pegar áreas seguras
 
-  // Componente de Botão do Menu (Reutilizável)
+  // Componente de Botão do Menu Padronizado
   const MenuButton = ({ title, icon, color, onPress, style }: any) => (
     <TouchableOpacity
       style={[
@@ -27,36 +29,38 @@ export default function UserHomeScreen({ navigation }: any) {
       onPress={onPress}
       activeOpacity={0.7}
     >
-      {/* Ícone Redondo */}
       <View style={[
         styles.iconContainer, 
-        { borderColor: color, borderWidth: 2 } // Borda colorida no ícone
+        { borderColor: color, borderWidth: 2 } 
       ]}>
         <Feather name={icon} size={24} color={isDark ? '#FFF' : color} />
       </View>
 
-      {/* Texto Centralizado */}
       <View style={styles.textContainer}>
         <ThemedText style={styles.buttonTitle}>{title}</ThemedText>
       </View>
 
-      {/* Seta */}
       <Feather name="chevron-right" size={24} color={colors.tabIconDefault} />
     </TouchableOpacity>
   );
 
   return (
     <ThemedView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        contentContainerStyle={[
+          styles.scrollContent, 
+          { paddingTop: insets.top + 60 } // Correção do corte: Inset + margem
+        ]} 
+        showsVerticalScrollIndicator={false}
+      >
         
-        {/* HEADER (Sem Logo, Texto Ajustado) */}
+        {/* HEADER LIMPO (Sem ícone) */}
         <View style={styles.header}>
           <ThemedText style={[styles.welcomeTitle, { color: colors.text }]}>
-            Bem-vindo!
+            Bem-vindo, {user?.name?.split(' ')[0]}!
           </ThemedText>
-          {/* Subtítulo agora usa colors.text para ficar da mesma cor do título */}
           <ThemedText style={[styles.subtitle, { color: colors.text }]}>
-            O que você gostaria de fazer?
+            O que você gostaria de fazer hoje?
           </ThemedText>
         </View>
 
@@ -65,36 +69,29 @@ export default function UserHomeScreen({ navigation }: any) {
           <MenuButton 
             title="Nova Ocorrência" 
             icon="plus" 
-            color="#0E2345" // Azul Marinho (Fyren)
+            color="#0E2345" 
             onPress={() => navigation.navigate('RegisterIncident')}
           />
 
           <MenuButton 
             title="Histórico" 
-            icon="list" 
-            color="#FF7A00" // Laranja
+            icon="clock" 
+            color="#FF7A00" 
             onPress={() => navigation.navigate('History')}
-          />
-
-          <MenuButton 
-            title="Sincronizar" 
-            icon="upload-cloud" 
-            color="#2D74FF" // Azul Claro
-            onPress={() => console.log('Sincronizar')}
           />
 
           <MenuButton 
             title="Configurações" 
             icon="settings" 
-            color="#475569" // Cinza
-            onPress={() => navigation.navigate('Profile')} // Redireciona para o perfil/config
+            color="#475569" 
+            onPress={() => navigation.navigate('Profile')}
           />
         </View>
 
         {/* FOOTER */}
         <View style={styles.footer}>
           <ThemedText style={[styles.versionText, { color: colors.tabIconDefault }]}>
-            Versão 1.0.0 • Última sincronização: Hoje, 10:30
+            Versão 1.0.0 • CBM-PE
           </ThemedText>
         </View>
 
@@ -108,13 +105,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: Spacing['2xl'],
-    paddingTop: 60, // Espaço superior maior já que removemos a logo
+    paddingHorizontal: Spacing['2xl'],
+    paddingBottom: 100,
   },
-  
-  // Header
   header: {
-    marginBottom: 40,
+    marginBottom: 30,
   },
   welcomeTitle: {
     fontSize: 32,
@@ -124,21 +119,19 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 18,
     fontWeight: '500',
-    opacity: 0.9, // Leve opacidade para dar um toque sutil, mas mantendo a cor
+    opacity: 0.8,
   },
-
-  // Menu Buttons
   menuContainer: {
-    gap: 16, // Espaço entre os botões
+    gap: 16,
   },
   menuButton: {
     flexDirection: 'row',
-    alignItems: 'center', // ISSO CENTRALIZA VERTICALMENTE
-    paddingVertical: 20,  // Aumenta a altura do botão
+    alignItems: 'center',
+    paddingVertical: 20,
     paddingHorizontal: 20,
-    borderRadius: 20,
+    borderRadius: 16,
     borderWidth: 1,
-    borderLeftWidth: 6, // Faixa lateral colorida
+    borderLeftWidth: 6,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.05,
@@ -146,23 +139,21 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
   },
   textContainer: {
-    flex: 1, // Ocupa todo o espaço do meio
-    justifyContent: 'center', // Garante centralização
+    flex: 1,
+    justifyContent: 'center',
   },
   buttonTitle: {
     fontSize: 18,
     fontWeight: '700',
   },
-
-  // Footer
   footer: {
     marginTop: 40,
     alignItems: 'center',

@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   header: {
     paddingHorizontal: 20,
-    paddingTop: 60,
+    paddingTop: 120,
     paddingBottom: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
