@@ -10,6 +10,7 @@ import RootNavigator from '@/navigation/RootNavigator';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
+import { ToastProvider } from '@/hooks/useToast';
 
 // Opcional: Ignorar warnings específicos (remova em produção)
 LogBox.ignoreLogs([
@@ -31,7 +32,9 @@ export default function App() {
                 {' '}
                 {/* Auth depois do tema */}
                 <NavigationContainer>
+                  <ToastProvider>
                   <RootNavigator />
+                  </ToastProvider>
                   <StatusBar style="auto" />
                 </NavigationContainer>
               </AuthProvider>

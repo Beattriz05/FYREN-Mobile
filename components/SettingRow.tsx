@@ -1,13 +1,11 @@
 import React, { ReactNode } from 'react';
 import { View, StyleSheet, Switch, TouchableOpacity } from 'react-native';
 import { ThemedText } from './ThemedText';
-import Spacer from './Spacer';
 import { useTheme } from '../hooks/useTheme';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Colors } from '@/constants/theme';
 
 interface SettingRowProps {
-  icon?: string;
+  icon?: keyof typeof MaterialIcons.glyphMap; // Tipagem correta para ícones
   label: string;
   description?: string;
   value?: string | boolean;
@@ -33,72 +31,61 @@ const SettingRow: React.FC<SettingRowProps> = ({
   children,
   type = 'default',
 }) => {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
 
-  const getIconColor = () => {
-    if (type === 'danger') return colors.error || '#F44336'; // Usar colors.error
-    return colors.textLight || '#9E9E9E';
-  };
-
-  const getTextColor = () => {
-    if (type === 'danger') return colors.error || '#F44336';
-    return colors.text || '#2c3e50';
-  };
+  // LÓGICA DE COR CORRIGIDA:
+  // Se for 'danger', usa vermelho.
+  // Se não, usa colors.text (Azul no Claro, Branco no Escuro)
+  // Ou usa colors.secondary (Laranja) se quiser destaque
+  const baseColor = type === 'danger' ? (colors.error || '#EF4444') : colors.text;
+  
+  // Cor secundária para descrição e chevron
+  const subColor = isDark ? '#94A3B8' : '#64748B'; 
 
   const Content = (
-    <View style={[styles.container, onPress && styles.pressable]}>
+    <View style={styles.container}>
       {icon && (
-        <>
-          <MaterialIcons
-            name={icon as any}
-            size={24}
-            color={getIconColor()}
-            style={styles.icon}
-          />
-          <Spacer size="s" horizontal />
-        </>
+        <View style={styles.iconContainer}>
+          {/* O segredo está aqui: baseColor garante o contraste */}
+          <MaterialIcons name={icon} size={24} color={baseColor} />
+        </View>
       )}
 
       <View style={styles.content}>
         <View style={styles.textContainer}>
-          <ThemedText style={[styles.label, { color: getTextColor() }]}>
+          <ThemedText style={[styles.label, { color: baseColor }]}>
             {label}
           </ThemedText>
           {description && (
-            <ThemedText type="caption" style={styles.description}>
+            <ThemedText style={[styles.description, { color: subColor }]}>
               {description}
-            </ThemedText>
-          )}
-          {value && typeof value === 'string' && (
-            <ThemedText type="caption" style={styles.value}>
-              {value}
             </ThemedText>
           )}
         </View>
 
-        {children && <View style={styles.children}>{children}</View>}
+        <View style={styles.rightContent}>
+          {value && typeof value === 'string' && (
+            <ThemedText style={[styles.value, { color: subColor }]}>
+              {value}
+            </ThemedText>
+          )}
+          
+          {children}
 
-        {showSwitch && (
-          <Switch
-            value={switchValue}
-            onValueChange={onSwitchChange}
-            trackColor={{
-              false: colors.border || '#E0E0E0',
-              true: colors.primary || '#0E2345',
-            }}
-            thumbColor={
-              switchValue ? '#FFFFFF' : colors.backgroundTertiary || '#F5F5F5'
-            }
-          />
-        )}
+          {showSwitch && (
+            <Switch
+              value={switchValue}
+              onValueChange={onSwitchChange}
+              // Cores do Switch ajustadas para o tema
+              trackColor={{ false: isDark ? '#334155' : '#E2E8F0', true: colors.primary }}
+              thumbColor={'#FFFFFF'}
+            />
+          )}
 
-        {showChevron && (
-          <MaterialIcons
-            name="chevron-right"
-            size={24}
-            color={colors.textLight || '#9E9E9E'}
-          />
-        )}
+          {showChevron && (
+            <MaterialIcons name="chevron-right" size={24} color={subColor} />
+          )}
+        </View>
       </View>
     </View>
   );
@@ -118,23 +105,13 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 16,
+    paddingVertical: 16, // Aumentei um pouco para facilitar o toque
     paddingHorizontal: 16,
-    backgroundColor: 'white',
-    marginHorizontal: 16,
-    marginVertical: 4,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
   },
-  pressable: {
-    backgroundColor: 'transparent',
-  },
-  icon: {
+  iconContainer: {
+    marginRight: 16,
     width: 24,
+    alignItems: 'center',
   },
   content: {
     flex: 1,
@@ -144,25 +121,24 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flex: 1,
-    marginRight: 12,
+    marginRight: 8,
   },
   label: {
     fontSize: 16,
     fontWeight: '500',
-    marginBottom: 2,
   },
   description: {
-    opacity: 0.7,
-    marginBottom: 4,
-    fontSize: 14,
+    fontSize: 12,
+    marginTop: 4,
+  },
+  rightContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   value: {
-    opacity: 0.9,
-    fontWeight: '500',
     fontSize: 14,
-  },
-  children: {
-    marginLeft: 12,
+    marginRight: 8,
+    textAlign: 'right',
   },
 });
 

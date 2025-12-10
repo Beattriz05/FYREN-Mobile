@@ -1,177 +1,173 @@
 import React from 'react';
-import { View, StyleSheet, Pressable } from 'react-native';
-import { ThemedText } from '@/components/ThemedText';
-import { Card } from '@/components/Card';
+import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { Feather, MaterialIcons } from '@expo/vector-icons';
+
 import { useTheme } from '@/hooks/useTheme';
+import { useAuth } from '@/hooks/useAuth';
+import { ThemedText } from '@/components/ThemedText';
+import { ThemedView } from '@/components/ThemedView';
 import { Spacing, BorderRadius } from '@/constants/theme';
-import { Feather } from '@expo/vector-icons';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { UserHomeStackParamList } from '@/types/navigation';
 
-type Props = NativeStackScreenProps<UserHomeStackParamList, 'Home'>;
+export default function UserHomeScreen({ navigation }: any) {
+  const { colors, isDark } = useTheme();
+  const { user } = useAuth();
 
-export default function UserHomeScreen({ navigation }: Props) {
-  const { colors } = useTheme();
+  // Componente de Botão do Menu (Reutilizável)
+  const MenuButton = ({ title, icon, color, onPress, style }: any) => (
+    <TouchableOpacity
+      style={[
+        styles.menuButton,
+        { 
+          backgroundColor: colors.card, 
+          borderColor: colors.border,
+          borderLeftColor: color // Cor da faixa lateral
+        },
+        style
+      ]}
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
+      {/* Ícone Redondo */}
+      <View style={[
+        styles.iconContainer, 
+        { borderColor: color, borderWidth: 2 } // Borda colorida no ícone
+      ]}>
+        <Feather name={icon} size={24} color={isDark ? '#FFF' : color} />
+      </View>
 
-  // Tipagem explícita para corrigir o erro do ícone
-  const menuItems: {
-    title: string;
-    subtitle: string;
-    icon: keyof typeof Feather.glyphMap;
-    color: string;
-    onPress: () => void;
-  }[] = [
-    {
-      title: 'Nova Ocorrência',
-      subtitle: 'Registrar nova ocorrência',
-      icon: 'plus-circle',
-      color: colors.primary,
-      onPress: () => navigation.navigate('RegisterIncident', { incident: undefined }),
-    },
-    {
-      title: 'Histórico',
-      subtitle: 'Ver ocorrências registradas',
-      icon: 'list',
-      color: colors.secondary,
-      onPress: () => navigation.navigate('History'),
-    },
-    {
-      title: 'Sincronizar',
-      subtitle: 'Enviar dados para nuvem',
-      icon: 'upload',
-      color: colors.accent,
-      onPress: () => {
-        console.log('Sincronizar');
-      },
-    },
-    {
-      title: 'Configurações',
-      subtitle: 'Ajustes do aplicativo',
-      icon: 'settings',
-      color: colors.text,
-      onPress: () => {
-        navigation.navigate('Profile');
-      },
-    },
-  ];
+      {/* Texto Centralizado */}
+      <View style={styles.textContainer}>
+        <ThemedText style={styles.buttonTitle}>{title}</ThemedText>
+      </View>
+
+      {/* Seta */}
+      <Feather name="chevron-right" size={24} color={colors.tabIconDefault} />
+    </TouchableOpacity>
+  );
 
   return (
-    <View
-      style={[styles.container, { backgroundColor: colors.backgroundRoot }]}
-    >
-      <View style={styles.header}>
-        <ThemedText type="title" style={styles.welcomeTitle}>
-          Bem-vindo!
-        </ThemedText>
-        <ThemedText
-          // Removido type="defaultSemiBold" que não existia, usando style direto
-          style={[styles.welcomeSubtitle, { color: colors.textLight, fontWeight: '600' }]}
-        >
-          O que você gostaria de fazer?
-        </ThemedText>
-      </View>
+    <ThemedView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        
+        {/* HEADER (Sem Logo, Texto Ajustado) */}
+        <View style={styles.header}>
+          <ThemedText style={[styles.welcomeTitle, { color: colors.text }]}>
+            Bem-vindo!
+          </ThemedText>
+          {/* Subtítulo agora usa colors.text para ficar da mesma cor do título */}
+          <ThemedText style={[styles.subtitle, { color: colors.text }]}>
+            O que você gostaria de fazer?
+          </ThemedText>
+        </View>
 
-      <View style={styles.menuGrid}>
-        {menuItems.map((item, index) => (
-          <Pressable
-            key={index}
-            style={({ pressed }) => [
-              styles.menuItem,
-              {
-                opacity: pressed ? 0.8 : 1,
-                transform: [{ scale: pressed ? 0.98 : 1 }],
-              },
-            ]}
-            onPress={item.onPress}
-          >
-            <Card
-              style={[
-                styles.card,
-                { borderLeftColor: item.color, borderLeftWidth: 4 },
-              ]}
-            >
-              <View style={styles.menuContent}>
-                <Feather name={item.icon} size={32} color={item.color} />
-                <View style={styles.menuText}>
-                  <ThemedText type="h4" style={styles.menuTitle}>
-                    {item.title}
-                  </ThemedText>
-                  <ThemedText
-                    type="caption"
-                    style={[styles.menuSubtitle, { color: colors.textLight }]}
-                  >
-                    {item.subtitle}
-                  </ThemedText>
-                </View>
-                <Feather
-                  name="chevron-right"
-                  size={20}
-                  color={colors.tabIconDefault}
-                />
-              </View>
-            </Card>
-          </Pressable>
-        ))}
-      </View>
+        {/* LISTA DE OPÇÕES */}
+        <View style={styles.menuContainer}>
+          <MenuButton 
+            title="Nova Ocorrência" 
+            icon="plus" 
+            color="#0E2345" // Azul Marinho (Fyren)
+            onPress={() => navigation.navigate('RegisterIncident')}
+          />
 
-      <View style={styles.footer}>
-        <ThemedText
-          type="caption"
-          style={[styles.footerText, { color: colors.tabIconDefault }]}
-        >
-          Versão 1.0.0 • Última sincronização: Hoje, 10:30
-        </ThemedText>
-      </View>
-    </View>
+          <MenuButton 
+            title="Histórico" 
+            icon="list" 
+            color="#FF7A00" // Laranja
+            onPress={() => navigation.navigate('History')}
+          />
+
+          <MenuButton 
+            title="Sincronizar" 
+            icon="upload-cloud" 
+            color="#2D74FF" // Azul Claro
+            onPress={() => console.log('Sincronizar')}
+          />
+
+          <MenuButton 
+            title="Configurações" 
+            icon="settings" 
+            color="#475569" // Cinza
+            onPress={() => navigation.navigate('Profile')} // Redireciona para o perfil/config
+          />
+        </View>
+
+        {/* FOOTER */}
+        <View style={styles.footer}>
+          <ThemedText style={[styles.versionText, { color: colors.tabIconDefault }]}>
+            Versão 1.0.0 • Última sincronização: Hoje, 10:30
+          </ThemedText>
+        </View>
+
+      </ScrollView>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: Spacing.lg,
   },
+  scrollContent: {
+    padding: Spacing['2xl'],
+    paddingTop: 60, // Espaço superior maior já que removemos a logo
+  },
+  
+  // Header
   header: {
-    marginBottom: Spacing.xl,
-    paddingTop: Spacing.xl,
+    marginBottom: 40,
   },
   welcomeTitle: {
     fontSize: 32,
-    marginBottom: Spacing.xs,
+    fontWeight: '800',
+    marginBottom: 8,
   },
-  welcomeSubtitle: {
-    fontSize: 16,
+  subtitle: {
+    fontSize: 18,
+    fontWeight: '500',
+    opacity: 0.9, // Leve opacidade para dar um toque sutil, mas mantendo a cor
   },
-  menuGrid: {
-    gap: Spacing.lg,
+
+  // Menu Buttons
+  menuContainer: {
+    gap: 16, // Espaço entre os botões
   },
-  menuItem: {
-    borderRadius: BorderRadius.lg,
-  },
-  card: {
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.lg,
-    borderLeftWidth: 4,
-  },
-  menuContent: {
+  menuButton: {
     flexDirection: 'row',
+    alignItems: 'center', // ISSO CENTRALIZA VERTICALMENTE
+    paddingVertical: 20,  // Aumenta a altura do botão
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderLeftWidth: 6, // Faixa lateral colorida
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2,
+  },
+  iconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
     alignItems: 'center',
-    gap: Spacing.lg,
+    marginRight: 16,
   },
-  menuText: {
-    flex: 1,
+  textContainer: {
+    flex: 1, // Ocupa todo o espaço do meio
+    justifyContent: 'center', // Garante centralização
   },
-  menuTitle: {
-    marginBottom: 2,
+  buttonTitle: {
+    fontSize: 18,
+    fontWeight: '700',
   },
-  menuSubtitle: {
-    fontSize: 12,
-  },
+
+  // Footer
   footer: {
-    marginTop: Spacing['3xl'],
+    marginTop: 40,
     alignItems: 'center',
   },
-  footerText: {
-    textAlign: 'center',
+  versionText: {
+    fontSize: 12,
   },
 });

@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Pressable } from 'react-native';
-import { Feather } from '@expo/vector-icons';
-import { ThemedText } from '@/components/ThemedText';
-import { Card } from '@/components/Card';
-import { ScreenScrollView } from '@/components/ScreenScrollView';
+import { View, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
+import { MaterialIcons, Feather } from '@expo/vector-icons';
+
 import { useTheme } from '@/hooks/useTheme';
-import { Spacing, BorderRadius } from '@/constants/theme';
+import { useAuth } from '@/hooks/useAuth';
+import { ThemedText } from '@/components/ThemedText';
+import { ThemedView } from '@/components/ThemedView';
+import { Card } from '@/components/Card';
+import { Colors, Spacing, BorderRadius } from '@/constants/theme';
 import { getIncidents } from '@/utils/storage';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { ChiefTabParamList } from '@/navigation/ChiefTabNavigator';
 
-type Props = NativeStackScreenProps<ChiefTabParamList, 'ChiefDashboard'>;
-
-export default function ChiefDashboardScreen({ navigation }: Props) {
-  const { colors } = useTheme();
+export default function ChiefDashboardScreen({ navigation }: any) {
+  const { colors, isDark } = useTheme();
+  const { user } = useAuth();
+  const [refreshing, setRefreshing] = useState(false);
+  
+  // Mock de dados (substitua pela lógica real depois)
   const [stats, setStats] = useState({
     total: 0,
     pending: 0,
@@ -21,200 +23,210 @@ export default function ChiefDashboardScreen({ navigation }: Props) {
     resolved: 0,
   });
 
-  useEffect(() => {
-    loadStats();
-  }, []);
-
-  const loadStats = async () => {
-    const incidents = await getIncidents();
+  const loadData = async () => {
+    const data = await getIncidents();
     setStats({
-      total: incidents.length,
-      pending: incidents.filter((i) => i.status === 'pending').length,
-      inProgress: incidents.filter((i) => i.status === 'in_progress').length,
-      resolved: incidents.filter((i) => i.status === 'resolved').length,
+      total: data.length,
+      pending: data.filter(i => i.status === 'pending').length,
+      inProgress: data.filter(i => i.status === 'in_progress').length,
+      resolved: data.filter(i => i.status === 'resolved').length,
     });
   };
 
+  useEffect(() => { loadData(); }, []);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await loadData();
+    setRefreshing(false);
+  };
+
+  // Componente de Card de Estatística Pequeno
+  const StatCard = ({ label, value, icon, color, onPress }: any) => (
+    <TouchableOpacity 
+      style={[styles.statCardWrapper, { backgroundColor: colors.card, borderColor: colors.border }]}
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
+      <View style={[styles.statIconContainer, { backgroundColor: color + '20' }]}>
+        <Feather name={icon} size={20} color={color} />
+      </View>
+      <View>
+        <ThemedText style={styles.statValue}>{value}</ThemedText>
+        <ThemedText style={[styles.statLabel, { color: colors.secondary }]}>{label}</ThemedText>
+      </View>
+    </TouchableOpacity>
+  );
+
   return (
-    <ScreenScrollView>
-      <View style={styles.container}>
-        <Card style={styles.welcomeCard}>
-          <ThemedText style={[styles.title, { color: colors.text }]}>
-            Dashboard do Chefe
-          </ThemedText>
-          <ThemedText
-            style={[styles.subtitle, { color: colors.tabIconDefault }]}
-          >
-            Visão geral das ocorrências
-          </ThemedText>
-        </Card>
+    <ThemedView style={styles.container}>
+      {/* Header Fixo */}
+      <View style={[styles.header, { backgroundColor: colors.backgroundRoot }]}>
+        <View>
+          <ThemedText style={styles.greeting}>Olá, Comandante</ThemedText>
+          <ThemedText type="title" style={styles.userName}>{user?.name}</ThemedText>
+        </View>
+        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+           <View style={[styles.profileBtn, { backgroundColor: colors.card }]}>
+             <Feather name="user" size={24} color={colors.primary} />
+           </View>
+        </TouchableOpacity>
+      </View>
 
-        <View style={styles.statsGrid}>
-          <Card
-            style={StyleSheet.flatten([
-              styles.statCard,
-              { borderLeftColor: colors.secondary, borderLeftWidth: 4 },
-            ])}
-          >
-            <ThemedText style={[styles.statValue, { color: colors.text }]}>
-              {stats.total}
-            </ThemedText>
-            <ThemedText
-              style={[styles.statLabel, { color: colors.tabIconDefault }]}
-            >
-              Total
-            </ThemedText>
-          </Card>
-
-          <Card
-            style={StyleSheet.flatten([
-              styles.statCard,
-              { borderLeftColor: colors.warning, borderLeftWidth: 4 },
-            ])}
-          >
-            <ThemedText style={[styles.statValue, { color: colors.text }]}>
-              {stats.pending}
-            </ThemedText>
-            <ThemedText
-              style={[styles.statLabel, { color: colors.tabIconDefault }]}
-            >
-              Pendentes
-            </ThemedText>
-          </Card>
-
-          <Card
-            style={StyleSheet.flatten([
-              styles.statCard,
-              { borderLeftColor: colors.info, borderLeftWidth: 4 },
-            ])}
-          >
-            <ThemedText style={[styles.statValue, { color: colors.text }]}>
-              {stats.inProgress}
-            </ThemedText>
-            <ThemedText
-              style={[styles.statLabel, { color: colors.tabIconDefault }]}
-            >
-              Em Andamento
-            </ThemedText>
-          </Card>
-
-          <Card
-            style={StyleSheet.flatten([
-              styles.statCard,
-              { borderLeftColor: colors.success, borderLeftWidth: 4 },
-            ])}
-          >
-            <ThemedText style={[styles.statValue, { color: colors.text }]}>
-              {stats.resolved}
-            </ThemedText>
-            <ThemedText
-              style={[styles.statLabel, { color: colors.tabIconDefault }]}
-            >
-              Resolvidos
-            </ThemedText>
-          </Card>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
+      >
+        
+        {/* Grid de Estatísticas */}
+        <ThemedText style={styles.sectionTitle}>Visão Geral</ThemedText>
+        <View style={styles.gridContainer}>
+          <StatCard 
+            label="Total" 
+            value={stats.total} 
+            icon="layers" 
+            color={colors.text}
+            onPress={() => navigation.navigate('IncidentList')} 
+          />
+          <StatCard 
+            label="Pendentes" 
+            value={stats.pending} 
+            icon="clock" 
+            color="#FF9800" // Laranja Warning
+            onPress={() => navigation.navigate('IncidentList', { filter: 'pending' })} 
+          />
+          <StatCard 
+            label="Em Andamento" 
+            value={stats.inProgress} 
+            icon="activity" 
+            color="#2196F3" // Azul Info
+            onPress={() => navigation.navigate('IncidentList', { filter: 'in_progress' })} 
+          />
+          <StatCard 
+            label="Resolvidos" 
+            value={stats.resolved} 
+            icon="check-circle" 
+            color="#4CAF50" // Verde Success
+            onPress={() => navigation.navigate('IncidentList', { filter: 'resolved' })} 
+          />
         </View>
 
-        <Card style={styles.section}>
-          <ThemedText style={[styles.sectionTitle, { color: colors.text }]}>
-            Ações Rápidas
-          </ThemedText>
-
-          <Pressable
-            style={({ pressed }) => [
-              styles.actionButton,
-              {
-                backgroundColor: colors.backgroundDefault,
-                opacity: pressed ? 0.7 : 1,
-              },
-            ]}
+        {/* Ações Rápidas */}
+        <ThemedText style={styles.sectionTitle}>Ações de Comando</ThemedText>
+        
+        <View style={styles.actionsContainer}>
+          <TouchableOpacity 
+            style={[styles.bigButton, { backgroundColor: colors.bombeiros?.primary }]}
             onPress={() => navigation.navigate('IncidentList')}
           >
-            <Feather name="list" size={24} color={colors.secondary} />
-            <ThemedText style={[styles.actionText, { color: colors.text }]}>
-              Ver Todas as Ocorrências
-            </ThemedText>
-            <Feather
-              name="chevron-right"
-              size={20}
-              color={colors.tabIconDefault}
-            />
-          </Pressable>
+            <View style={styles.bigButtonContent}>
+              <MaterialIcons name="view-list" size={32} color="#FFF" />
+              <View style={{marginLeft: 12}}>
+                <ThemedText style={styles.bigButtonTitle}>Gerenciar Ocorrências</ThemedText>
+                <ThemedText style={styles.bigButtonSubtitle}>Visualizar e despachar equipes</ThemedText>
+              </View>
+            </View>
+            <Feather name="chevron-right" size={24} color="#FFF" />
+          </TouchableOpacity>
 
-          <Pressable
-            style={({ pressed }) => [
-              styles.actionButton,
-              {
-                backgroundColor: colors.backgroundDefault,
-                opacity: pressed ? 0.7 : 1,
-              },
-            ]}
+          <TouchableOpacity 
+            style={[styles.bigButton, { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border }]}
             onPress={() => navigation.navigate('Reports')}
           >
-            <Feather name="bar-chart-2" size={24} color={colors.accent} />
-            <ThemedText style={[styles.actionText, { color: colors.text }]}>
-              Relatórios
-            </ThemedText>
-            <Feather
-              name="chevron-right"
-              size={20}
-              color={colors.tabIconDefault}
-            />
-          </Pressable>
+            <View style={styles.bigButtonContent}>
+              <MaterialIcons name="assessment" size={32} color={colors.primary} />
+              <View style={{marginLeft: 12}}>
+                <ThemedText style={[styles.bigButtonTitle, { color: colors.text }]}>Relatórios</ThemedText>
+                <ThemedText style={[styles.bigButtonSubtitle, { color: colors.secondary }]}>Estatísticas operacionais</ThemedText>
+              </View>
+            </View>
+            <Feather name="chevron-right" size={24} color={colors.tabIconDefault} />
+          </TouchableOpacity>
+        </View>
+
+        {/* Dica do dia ou Aviso */}
+        <Card style={[styles.infoCard, { backgroundColor: 'rgba(33, 150, 243, 0.1)' }]}>
+           <Feather name="info" size={20} color={Colors.light.accent} />
+           <ThemedText style={[styles.infoText, { color: colors.text }]}>
+             Toque nos cards acima para filtrar a lista de ocorrências automaticamente.
+           </ThemedText>
         </Card>
-      </View>
-    </ScreenScrollView>
+
+      </ScrollView>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: Spacing.lg,
-    gap: Spacing.lg,
+  container: { flex: 1 },
+  header: {
+    paddingHorizontal: 20,
+    paddingTop: 60,
+    paddingBottom: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
-  welcomeCard: {
-    padding: Spacing.xl,
+  greeting: { fontSize: 14, opacity: 0.8 },
+  userName: { fontSize: 24, fontWeight: 'bold' },
+  profileBtn: {
+    width: 44, height: 44, borderRadius: 22,
+    justifyContent: 'center', alignItems: 'center',
+    borderWidth: 1, borderColor: 'rgba(0,0,0,0.1)'
   },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: Spacing.xs,
-  },
-  subtitle: {
-    fontSize: 16,
-  },
-  statsGrid: {
-    gap: Spacing.md,
-  },
-  statCard: {
-    padding: Spacing.xl,
-    gap: Spacing.sm,
-  },
-  statValue: {
-    fontSize: 32,
-    fontWeight: '700',
-  },
-  statLabel: {
-    fontSize: 14,
-  },
-  section: {
-    padding: Spacing.lg,
-    gap: Spacing.md,
-  },
+  scrollContent: { padding: 20, paddingBottom: 100 },
+  
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    marginBottom: Spacing.sm,
+    fontSize: 18, fontWeight: '700',
+    marginBottom: 12, marginTop: 8,
   },
-  actionButton: {
+  
+  // Grid
+  gridContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+    marginBottom: 24,
+  },
+  statCardWrapper: {
+    width: '48%', // Quase metade da tela
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+  },
+  statIconContainer: {
+    width: 36, height: 36,
+    borderRadius: 18,
+    justifyContent: 'center', alignItems: 'center',
+    marginBottom: 12,
+  },
+  statValue: { fontSize: 24, fontWeight: 'bold' },
+  statLabel: { fontSize: 12, fontWeight: '500' },
+
+  // Big Buttons
+  actionsContainer: { gap: 12, marginBottom: 24 },
+  bigButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.md,
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.sm,
+    justifyContent: 'space-between',
+    padding: 20,
+    borderRadius: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  actionText: {
-    fontSize: 16,
-    flex: 1,
+  bigButtonContent: { flexDirection: 'row', alignItems: 'center' },
+  bigButtonTitle: { fontSize: 16, fontWeight: '700', color: '#FFF' },
+  bigButtonSubtitle: { fontSize: 12, color: 'rgba(255,255,255,0.8)' },
+
+  infoCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    padding: 16,
+    borderWidth: 0,
   },
+  infoText: { fontSize: 13, flex: 1 },
 });
